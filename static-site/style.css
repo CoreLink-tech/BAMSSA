@@ -186,7 +186,8 @@ body.site-shell .hero-slide {
   opacity: 0;
   transform: scale(1.12) translate3d(-2%, 0, 0);
   filter: blur(4px) brightness(0.7) saturate(0.95) contrast(0.97);
-  animation: hero-pan 32s infinite;
+  animation: hero-pan 24s linear infinite;
+  animation-fill-mode: both;
 }
 
 body.site-shell .hero-slide:nth-child(1) { animation-delay: 0s; }
@@ -197,21 +198,21 @@ body.site-shell .hero-slide:nth-child(5) { animation-delay: 25.6s; }
 
 @keyframes hero-pan {
   0% {
-    opacity: 0;
-    transform: scale(1.14) translate3d(-3%, 0, 0);
+    opacity: 1;
+    transform: scale(1.12) translate3d(0, 0, 0);
   }
-  7% {
+  8% {
     opacity: 1;
   }
-  26% {
+  30% {
     opacity: 1;
     transform: scale(1.04) translate3d(2.5%, 0, 0);
   }
-  48% {
+  56% {
     opacity: 1;
     transform: scale(1.1) translate3d(-1%, 0, 0);
   }
-  58% {
+  66% {
     opacity: 0;
   }
   100% {
