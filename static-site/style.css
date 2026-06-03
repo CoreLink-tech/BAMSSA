@@ -1,0 +1,309 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
+
+:root {
+  --bg: #f4f7fb;
+  --panel: rgba(255, 255, 255, 0.82);
+  --panel-strong: rgba(255, 255, 255, 0.96);
+  --line: rgba(15, 23, 42, 0.08);
+  --text: #0f172a;
+  --muted: #64748b;
+  --brand: #2563eb;
+  --brand-strong: #1d4ed8;
+  --shadow-sm: 0 10px 24px rgba(15, 23, 42, 0.06);
+  --shadow-lg: 0 22px 50px rgba(15, 23, 42, 0.10);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background:
+    radial-gradient(circle at top left, rgba(37, 99, 235, 0.12), transparent 36%),
+    radial-gradient(circle at 85% 10%, rgba(14, 165, 233, 0.10), transparent 28%),
+    linear-gradient(180deg, #f8fbff 0%, #f4f7fb 100%);
+  color: var(--text);
+  font-family: 'Manrope', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+body.site-shell {
+  position: relative;
+  isolation: isolate;
+}
+
+body.site-shell.home-shell {
+  background:
+    linear-gradient(180deg, #081429 0, #0f2140 22rem, #f4f7fb 22rem, #f4f7fb 100%);
+  color: #e5efff;
+}
+
+body.site-shell.page-shell {
+  background:
+    linear-gradient(180deg, #081429 0, #0f2140 18rem, #f4f7fb 18rem, #f4f7fb 100%);
+}
+
+body.site-shell.page-shell:not(.js-ready) > header,
+body.site-shell.page-shell:not(.js-ready) > footer,
+body.site-shell.page-shell:not(.js-ready) main {
+  opacity: 0;
+}
+
+body.site-shell.home-shell::before {
+  opacity: 0.16;
+}
+
+body.site-shell.home-shell::after {
+  opacity: 0.12;
+}
+
+body.site-shell.home-shell header {
+  background: transparent;
+  backdrop-filter: none;
+  box-shadow: none;
+}
+
+body.site-shell.page-shell header {
+  background: transparent;
+  backdrop-filter: none;
+  box-shadow: none;
+}
+
+body.site-shell.home-shell footer {
+  background: #081429;
+  color: #dbe7ff;
+}
+
+body.site-shell.home-shell footer a,
+body.site-shell.home-shell footer p,
+body.site-shell.home-shell footer li,
+body.site-shell.home-shell footer h4 {
+  color: inherit;
+}
+
+body.site-shell.home-shell footer a:hover {
+  color: #ffffff;
+}
+
+body.site-shell::before,
+body.site-shell::after {
+  content: "";
+  position: fixed;
+  inset: auto;
+  width: 26rem;
+  height: 26rem;
+  border-radius: 999px;
+  pointer-events: none;
+  z-index: -1;
+  filter: blur(18px);
+  opacity: 0.28;
+}
+
+body.site-shell::before {
+  top: -8rem;
+  right: -8rem;
+  background: radial-gradient(circle, rgba(37, 99, 235, 0.55), transparent 68%);
+}
+
+body.site-shell::after {
+  left: -10rem;
+  bottom: -10rem;
+  background: radial-gradient(circle, rgba(14, 165, 233, 0.40), transparent 70%);
+}
+
+body.site-shell header {
+  background: rgba(255, 255, 255, 0.84);
+  backdrop-filter: blur(18px);
+  box-shadow: 0 1px 0 var(--line), 0 12px 32px rgba(15, 23, 42, 0.04);
+}
+
+body.site-shell footer {
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(10px);
+}
+
+body.site-shell main > section {
+  position: relative;
+}
+
+body.site-shell img {
+  display: block;
+  max-width: 100%;
+}
+
+body.site-shell .mx-auto.max-w-7xl {
+  max-width: 88rem;
+  padding-left: clamp(1rem, 1.6vw, 1.5rem);
+  padding-right: clamp(1rem, 1.6vw, 1.5rem);
+}
+
+body.site-shell.home-shell main > section:first-of-type .relative.mx-auto.max-w-7xl,
+body.site-shell.page-shell > section:first-of-type .relative.mx-auto.max-w-7xl {
+  padding-left: clamp(2rem, 4vw, 4rem);
+  padding-right: clamp(1rem, 2vw, 2rem);
+}
+
+body.site-shell a {
+  transition: color 180ms ease, border-color 180ms ease, background-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+}
+
+body.site-shell [data-count] {
+  display: inline-block;
+  font-variant-numeric: tabular-nums;
+}
+
+body.site-shell .reveal-item {
+  opacity: 0;
+  transform: translateY(18px);
+  filter: blur(4px);
+  transition:
+    opacity 320ms ease var(--reveal-delay, 0ms),
+    transform 320ms ease var(--reveal-delay, 0ms),
+    filter 320ms ease var(--reveal-delay, 0ms);
+  will-change: opacity, transform, filter;
+}
+
+body.site-shell .reveal-item.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+  filter: blur(0);
+}
+
+body.site-shell .hero-stage {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+body.site-shell .hero-slide {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transform: scale(1.12) translate3d(-2%, 0, 0);
+  filter: blur(4px) brightness(0.7) saturate(0.95) contrast(0.97);
+  animation: hero-pan 32s infinite;
+}
+
+body.site-shell .hero-slide:nth-child(1) { animation-delay: 0s; }
+body.site-shell .hero-slide:nth-child(2) { animation-delay: 6.4s; }
+body.site-shell .hero-slide:nth-child(3) { animation-delay: 12.8s; }
+body.site-shell .hero-slide:nth-child(4) { animation-delay: 19.2s; }
+body.site-shell .hero-slide:nth-child(5) { animation-delay: 25.6s; }
+
+@keyframes hero-pan {
+  0% {
+    opacity: 0;
+    transform: scale(1.14) translate3d(-3%, 0, 0);
+  }
+  7% {
+    opacity: 1;
+  }
+  26% {
+    opacity: 1;
+    transform: scale(1.04) translate3d(2.5%, 0, 0);
+  }
+  48% {
+    opacity: 1;
+    transform: scale(1.1) translate3d(-1%, 0, 0);
+  }
+  58% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.14) translate3d(3%, 0, 0);
+  }
+}
+
+body.site-shell .rounded-xl.border,
+body.site-shell .rounded-md.border,
+body.site-shell .bg-white.border,
+body.site-shell form {
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 180ms ease, transform 180ms ease;
+}
+
+body.site-shell .rounded-xl.border:hover,
+body.site-shell .bg-white.border:hover,
+body.site-shell form:focus-within {
+  box-shadow: var(--shadow-lg);
+}
+
+body.site-shell .rounded-xl.border:hover,
+body.site-shell .bg-white.border:hover {
+  transform: translateY(-2px);
+}
+
+body.site-shell .group:hover img {
+  transform: scale(1.03);
+}
+
+body.site-shell img {
+  transition: transform 360ms ease, filter 360ms ease;
+}
+
+body.site-shell main section {
+  scroll-margin-top: 7rem;
+}
+
+body.site-shell .pill-tab {
+  transition: background-color 180ms ease, color 180ms ease, border-color 180ms ease, transform 180ms ease;
+}
+
+body.site-shell .pill-tab:hover {
+  transform: translateY(-1px);
+}
+
+body.site-shell [data-exec-modal].flex {
+  display: flex;
+}
+
+body.site-shell [data-exec-modal] {
+  backdrop-filter: blur(10px);
+}
+
+body.site-shell input,
+body.site-shell textarea,
+body.site-shell button {
+  font: inherit;
+}
+
+body.site-shell input:focus,
+body.site-shell textarea:focus {
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+}
+
+body.site-shell ::selection {
+  background: rgba(37, 99, 235, 0.18);
+  color: #0f172a;
+}
+
+@media (max-width: 768px) {
+  body.site-shell::before,
+  body.site-shell::after {
+    width: 18rem;
+    height: 18rem;
+    opacity: 0.18;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  body.site-shell a,
+  body.site-shell img {
+    transition: none;
+  }
+
+  body.site-shell a:hover {
+    transform: none;
+  }
+}
