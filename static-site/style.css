@@ -175,6 +175,10 @@ body.site-shell .hero-stage {
   position: absolute;
   inset: 0;
   overflow: hidden;
+  transform-origin: center center;
+  will-change: transform;
+  animation: hero-drift 9s ease-in-out infinite alternate;
+  animation-delay: -4.5s;
 }
 
 body.site-shell .hero-slide {
@@ -184,40 +188,50 @@ body.site-shell .hero-slide {
   height: 100%;
   object-fit: cover;
   opacity: 0;
-  transform: scale(1.14) translate3d(-3%, 0, 0);
+  transform: scale(1.18) translate3d(-6%, -0.3%, 0);
   filter: blur(4px) brightness(0.7) saturate(0.95) contrast(0.97);
-  animation: hero-pan 18s linear infinite;
+  animation: hero-pan 14s linear infinite;
   animation-fill-mode: both;
 }
 
-body.site-shell .hero-slide:nth-child(1) { animation-delay: -7s; }
-body.site-shell .hero-slide:nth-child(2) { animation-delay: 4s; }
-body.site-shell .hero-slide:nth-child(3) { animation-delay: 9.6s; }
-body.site-shell .hero-slide:nth-child(4) { animation-delay: 15.2s; }
-body.site-shell .hero-slide:nth-child(5) { animation-delay: 20.8s; }
+body.site-shell .hero-slide:nth-child(1) { animation-delay: 0s; }
+body.site-shell .hero-slide:nth-child(2) { animation-delay: 2.8s; }
+body.site-shell .hero-slide:nth-child(3) { animation-delay: 5.6s; }
+body.site-shell .hero-slide:nth-child(4) { animation-delay: 8.4s; }
+body.site-shell .hero-slide:nth-child(5) { animation-delay: 11.2s; }
+
+@keyframes hero-drift {
+  from {
+    transform: scale(1.03) translate3d(-1%, 0, 0);
+  }
+  to {
+    transform: scale(1.095) translate3d(1.6%, -0.7%, 0);
+  }
+}
 
 @keyframes hero-pan {
   0% {
     opacity: 1;
-    transform: scale(1.14) translate3d(-3%, 0, 0);
+    transform: scale(1.18) translate3d(-6%, -0.3%, 0);
   }
-  12% {
+  8% {
     opacity: 1;
+    transform: scale(1.165) translate3d(-4.3%, -0.2%, 0);
   }
-  28% {
+  22% {
     opacity: 1;
-    transform: scale(1.09) translate3d(-0.5%, 0, 0);
+    transform: scale(1.145) translate3d(-1.7%, 0, 0);
   }
-  52% {
+  50% {
     opacity: 1;
-    transform: scale(1.05) translate3d(2.2%, 0, 0);
+    transform: scale(1.12) translate3d(1.8%, 0.4%, 0);
   }
-  68% {
+  76% {
     opacity: 0;
   }
   100% {
     opacity: 0;
-    transform: scale(1.14) translate3d(3%, 0, 0);
+    transform: scale(1.195) translate3d(5.5%, 1%, 0);
   }
 }
 
