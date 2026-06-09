@@ -42,11 +42,24 @@
   box-shadow: var(--shadow-sm);
   overflow: hidden;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  text-align: left;
+  font: inherit;
 }
 
 .leader-card:hover {
   transform: translateY(-6px);
   box-shadow: var(--shadow-lg);
+}
+
+.leader-card img {
+  transition: transform 360ms ease;
+}
+
+.leader-card:hover img {
+  transform: scale(1.05);
 }
 
 .leader-img-wrapper {
@@ -77,6 +90,21 @@
   display: block;
   font-size: 0.875rem;
   color: var(--brand);
+}
+
+[data-leader-modal].flex {
+  display: flex;
+}
+
+[data-leader-modal] {
+  backdrop-filter: blur(10px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .leader-card,
+  .leader-card img {
+    transition: none;
+  }
 }
 
 html {
