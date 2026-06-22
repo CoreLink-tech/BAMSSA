@@ -44,6 +44,12 @@ document.addEventListener('DOMContentLoaded', () => {
       text: 'A visual mix of lectures, practicals, outreach, and student life across the faculty.',
       image: asset('gallery-campus.webp'),
     },
+    suggestions: {
+      eyebrow: 'Share Your Suggestions',
+      title: 'Anonymous. Honest. Heard.',
+      text: 'Your feedback shapes the future of BAMSSA. Share your thoughts freely.',
+      image: asset('outreach.webp'),
+    },
     staff: {
       eyebrow: 'Staff',
       title: 'The people behind the scenes.',
@@ -296,6 +302,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <a href="gallery.html" class="${pageKey === 'gallery' ? 'rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-white' : 'rounded-full px-4 py-2 text-sm font-semibold text-slate-200 hover:bg-white/10 hover:text-white'}">Gallery</a>
             <a href="staff.html" class="${pageKey === 'staff' ? 'rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-white' : 'rounded-full px-4 py-2 text-sm font-semibold text-slate-200 hover:bg-white/10 hover:text-white'}">Staff</a>
             <a href="executives.html" class="${pageKey === 'executives' ? 'rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-white' : 'rounded-full px-4 py-2 text-sm font-semibold text-slate-200 hover:bg-white/10 hover:text-white'}">Executives</a>
+            <a href="suggestions.html" class="${pageKey === 'suggestions' ? 'rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-white' : 'rounded-full px-4 py-2 text-sm font-semibold text-slate-200 hover:bg-white/10 hover:text-white'}">Suggestions</a>
             <a href="contact.html" class="${pageKey === 'contact' ? 'rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-white' : 'rounded-full px-4 py-2 text-sm font-semibold text-slate-200 hover:bg-white/10 hover:text-white'}">Contact</a>
           </nav>
           <button data-menu-toggle type="button" class="inline-flex items-center rounded-full border border-white/15 px-4 py-2 text-sm font-semibold text-white lg:hidden">Menu</button>
@@ -308,6 +315,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <a href="gallery.html" class="rounded-xl ${pageKey === 'gallery' ? 'bg-white/10 text-white' : 'text-slate-200 hover:bg-white/10 hover:text-white'} px-4 py-3 text-sm font-semibold">Gallery</a>
             <a href="staff.html" class="rounded-xl ${pageKey === 'staff' ? 'bg-white/10 text-white' : 'text-slate-200 hover:bg-white/10 hover:text-white'} px-4 py-3 text-sm font-semibold">Staff</a>
             <a href="executives.html" class="rounded-xl ${pageKey === 'executives' ? 'bg-white/10 text-white' : 'text-slate-200 hover:bg-white/10 hover:text-white'} px-4 py-3 text-sm font-semibold">Executives</a>
+            <a href="suggestions.html" class="rounded-xl ${pageKey === 'suggestions' ? 'bg-white/10 text-white' : 'text-slate-200 hover:bg-white/10 hover:text-white'} px-4 py-3 text-sm font-semibold">Suggestions</a>
             <a href="contact.html" class="rounded-xl ${pageKey === 'contact' ? 'bg-white/10 text-white' : 'text-slate-200 hover:bg-white/10 hover:text-white'} px-4 py-3 text-sm font-semibold">Contact</a>
           </div>
         </div>
@@ -772,6 +780,66 @@ document.addEventListener('DOMContentLoaded', () => {
       </section>`;
   }
 
+  function renderSuggestions(main) {
+    main.innerHTML = `
+      <section class="bg-slate-50 text-slate-900">
+        <div class="mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:px-8">
+          <div class="bg-white rounded-[2rem] border border-slate-200 shadow-sm p-6 sm:p-10">
+            <h2 class="text-2xl font-black text-slate-900">Share Your Suggestions</h2>
+            <p class="mt-2 text-sm text-slate-500">Anonymous. Honest. Heard.</p>
+            <form id="suggestions-form" class="mt-6 space-y-5">
+              <div>
+                <label for="suggestion-text" class="block text-sm font-semibold text-slate-700">Your suggestion</label>
+                <textarea id="suggestion-text" rows="5" placeholder="Write your suggestion here..."
+                  class="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 shadow-sm focus:border-blue-500 focus:ring-4 focus:ring-blue-100"></textarea>
+              </div>
+              <div id="suggestions-status"></div>
+              <button type="submit" id="suggestions-submit"
+                class="inline-flex w-full items-center justify-center rounded-2xl bg-[#2f6df6] px-6 py-4 text-base font-extrabold text-white shadow-lg shadow-blue-950/15 transition hover:bg-[#235ee8]">
+                Submit
+              </button>
+            </form>
+          </div>
+        </div>
+      </section>`;
+
+    const form = document.getElementById('suggestions-form');
+    const status = document.getElementById('suggestions-status');
+    const submitBtn = document.getElementById('suggestions-submit');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const textarea = document.getElementById('suggestion-text');
+      const value = textarea.value.trim();
+      if (!value) return;
+
+      status.innerHTML = '';
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = `<span class="inline-block h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent"></span> Submitting...`;
+
+      if (!supabaseClient) {
+        status.innerHTML = `<p class="text-sm text-red-600 bg-red-50 border border-red-200 rounded-xl px-4 py-3">Something went wrong. Please try again.</p>`;
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Submit';
+        return;
+      }
+
+      const { error } = await supabaseClient.from('suggestions').insert([{ message: value }]);
+      if (error) {
+        status.innerHTML = `<p class="text-sm text-red-600 bg-red-50 border border-red-200 rounded-xl px-4 py-3">Something went wrong. Please try again.</p>`;
+      } else {
+        textarea.value = '';
+        status.innerHTML = `<p class="text-sm text-green-700 bg-green-50 border border-green-200 rounded-xl px-4 py-3">Your suggestion has been submitted.</p>`;
+      }
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Submit';
+    });
+  }
+
+  async function renderSuggestionsAsync(main) {
+    renderSuggestions(main);
+  }
+
   function renderExecutives(main, execData) {
     _currentExecutiveData = execData || executiveData;
     const data = _currentExecutiveData;
@@ -906,6 +974,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (execs) { renderExecutives(main, execs); } else { injectError(main); }
         break;
       }
+      case 'suggestions': {
+        renderSuggestionsAsync(main);
+        break;
+      }
       case 'gallery': {
         injectLoading(main);
         const gallery = await fetchGalleryData();
@@ -949,6 +1021,9 @@ document.addEventListener('DOMContentLoaded', () => {
       case 'executives':
         renderExecutives(main);
         break;
+      case 'suggestions':
+        renderSuggestions(main);
+        break;
       default:
         break;
     }
@@ -961,7 +1036,7 @@ document.addEventListener('DOMContentLoaded', () => {
       injectHero(pageConfigs[pageKey]);
     }
     document.body.classList.add('js-ready');
-    if (['executives', 'gallery', 'departments'].includes(pageKey)) {
+    if (['executives', 'gallery', 'departments', 'suggestions'].includes(pageKey)) {
       if (supabaseClient) {
         renderPageAsync(pageKey, main);
       } else {

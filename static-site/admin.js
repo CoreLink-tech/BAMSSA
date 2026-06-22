@@ -1,7 +1,7 @@
 // BAMSSA Admin Dashboard
 // Sections: Auth, Overview, Administrations, Achievements, Executives, Department Reps, HODs, Gallery
 
-const SECTIONS = ['Overview', 'Administrations', 'Achievements', 'Executives', 'Department Reps', 'HODs', 'Gallery'];
+const SECTIONS = ['Overview', 'Administrations', 'Achievements', 'Executives', 'Department Reps', 'HODs', 'Gallery', 'Suggestions'];
 
 document.addEventListener('DOMContentLoaded', async () => {
   const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -94,33 +94,63 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
 
+let isSidebarOpen = false;
+
+function toggleSidebar() {
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('sidebar-overlay');
+  if (!sidebar || !overlay) return;
+  isSidebarOpen = !isSidebarOpen;
+  if (isSidebarOpen) {
+    sidebar.classList.remove('-translate-x-full');
+    sidebar.classList.add('translate-x-0');
+    overlay.classList.remove('hidden');
+  } else {
+    sidebar.classList.remove('translate-x-0');
+    sidebar.classList.add('-translate-x-full');
+    overlay.classList.add('hidden');
+  }
+}
+
 function renderDashboard() {
   const app = document.getElementById('app');
+  isSidebarOpen = false;
   app.innerHTML = `
-    <aside class="w-64 bg-[#081429] text-white h-full flex flex-col">
-      <div class="p-4">
-        <img src="assets/logo-clean.webp" alt="BAMSSA" class="h-10" />
-      </div>
-      <nav class="flex-1 px-2 space-y-1">
-        ${SECTIONS.map((s, i) => `
-          <button data-section="${s}" class="nav-link w-full text-left px-4 py-2 rounded-full text-sm ${i === 0 ? 'bg-white/10' : 'hover:bg-white/5'} transition">${s}</button>
-        `).join('')}
-      </nav>
-      <div class="p-4">
-        <button id="logout-btn" class="w-full px-4 py-2 rounded bg-slate-700 text-sm hover:bg-slate-600 transition">Logout</button>
-      </div>
-    </aside>
-    <main class="flex-1 overflow-y-auto">
-      <header class="sticky top-0 z-10 bg-white border-b px-6 py-4">
-        <h2 id="section-title" class="text-xl font-semibold">${SECTIONS[0]}</h2>
-      </header>
-      <div id="section-content" class="p-6"></div>
-    </main>
+    <div class="flex min-h-screen">
+      <aside id="sidebar" class="sidebar fixed inset-y-0 left-0 z-50 w-64 -translate-x-full flex-col bg-[#081429] text-white transition-transform duration-300 lg:static lg:z-auto lg:translate-x-0">
+        <div class="p-4">
+          <img src="assets/logo-clean.webp" alt="BAMSSA" class="h-10" />
+        </div>
+        <nav class="flex-1 px-2 space-y-1">
+          ${SECTIONS.map((s, i) => `
+            <button data-section="${s}" class="nav-link w-full text-left px-4 py-3 rounded-full text-sm lg:py-2 ${i === 0 ? 'bg-white/10' : 'hover:bg-white/5'} transition">${s}</button>
+          `).join('')}
+        </nav>
+        <div class="p-4">
+          <button id="logout-btn" class="w-full px-4 py-2 rounded bg-slate-700 text-sm hover:bg-slate-600 transition">Logout</button>
+        </div>
+      </aside>
+      <div id="sidebar-overlay" class="fixed inset-0 z-40 hidden bg-black/50 lg:hidden"></div>
+      <main class="flex-1 min-w-0 overflow-y-auto">
+        <header class="sticky top-0 z-10 bg-white border-b px-4 py-3 lg:px-6 lg:py-4 flex items-center gap-3">
+          <button id="hamburger" type="button" class="inline-flex items-center justify-center rounded-full p-1.5 text-slate-700 hover:bg-slate-100 lg:hidden">
+            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+            </svg>
+          </button>
+          <h2 id="section-title" class="text-lg sm:text-xl font-semibold truncate">${SECTIONS[0]}</h2>
+        </header>
+        <div id="section-content" class="p-4 lg:p-6"></div>
+      </main>
+    </div>
   `;
+  document.getElementById('hamburger').addEventListener('click', toggleSidebar);
+  document.getElementById('sidebar-overlay').addEventListener('click', toggleSidebar);
   document.querySelectorAll('.nav-link').forEach(btn => {
     btn.addEventListener('click', () => {
       setActiveNav(btn.dataset.section);
       renderSection(btn.dataset.section);
+      if (window.innerWidth < 1024 && isSidebarOpen) toggleSidebar();
     });
   });
   document.getElementById('logout-btn').addEventListener('click', async () => {
@@ -155,8 +185,8 @@ function renderSection(section) {
     renderHODs(content, title);
   } else if (section === 'Gallery') {
     renderGallery(content, title);
-  } else if (section === 'Achievements') {
-    renderAchievements(content, title);
+  } else if (section === 'Suggestions') {
+    renderSuggestions(content, title);
   } else {
     content.innerHTML = `
       <div class="bg-white rounded-lg border p-6">
@@ -222,7 +252,7 @@ async function renderOverview(content) {
           <p class="text-2xl font-bold text-[#2f6df6]">${escapeHtml(current.session_label)}</p>
         </div>
       ` : ''}
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         ${stats.map(s => `
           <div class="rounded-[1.75rem] border border-slate-200 bg-white shadow-sm p-6">
             <p class="text-sm font-medium text-slate-500">${s.label}</p>
@@ -256,7 +286,8 @@ async function renderAdministrations(content, title) {
         </div>
       </form>
       <div class="bg-white rounded-[1.75rem] border border-slate-200 shadow-sm overflow-hidden">
-        <table class="w-full text-left text-sm">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm">
           <thead class="bg-slate-50 border-b">
             <tr>
               <th class="px-6 py-3 font-semibold text-slate-700">Session Label</th>
@@ -370,7 +401,7 @@ function renderAdminRow(row) {
 function showToast(message, type = 'success') {
   const color = type === 'success' ? 'bg-green-500' : 'bg-red-500';
   const toast = document.createElement('div');
-  toast.className = `fixed top-4 right-4 z-50 ${color} text-white px-4 py-2 rounded shadow-lg`;
+  toast.className = `fixed top-4 left-1/2 -translate-x-1/2 lg:left-auto lg:translate-x-0 lg:right-4 z-50 ${color} text-white px-4 py-2 rounded shadow-lg`;
   toast.textContent = message;
   document.body.appendChild(toast);
   setTimeout(() => toast.remove(), 4000);
@@ -380,7 +411,7 @@ function showConfirm(message, onConfirm) {
   const overlay = document.createElement('div');
   overlay.className = 'fixed inset-0 z-50 flex items-center justify-center bg-black/50';
   overlay.innerHTML = `
-    <div class="bg-white rounded-lg p-6 max-w-sm w-full mx-4 shadow-xl">
+    <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4 shadow-xl">
       <p class="text-slate-900 mb-6">${message}</p>
       <div class="flex justify-end space-x-3">
         <button id="confirm-cancel" class="px-4 py-2 rounded bg-slate-200 text-slate-700 hover:bg-slate-300 transition">Cancel</button>
@@ -400,9 +431,9 @@ async function showConfirmWithInput(message, expectedValue) {
   return new Promise((resolve) => {
     const overlay = document.createElement('div');
     overlay.className = 'fixed inset-0 z-50 flex items-center justify-center bg-black/50';
-    overlay.innerHTML = `
-      <div class="bg-white rounded-lg p-6 max-w-sm w-full mx-4 shadow-xl">
-        <p class="text-slate-900 mb-4">${message}</p>
+  overlay.innerHTML = `
+    <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4 shadow-xl">
+      <p class="text-slate-900 mb-4">${message}</p>
         <input type="text" id="confirm-input" class="w-full px-4 py-2 rounded-lg border border-slate-300 mb-4 focus:outline-none focus:border-[#2f6df6]" placeholder='Type "${expectedValue}" to confirm' />
         <div class="flex justify-end space-x-3">
           <button id="confirm-with-input-cancel" class="px-4 py-2 rounded bg-slate-200 text-slate-700 hover:bg-slate-300 transition">Cancel</button>
@@ -560,7 +591,7 @@ let editingId = null;
   async function renderExecs() {
     if (editingId || isAddMode) {
       const exec = editingId ? execs.find(e => e.id === editingId) : null;
-      content.innerHTML = renderExecForm(exec) + `<div class="grid sm:grid-cols-2 xl:grid-cols-3 gap-5">${execs.map(renderExecCard).join('')}</div>`;
+        content.innerHTML = renderExecForm(exec) + `<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">${execs.map(renderExecCard).join('')}</div>`;
     } else {
       content.innerHTML = `
         <div class="flex justify-between items-center mb-4">
@@ -570,7 +601,7 @@ let editingId = null;
           </select>
           <button id="exec-add" class="px-4 py-2 rounded-lg bg-[#2f6df6] text-white font-semibold hover:bg-blue-600 transition">Add Executive</button>
         </div>
-        <div class="grid sm:grid-cols-2 xl:grid-cols-3 gap-5">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
           ${execs.map(renderExecCard).join('')}
         </div>
       `;
@@ -736,7 +767,7 @@ async function renderDepartmentReps(content, title) {
   async function renderReps() {
     if (editingRepId || isRepAddMode) {
       const rep = editingRepId ? reps.find(r => r.id === editingRepId) : null;
-      content.innerHTML = renderRepForm(rep) + `<div class="grid sm:grid-cols-2 xl:grid-cols-3 gap-5">${reps.map(renderRepCard).join('')}</div>`;
+      content.innerHTML = renderRepForm(rep) + `<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">${reps.map(renderRepCard).join('')}</div>`;
     } else {
       content.innerHTML = `
         <div class="flex justify-between items-center mb-4">
@@ -746,7 +777,7 @@ async function renderDepartmentReps(content, title) {
           </select>
           <button id="rep-add" class="px-4 py-2 rounded-lg bg-[#2f6df6] text-white font-semibold hover:bg-blue-600 transition">Add Department Rep</button>
         </div>
-        <div class="grid sm:grid-cols-2 xl:grid-cols-3 gap-5">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
           ${reps.map(renderRepCard).join('')}
         </div>
       `;
@@ -862,7 +893,7 @@ async function renderHODs(content, title) {
   }
   
   content.innerHTML = `
-    <div class="grid md:grid-cols-3 gap-5">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
       ${depts.map(d => {
         const hod = data.find(h => h.department === d) || { department: d, name: '', image_url: '' };
         return renderHODCard(hod);
@@ -974,7 +1005,7 @@ async function renderGallery(content, title) {
         <p id="bulk-progress" class="mt-2 text-sm text-slate-500 hidden"></p>
       </div>
       
-      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
         ${filteredData.map(item => `
           <div class="bg-white rounded-[1.75rem] border border-slate-200 shadow-sm overflow-hidden flex flex-col" data-id="${item.id}">
             <img src="${escapeHtml(item.image_url)}" alt="${escapeHtml(item.title)}" class="h-48 w-full object-cover" />
@@ -1048,19 +1079,56 @@ async function renderGallery(content, title) {
     btn.addEventListener('click', () => { editGallery(btn.dataset.id); });
   });
   
-  document.querySelectorAll('[data-action="delete-gallery"]').forEach(btn => {
+    document.querySelectorAll('[data-action="delete-gallery"]').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const id = btn.dataset.id;
+        const url = btn.dataset.url;
+        const confirmed = await showConfirm('Delete this image? This cannot be undone.');
+        if (!confirmed) return;
+        if (url) {
+          const path = url.split('/').pop();
+          await supabase.storage.from('gallery').remove([path]);
+        }
+        await supabase.from('gallery').delete().eq('id', id);
+        showToast('Image deleted', 'success');
+        renderSection('Gallery');
+      });
+    });
+}
+
+// SUGGESTIONS
+
+async function renderSuggestions(content, title) {
+  await supabase.from('suggestions').delete().lt('created_at', new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString());
+
+  const { data, error, count } = await supabase.from('suggestions').select('*', { count: 'exact' }).order('created_at', { ascending: false });
+  if (error) { showToast('Failed to load suggestions', 'error'); return; }
+
+  title.textContent = 'Suggestions';
+
+  const suggestions = data || [];
+
+  content.innerHTML = `
+    <div class="mb-4">
+      <p class="text-sm text-slate-500">${count ?? suggestions.length} suggestions received</p>
+    </div>
+    ${suggestions.length === 0 ? `<p class="text-slate-500">No suggestions yet.</p>` : `
+      <div class="space-y-4">
+        ${suggestions.map(s => `
+          <div class="bg-white rounded-[1.75rem] border border-slate-200 shadow-sm p-6">
+            <p class="text-slate-900 whitespace-pre-wrap">${escapeHtml(s.message)}</p>
+            <p class="mt-3 text-xs text-slate-400">${new Date(s.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+            <button data-action="delete-suggestion" data-id="${s.id}" class="mt-3 px-4 py-1.5 rounded-full bg-red-50 text-red-600 hover:bg-red-100 transition text-xs">Delete</button>
+          </div>
+        `).join('')}
+      </div>
+    `}
+  `;
+
+  document.querySelectorAll('[data-action="delete-suggestion"]').forEach(btn => {
     btn.addEventListener('click', async () => {
-      const id = btn.dataset.id;
-      const url = btn.dataset.url;
-      const confirmed = await showConfirm('Delete this image? This cannot be undone.');
-      if (!confirmed) return;
-      if (url) {
-        const path = url.split('/').pop();
-        await supabase.storage.from('gallery').remove([path]);
-      }
-      await supabase.from('gallery').delete().eq('id', id);
-      showToast('Image deleted', 'success');
-      renderSection('Gallery');
+      const { error } = await supabase.from('suggestions').delete().eq('id', btn.dataset.id);
+      if (error) { showToast(error.message, 'error'); } else { showToast('Suggestion deleted', 'success'); renderSuggestions(content, title); }
     });
   });
 }
@@ -1216,7 +1284,7 @@ async function renderAchievements(content, title) {
         <button type="submit" class="mt-4 px-6 py-2 rounded-lg bg-[#2f6df6] text-white font-semibold hover:bg-blue-600 transition">Save</button>
       </form>
       
-      <div class="grid md:grid-cols-2 gap-5">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
         ${achievements.map(ach => `
           <div class="bg-white rounded-[1.75rem] border border-slate-200 shadow-sm overflow-hidden flex flex-col" data-id="${ach.id}">
             ${ach.image_url ? `<img src="${escapeHtml(ach.image_url)}" alt="${escapeHtml(ach.title)}" class="h-40 w-full object-cover" />` : ''}
