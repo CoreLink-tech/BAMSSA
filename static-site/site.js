@@ -1,5 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
   const asset = (name) => `assets/${name}`;
+  const supabaseClient = (typeof window.supabase !== 'undefined') ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
+  let _currentExecutiveData = [];
   const pageKey = (() => {
     const file = window.location.pathname.split('/').pop() || 'index.html';
     return file.replace(/\.html?$/, '') || 'index';
@@ -474,14 +476,15 @@ document.addEventListener('DOMContentLoaded', () => {
       </section>`;
   }
 
-  function renderDepartments(main) {
+  function renderDepartments(main, hodNames) {
+    const hods = hodNames || {};
     const items = [
       {
         image: asset('anatomy.webp'),
         title: 'Anatomy',
         subtitle: 'Structure of the human body',
         text: 'The Department of Anatomy explores gross anatomy, histology, embryology, and neuroanatomy through hands-on learning and imaging.',
-        hod: 'Prof. E. Onuoha',
+        hod: hods['Anatomy'] || 'Prof. E. Onuoha',
         count: 412,
         countLabel: 'students',
         courses: ['Gross Anatomy', 'Histology', 'Embryology', 'Neuroanatomy', 'Radiological Anatomy'],
@@ -491,7 +494,7 @@ document.addEventListener('DOMContentLoaded', () => {
         title: 'Physiology',
         subtitle: 'How the body functions',
         text: 'The Department of Physiology covers the mechanisms by which the human body operates from cellular signalling to whole-system integration.',
-        hod: 'Prof. A. Okoro',
+        hod: hods['Physiology'] || 'Prof. A. Okoro',
         count: 388,
         countLabel: 'students',
         courses: ['General Physiology', 'Cardiovascular Physiology', 'Endocrinology', 'Neurophysiology', 'Renal Physiology'],
@@ -501,7 +504,7 @@ document.addEventListener('DOMContentLoaded', () => {
         title: 'Biochemistry',
         subtitle: 'Chemistry of life',
         text: 'The Department of Biochemistry studies the molecular basis of life from enzyme kinetics to metabolic pathways and clinical biochemistry.',
-        hod: 'Prof. K. Eluwa',
+        hod: hods['Biochemistry'] || 'Prof. K. Eluwa',
         count: 297,
         countLabel: 'students',
         courses: ['General Biochemistry', 'Clinical Biochemistry', 'Molecular Biology', 'Enzymology', 'Nutritional Biochemistry'],
@@ -548,12 +551,13 @@ document.addEventListener('DOMContentLoaded', () => {
       </section>`;
   }
 
-  function renderGallery(main) {
+  function renderGallery(main, galleryItems) {
+    const data = galleryItems || galleryData;
     main.innerHTML = `
       <section class="bg-white text-slate-900">
         <div class="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
           <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            ${galleryData
+            ${data
               .map(
                 (item) => `
                   <figure class="overflow-hidden rounded-[1.75rem] border border-slate-200 bg-slate-100 shadow-sm">
@@ -768,7 +772,9 @@ document.addEventListener('DOMContentLoaded', () => {
       </section>`;
   }
 
-  function renderExecutives(main) {
+  function renderExecutives(main, execData) {
+    _currentExecutiveData = execData || executiveData;
+    const data = _currentExecutiveData;
     main.innerHTML = `
       <section class="bg-white text-slate-900">
         <div class="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
@@ -777,7 +783,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <h2 class="mt-3 text-3xl font-black tracking-tight text-slate-900 sm:text-4xl">Tap a name to view the profile.</h2>
           </div>
           <div class="grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
-            ${executiveData
+            ${data
               .map(
                 (exec, index) => `
                   <button type="button" data-exec-index="${index}" class="group text-left overflow-hidden rounded-[1.75rem] border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-xl">
@@ -842,7 +848,82 @@ document.addEventListener('DOMContentLoaded', () => {
       </div>`;
   }
 
-  function renderPage(pageKey, main) {
+  function injectLoading(main) {
+    main.innerHTML = `<div class="flex items-center justify-center py-32">
+      <div class="h-10 w-10 animate-spin rounded-full border-4 border-blue-600 border-t-transparent"></div>
+    </div>`;
+  }
+
+  function injectError(main) {
+    main.innerHTML = `<p class="text-center py-32 text-slate-500">Could not load content. Please refresh the page.</p>`;
+  }
+
+  async function fetchExecutivesData() {
+    if (!supabaseClient) return null;
+    const { data: admin } = await supabaseClient.from('administrations').select('id').eq('is_current', true).single();
+    if (!admin) return null;
+    const { data, error } = await supabaseClient.from('executives').select('*').eq('administration_id', admin.id).order('display_order', { ascending: true });
+    if (error) return null;
+    return data.map(row => ({
+      name: row.name,
+      role: row.role,
+      image: row.image_url,
+      department: row.department,
+      level: row.level,
+      summary: row.summary,
+      focus: row.focus,
+      email: row.email,
+      phone: row.phone
+    }));
+  }
+
+  async function fetchGalleryData() {
+    if (!supabaseClient) return null;
+    const { data, error } = await supabaseClient.from('gallery').select('*').order('created_at', { ascending: false });
+    if (error) return null;
+    return data.map(row => ({
+      image: row.image_url,
+      title: row.title,
+      tag: row.tag,
+      text: row.caption
+    }));
+  }
+
+  async function fetchHodsData() {
+    if (!supabaseClient) return null;
+    const { data, error } = await supabaseClient.from('hods').select('department, name, image_url').order('department', { ascending: true });
+    if (error) return null;
+    const result = {};
+    data.forEach(row => { result[row.department] = row.name || ''; });
+    return result;
+  }
+
+  async function renderPageAsync(pageKey, main) {
+    switch (pageKey) {
+      case 'executives': {
+        injectLoading(main);
+        const execs = await fetchExecutivesData();
+        if (execs) { renderExecutives(main, execs); } else { injectError(main); }
+        break;
+      }
+      case 'gallery': {
+        injectLoading(main);
+        const gallery = await fetchGalleryData();
+        if (gallery) { renderGallery(main, gallery); } else { injectError(main); }
+        break;
+      }
+      case 'departments': {
+        injectLoading(main);
+        const hods = await fetchHodsData();
+        if (hods !== null) { renderDepartments(main, hods); } else { injectError(main); }
+        break;
+      }
+      default:
+        renderPage(pageKey, main);
+    }
+  }
+
+  async function renderPage(pageKey, main) {
     switch (pageKey) {
       case 'about':
         renderAbout(main);
@@ -879,9 +960,17 @@ document.addEventListener('DOMContentLoaded', () => {
     if (pageKey !== 'contact') {
       injectHero(pageConfigs[pageKey]);
     }
-    injectFooter();
-    renderPage(pageKey, main);
     document.body.classList.add('js-ready');
+    if (['executives', 'gallery', 'departments'].includes(pageKey)) {
+      if (supabaseClient) {
+        renderPageAsync(pageKey, main);
+      } else {
+        renderPage(pageKey, main);
+      }
+    } else {
+      renderPage(pageKey, main);
+    }
+    injectFooter();
   }
 
   const toggle = document.querySelector('[data-menu-toggle]');
@@ -933,7 +1022,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const show = (index) => {
-      const data = executiveData[index];
+      const data = _currentExecutiveData[index];
       if (!data) return;
       image.src = data.image;
       image.alt = data.name;
