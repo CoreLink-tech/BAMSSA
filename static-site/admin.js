@@ -143,16 +143,16 @@ function renderDashboard() {
         </div>
       </aside>
       <div id="sidebar-overlay" class="fixed inset-0 z-40 hidden bg-black/50 lg:hidden"></div>
-      <main class="flex-1 min-w-0 overflow-y-auto">
-        <header class="sticky top-0 z-10 bg-white border-b px-4 py-3 lg:px-6 lg:py-4 flex items-center gap-3">
+      <main class="flex-1 min-w-0 overflow-y-auto" style="background:#f8fafc;">
+        <header class="sticky top-0 z-10 border-b px-4 py-3 lg:px-6 lg:py-4 flex items-center gap-3" style="background:#ffffff;">
           <button id="hamburger" type="button" class="inline-flex items-center justify-center rounded-full p-1.5 text-slate-700 hover:bg-slate-100 lg:hidden">
             <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
             </svg>
           </button>
-          <h2 id="section-title" class="text-lg sm:text-xl font-semibold truncate">${SECTIONS[0]}</h2>
+          <h2 id="section-title" class="text-lg sm:text-xl font-semibold truncate text-slate-900">${SECTIONS[0]}</h2>
         </header>
-        <div id="section-content" class="p-4 lg:p-6"></div>
+        <div id="section-content" class="p-4 lg:p-6" style="background:#f8fafc;"></div>
       </main>
     </div>
   `;
@@ -257,16 +257,16 @@ async function renderOverview(content) {
   content.innerHTML = `
     <div class="space-y-6">
       ${current ? `
-        <div class="rounded-[1.75rem] border border-[#2f6df6] bg-blue-50 p-6 shadow-sm">
-          <h3 class="text-lg font-semibold text-[#081429] mb-1">Current Administration</h3>
-          <p class="text-2xl font-bold text-[#2f6df6]">${escapeHtml(current.session_label)}</p>
+        <div class="rounded-[1.75rem] p-6 shadow-sm" style="background:#eff6ff;border:2px solid #2f6df6;">
+          <h3 class="text-base font-semibold mb-1" style="color:#081429;">Current Administration</h3>
+          <p class="text-2xl font-bold" style="color:#2f6df6;">${escapeHtml(current.session_label)}</p>
         </div>
       ` : ''}
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
         ${stats.map(s => `
-          <div class="rounded-[1.75rem] border border-slate-200 bg-white shadow-sm p-6">
-            <p class="text-sm font-medium text-slate-500">${s.label}</p>
-            <p class="text-3xl font-bold text-slate-900 mt-2">${s.count}</p>
+          <div class="rounded-[1.75rem] p-5 shadow-sm" style="background:#ffffff;border:1px solid #e2e8f0;">
+            <p class="text-xs font-medium" style="color:#64748b;">${s.label}</p>
+            <p class="text-3xl font-bold mt-2" style="color:#0f172a;">${s.count}</p>
           </div>
         `).join('')}
       </div>
