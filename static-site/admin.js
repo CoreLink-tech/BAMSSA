@@ -1,11 +1,11 @@
 // BAMSSA Admin Dashboard
 // Sections: Auth, Overview, Administrations, Achievements, Executives, Department Reps, HODs, Gallery
 
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
 const SECTIONS = ['Overview', 'Administrations', 'Achievements', 'Executives', 'Department Reps', 'HODs', 'Gallery'];
 
 document.addEventListener('DOMContentLoaded', async () => {
+  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
   const authScreen = document.getElementById('auth-screen');
   const app = document.getElementById('app');
   const { data: { session } } = await supabase.auth.getSession();
@@ -18,11 +18,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     authScreen.classList.remove('hidden');
     renderAuth();
   }
-});
 
-function renderAuth() {
-  const authScreen = document.getElementById('auth-screen');
-  authScreen.innerHTML = `
+  function renderAuth() {
+    const authScreen = document.getElementById('auth-screen');
+    authScreen.innerHTML = `
     <div class="min-h-screen flex items-center justify-center bg-[#081429] px-4">
       <div class="w-full max-w-md">
         <div class="text-center mb-8">
@@ -58,42 +57,42 @@ function renderAuth() {
         <p class="text-center text-xs text-slate-500 mt-6">Authorized personnel only</p>
       </div>
     </div>
-  `;
+    `;
 
-  document.getElementById('login-form').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const email = document.getElementById('login-email').value.trim();
-    const password = document.getElementById('login-password').value;
-    const errorEl = document.getElementById('login-error');
-    const spinner = document.getElementById('login-spinner');
-    const btnText = document.getElementById('login-btn-text');
-    const btn = document.getElementById('login-btn');
+    document.getElementById('login-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('login-email').value.trim();
+      const password = document.getElementById('login-password').value;
+      const errorEl = document.getElementById('login-error');
+      const spinner = document.getElementById('login-spinner');
+      const btnText = document.getElementById('login-btn-text');
+      const btn = document.getElementById('login-btn');
 
-    errorEl.classList.add('hidden');
-    spinner.classList.remove('hidden');
-    btnText.textContent = 'Signing in...';
-    btn.disabled = true;
-    btn.classList.add('opacity-75', 'cursor-not-allowed');
+      errorEl.classList.add('hidden');
+      spinner.classList.remove('hidden');
+      btnText.textContent = 'Signing in...';
+      btn.disabled = true;
+      btn.classList.add('opacity-75', 'cursor-not-allowed');
 
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
 
-    if (error) {
-      spinner.classList.add('hidden');
-      btnText.textContent = 'Sign In';
-      btn.disabled = false;
-      btn.classList.remove('opacity-75', 'cursor-not-allowed');
-      errorEl.textContent = error.message;
-      errorEl.classList.remove('hidden');
-    } else {
-      btnText.textContent = 'Welcome';
-      setTimeout(() => {
-        document.getElementById('auth-screen').classList.add('hidden');
-        document.getElementById('app').classList.remove('hidden');
-        renderDashboard();
-      }, 600);
-    }
-  });
-}
+      if (error) {
+        spinner.classList.add('hidden');
+        btnText.textContent = 'Sign In';
+        btn.disabled = false;
+        btn.classList.remove('opacity-75', 'cursor-not-allowed');
+        errorEl.textContent = error.message;
+        errorEl.classList.remove('hidden');
+      } else {
+        btnText.textContent = 'Welcome';
+        setTimeout(() => {
+          document.getElementById('auth-screen').classList.add('hidden');
+          document.getElementById('app').classList.remove('hidden');
+          renderDashboard();
+        }, 600);
+      }
+    });
+  }
 
 function renderDashboard() {
   const app = document.getElementById('app');
@@ -1375,3 +1374,4 @@ async function editAchievement(id) {
     }
   });
 }
+});
