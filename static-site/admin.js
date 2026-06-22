@@ -8,15 +8,29 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   const authScreen = document.getElementById('auth-screen');
   const app = document.getElementById('app');
-  const { data: { session } } = await supabase.auth.getSession();
-  if (session) {
-    authScreen.classList.add('hidden');
-    app.classList.remove('hidden');
-    renderDashboard();
-  } else {
-    app.classList.add('hidden');
-    authScreen.classList.remove('hidden');
+
+  function showAuth() {
+    app.style.display = 'none';
+    authScreen.style.display = 'block';
     renderAuth();
+  }
+
+  function showApp() {
+    authScreen.style.display = 'none';
+    app.style.display = 'flex';
+    renderDashboard();
+  }
+
+  try {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session) {
+      showApp();
+    } else {
+      showAuth();
+    }
+  } catch (err) {
+    console.error('Startup error:', err);
+    showAuth();
   }
 
   function renderAuth() {
@@ -86,9 +100,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       } else {
         btnText.textContent = 'Welcome';
         setTimeout(() => {
-          document.getElementById('auth-screen').classList.add('hidden');
-          document.getElementById('app').classList.remove('hidden');
-          renderDashboard();
+          showApp();
         }, 600);
       }
     });
@@ -155,10 +167,8 @@ function renderDashboard() {
   });
   document.getElementById('logout-btn').addEventListener('click', async () => {
     await supabase.auth.signOut();
-    document.getElementById('app').classList.add('hidden');
     document.getElementById('app').innerHTML = '';
-    document.getElementById('auth-screen').classList.remove('hidden');
-    renderAuth();
+    showAuth();
   });
   renderSection(SECTIONS[0]);
 }
