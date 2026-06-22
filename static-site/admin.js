@@ -23,41 +23,74 @@ document.addEventListener('DOMContentLoaded', async () => {
 function renderAuth() {
   const authScreen = document.getElementById('auth-screen');
   authScreen.innerHTML = `
-    <div class="min-h-screen flex items-center justify-center bg-[#081429]">
-      <div class="w-full max-w-md p-8">
+    <div class="min-h-screen flex items-center justify-center bg-[#081429] px-4">
+      <div class="w-full max-w-md">
         <div class="text-center mb-8">
-          <img src="assets/logo-clean.webp" alt="BAMSSA" class="mx-auto h-16 mb-4" />
-          <h1 class="text-2xl font-bold text-white">BAMSSA Admin Panel</h1>
+          <img src="assets/logo-clean.webp" alt="BAMSSA" class="mx-auto h-20 mb-5" />
+          <h1 class="text-2xl font-bold text-white tracking-tight">BAMSSA Admin Panel</h1>
+          <p class="text-slate-400 text-sm mt-1">Faculty of Basic Medical Sciences — DELSU</p>
         </div>
-        <form id="login-form" class="space-y-4">
-          <div>
-            <label class="block text-sm font-medium text-slate-300 mb-1">Email</label>
-            <input type="email" id="email" required class="w-full px-4 py-2 rounded bg-slate-800 text-white border border-slate-700 focus:outline-none focus:border-[#2f6df6]" />
-          </div>
-          <div>
-            <label class="block text-sm font-medium text-slate-300 mb-1">Password</label>
-            <input type="password" id="password" required class="w-full px-4 py-2 rounded bg-slate-800 text-white border border-slate-700 focus:outline-none focus:border-[#2f6df6]" />
-          </div>
-          <div id="login-error" class="hidden text-red-400 text-sm"></div>
-          <button type="submit" class="w-full py-2 rounded bg-[#2f6df6] text-white font-semibold hover:bg-blue-600 transition">Sign In</button>
-        </form>
+        <div class="rounded-[1.75rem] border border-white/10 bg-white/5 backdrop-blur-sm p-8 shadow-2xl">
+          <form id="login-form" class="space-y-5">
+            <div>
+              <label class="block text-sm font-medium text-slate-300 mb-1.5">Email address</label>
+              <input type="email" id="login-email" required autocomplete="email"
+                class="w-full px-4 py-3 rounded-xl bg-white/5 text-white border border-white/10 placeholder-slate-500 focus:outline-none focus:border-[#2f6df6] focus:ring-2 focus:ring-[#2f6df6]/30 transition"
+                placeholder="you@example.com" />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-slate-300 mb-1.5">Password</label>
+              <input type="password" id="login-password" required autocomplete="current-password"
+                class="w-full px-4 py-3 rounded-xl bg-white/5 text-white border border-white/10 placeholder-slate-500 focus:outline-none focus:border-[#2f6df6] focus:ring-2 focus:ring-[#2f6df6]/30 transition"
+                placeholder="••••••••" />
+            </div>
+            <div id="login-error" class="hidden rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm px-4 py-3"></div>
+            <button type="submit" id="login-btn"
+              class="w-full py-3 rounded-xl bg-[#2f6df6] text-white font-semibold text-base hover:bg-[#235ee8] transition flex items-center justify-center gap-3">
+              <svg id="login-spinner" class="hidden h-5 w-5 animate-spin text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
+              </svg>
+              <span id="login-btn-text">Sign In</span>
+            </button>
+          </form>
+        </div>
+        <p class="text-center text-xs text-slate-500 mt-6">Authorized personnel only</p>
       </div>
     </div>
   `;
+
   document.getElementById('login-form').addEventListener('submit', async (e) => {
     e.preventDefault();
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
+    const email = document.getElementById('login-email').value.trim();
+    const password = document.getElementById('login-password').value;
     const errorEl = document.getElementById('login-error');
+    const spinner = document.getElementById('login-spinner');
+    const btnText = document.getElementById('login-btn-text');
+    const btn = document.getElementById('login-btn');
+
     errorEl.classList.add('hidden');
+    spinner.classList.remove('hidden');
+    btnText.textContent = 'Signing in...';
+    btn.disabled = true;
+    btn.classList.add('opacity-75', 'cursor-not-allowed');
+
     const { error } = await supabase.auth.signInWithPassword({ email, password });
+
     if (error) {
+      spinner.classList.add('hidden');
+      btnText.textContent = 'Sign In';
+      btn.disabled = false;
+      btn.classList.remove('opacity-75', 'cursor-not-allowed');
       errorEl.textContent = error.message;
       errorEl.classList.remove('hidden');
     } else {
-      document.getElementById('auth-screen').classList.add('hidden');
-      document.getElementById('app').classList.remove('hidden');
-      renderDashboard();
+      btnText.textContent = 'Welcome';
+      setTimeout(() => {
+        document.getElementById('auth-screen').classList.add('hidden');
+        document.getElementById('app').classList.remove('hidden');
+        renderDashboard();
+      }, 600);
     }
   });
 }
