@@ -4,7 +4,19 @@
 const SECTIONS = ['Overview', 'Administrations', 'Achievements', 'Executives', 'Department Reps', 'HODs', 'Gallery', 'Suggestions'];
 
 document.addEventListener('DOMContentLoaded', async () => {
-  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+    auth: {
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: false
+    }
+  });
+
+  async function getValidSession() {
+    const { data: { session }, error } = await supabase.auth.getSession();
+    if (error || !session) { showAuth(); return null; }
+    return session;
+  }
 
   const authScreen = document.getElementById('auth-screen');
   const app = document.getElementById('app');
@@ -32,6 +44,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     console.error('Startup error:', err);
     showAuth();
   }
+
+  supabase.auth.onAuthStateChange((event, session) => {
+    if (event === 'SIGNED_OUT' || event === 'TOKEN_REFRESHED' && !session) {
+      showAuth();
+    }
+  });
 
   function renderAuth() {
     const authScreen = document.getElementById('auth-screen');
@@ -661,6 +679,9 @@ let editingId = null;
         image_url = url;
       }
       
+      const session = await getValidSession();
+      if (!session) return;
+
       const payload = { administration_id: adminId, name, role, department: dept, level, summary, focus, email, phone, display_order: order, image_url };
       
       let error;
