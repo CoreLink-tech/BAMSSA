@@ -94,9 +94,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
 
-let isSidebarOpen = false;
+  let isSidebarOpen = false;
 
-function toggleSidebar() {
+  function toggleSidebar() {
   const sidebar = document.getElementById('sidebar');
   const overlay = document.getElementById('sidebar-overlay');
   if (!sidebar || !overlay) return;
@@ -1442,4 +1442,5 @@ async function editAchievement(id) {
     }
   });
 }
+
 });
