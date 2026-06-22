@@ -841,7 +841,11 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function renderExecutives(main, execData) {
-    _currentExecutiveData = execData || executiveData;
+    if (!execData || execData.length === 0) {
+      main.innerHTML = `<div class="flex items-center justify-center py-32"><p class="text-slate-500 text-center">No executives found for the current administration.</p></div>`;
+      return;
+    }
+    _currentExecutiveData = execData;
     const data = _currentExecutiveData;
     main.innerHTML = `
       <section class="bg-white text-slate-900">
@@ -1019,7 +1023,7 @@ document.addEventListener('DOMContentLoaded', () => {
         renderContact(main);
         break;
       case 'executives':
-        renderExecutives(main);
+        injectError(main);
         break;
       case 'suggestions':
         renderSuggestions(main);
