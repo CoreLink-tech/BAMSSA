@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   async function getValidSession() {
     const { data: { session }, error } = await supabase.auth.getSession();
-    if (error || !session) { showAuth(); return null; }
+    if (error || !session) { return null; }
     return session;
   }
 
@@ -681,9 +681,6 @@ let editingId = null;
         image_url = url;
       }
       
-      const session = await getValidSession();
-      if (!session) return;
-
       const payload = { administration_id: adminId, name, role, department: dept, level, summary, focus, email, phone, display_order: order, image_url };
       
       let error;
