@@ -644,6 +644,7 @@ let editingId = null;
     
     if (addBtn) addBtn.addEventListener('click', () => { isAddMode = true; editingId = null; renderExecs(); });
     if (cancelBtn) cancelBtn.addEventListener('click', () => { isAddMode = false; editingId = null; renderSection('Executives'); });
+    const filterEl = document.getElementById('exec-filter');
     if (filterEl) filterEl.addEventListener('change', () => { renderSection('Executives'); });
     
     const photoInput = document.getElementById('exec-photo');
