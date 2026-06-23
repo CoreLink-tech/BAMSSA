@@ -46,7 +46,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   supabase.auth.onAuthStateChange((event, session) => {
-    if (event === 'SIGNED_OUT' || event === 'TOKEN_REFRESHED' && !session) {
+    if (event === 'SIGNED_OUT') {
       showAuth();
     }
   });
