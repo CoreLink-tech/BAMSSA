@@ -437,23 +437,22 @@ function showToast(message, type = 'success') {
   setTimeout(() => toast.remove(), 4000);
 }
 
-function showConfirm(message, onConfirm) {
-  const overlay = document.createElement('div');
-  overlay.className = 'fixed inset-0 z-50 flex items-center justify-center bg-black/50';
-  overlay.innerHTML = `
-    <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4 shadow-xl">
-      <p class="text-slate-900 mb-6">${message}</p>
-      <div class="flex justify-end space-x-3">
-        <button id="confirm-cancel" class="px-4 py-2 rounded bg-slate-200 text-slate-700 hover:bg-slate-300 transition">Cancel</button>
-        <button id="confirm-ok" class="px-4 py-2 rounded bg-red-500 text-white hover:bg-red-600 transition">Confirm</button>
+function showConfirm(message) {
+  return new Promise((resolve) => {
+    const overlay = document.createElement('div');
+    overlay.className = 'fixed inset-0 z-50 flex items-center justify-center bg-black/50';
+    overlay.innerHTML = `
+      <div style="background:#ffffff;" class="rounded-2xl p-6 max-w-md w-full mx-4 shadow-xl">
+        <p class="text-slate-900 mb-6">${message}</p>
+        <div class="flex justify-end space-x-3">
+          <button id="confirm-cancel" class="px-4 py-2 rounded-lg bg-slate-200 text-slate-700 hover:bg-slate-300 transition">Cancel</button>
+          <button id="confirm-ok" class="px-4 py-2 rounded-lg bg-red-500 text-white hover:bg-red-600 transition">Confirm</button>
+        </div>
       </div>
-    </div>
-  `;
-  document.body.appendChild(overlay);
-  document.getElementById('confirm-cancel').addEventListener('click', () => overlay.remove());
-  document.getElementById('confirm-ok').addEventListener('click', () => {
-    overlay.remove();
-    onConfirm();
+    `;
+    document.body.appendChild(overlay);
+    document.getElementById('confirm-cancel').addEventListener('click', () => { overlay.remove(); resolve(false); });
+    document.getElementById('confirm-ok').addEventListener('click', () => { overlay.remove(); resolve(true); });
   });
 }
 
