@@ -58,96 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
     },
   };
 
-  const executiveData = [
-    {
-      name: 'Amina Yusuf',
-      role: 'President',
-      image: asset('exec-amina-yusuf.webp'),
-      department: 'Biochemistry',
-      level: '500 Level',
-      summary: 'Leads the council vision, represents the chapter publicly, and keeps the executive team aligned on priorities.',
-      focus: 'Strategy, advocacy, and chapter representation.',
-      email: 'president@bamssa.delsu.edu.ng',
-      phone: '+234 800 000 1001',
-    },
-    {
-      name: 'Daniel Okafor',
-      role: 'Vice President',
-      image: asset('exec-daniel-okafor.webp'),
-      department: 'Physiology',
-      level: '400 Level',
-      summary: 'Supports the president and coordinates committee work, projects, and follow-up across the council.',
-      focus: 'Operations, committee support, and project delivery.',
-      email: 'vice-president@bamssa.delsu.edu.ng',
-      phone: '+234 800 000 1002',
-    },
-    {
-      name: 'Chisom Eze',
-      role: 'General Secretary',
-      image: asset('exec-chisom-eze.webp'),
-      department: 'Anatomy',
-      level: '400 Level',
-      summary: 'Manages records, notices, minutes, and all official correspondence for the chapter.',
-      focus: 'Communication, records, and documentation.',
-      email: 'secretary@bamssa.delsu.edu.ng',
-      phone: '+234 800 000 1003',
-    },
-    {
-      name: 'Ibrahim Musa',
-      role: 'Financial Secretary',
-      image: asset('exec-ibrahim-musa.webp'),
-      department: 'Biochemistry',
-      level: '300 Level',
-      summary: 'Tracks dues, budgets, and financial records with a focus on transparency and consistency.',
-      focus: 'Budget tracking, dues, and accountability.',
-      email: 'finance@bamssa.delsu.edu.ng',
-      phone: '+234 800 000 1004',
-    },
-    {
-      name: 'Maryam Bello',
-      role: 'Treasurer',
-      image: asset('exec-maryam-bello.webp'),
-      department: 'Physiology',
-      level: '300 Level',
-      summary: 'Safeguards funds, handles receipts, and supports responsible spending across chapter activities.',
-      focus: 'Funds management and spending oversight.',
-      email: 'treasurer@bamssa.delsu.edu.ng',
-      phone: '+234 800 000 1005',
-    },
-    {
-      name: 'Samuel Ojo',
-      role: 'Public Relations Officer',
-      image: asset('exec-samuel-ojo.webp'),
-      department: 'Anatomy',
-      level: '400 Level',
-      summary: 'Handles announcements, media updates, and the public voice of the chapter.',
-      focus: 'Media, announcements, and brand voice.',
-      email: 'pr@bamssa.delsu.edu.ng',
-      phone: '+234 800 000 1006',
-    },
-    {
-      name: 'Esther Paul',
-      role: 'Welfare Director',
-      image: asset('exec-esther-paul.webp'),
-      department: 'Biochemistry',
-      level: '300 Level',
-      summary: 'Leads student-care initiatives and responds to welfare needs with empathy and speed.',
-      focus: 'Student welfare and support initiatives.',
-      email: 'welfare@bamssa.delsu.edu.ng',
-      phone: '+234 800 000 1007',
-    },
-    {
-      name: 'Michael Adebayo',
-      role: 'Sports and Socials',
-      image: asset('exec-michael-adebayo.webp'),
-      department: 'Physiology',
-      level: '400 Level',
-      summary: 'Builds community through events, social programs, and healthy competition.',
-      focus: 'Community events and social programming.',
-      email: 'socials@bamssa.delsu.edu.ng',
-      phone: '+234 800 000 1008',
-    },
-  ];
+  const executiveData = [];
 
   const staffData = [
     {
@@ -188,16 +99,7 @@ document.addEventListener('DOMContentLoaded', () => {
     },
   ];
 
-  const galleryData = [
-    { image: asset('gallery-lecture.webp'), title: 'Lecture Hall Session', tag: 'Academics', text: 'Focused class discussion and note-taking.' },
-    { image: asset('gallery-practical.webp'), title: 'Practical Laboratory', tag: 'Practicals', text: 'Hands-on learning with laboratory supervision.' },
-    { image: asset('gallery-outreach.webp'), title: 'Community Outreach', tag: 'Service', text: 'Students serving Abraka and nearby communities.' },
-    { image: asset('gallery-sports.webp'), title: 'Sports Day', tag: 'Campus Life', text: 'Healthy competition and strong team spirit.' },
-    { image: asset('gallery-campus.webp'), title: 'Campus Walkway', tag: 'Campus', text: 'The everyday rhythm of student life at DELSU.' },
-    { image: asset('gallery-whitecoat.webp'), title: 'White Coat Moment', tag: 'Ceremony', text: 'A milestone welcome into the faculty.' },
-    { image: asset('gallery-seminar.webp'), title: 'Seminar Series', tag: 'Learning', text: 'Shared ideas, questions, and student confidence.' },
-    { image: asset('whitecoat.webp'), title: 'Welcome Assembly', tag: 'Community', text: 'A formal gathering for students and staff.' },
-  ];
+  const galleryData = [];
 
   const newsData = [
     {
@@ -492,7 +394,7 @@ document.addEventListener('DOMContentLoaded', () => {
         title: 'Anatomy',
         subtitle: 'Structure of the human body',
         text: 'The Department of Anatomy explores gross anatomy, histology, embryology, and neuroanatomy through hands-on learning and imaging.',
-        hod: hods['Anatomy'] || 'Prof. E. Onuoha',
+        hod: hods['Anatomy'] || '',
         count: 1200,
         countLabel: 'students',
         courses: ['Gross Anatomy', 'Histology', 'Embryology', 'Neuroanatomy', 'Radiological Anatomy'],
@@ -502,7 +404,7 @@ document.addEventListener('DOMContentLoaded', () => {
         title: 'Physiology',
         subtitle: 'How the body functions',
         text: 'The Department of Physiology covers the mechanisms by which the human body operates from cellular signalling to whole-system integration.',
-        hod: hods['Physiology'] || 'Prof. A. Okoro',
+        hod: hods['Physiology'] || '',
         count: 1050,
         countLabel: 'students',
         courses: ['General Physiology', 'Cardiovascular Physiology', 'Endocrinology', 'Neurophysiology', 'Renal Physiology'],
@@ -512,7 +414,7 @@ document.addEventListener('DOMContentLoaded', () => {
         title: 'Biochemistry',
         subtitle: 'Chemistry of life',
         text: 'The Department of Biochemistry studies the molecular basis of life from enzyme kinetics to metabolic pathways and clinical biochemistry.',
-        hod: hods['Biochemistry'] || 'Prof. K. Eluwa',
+        hod: hods['Biochemistry'] || '',
         count: 850,
         countLabel: 'students',
         courses: ['General Biochemistry', 'Clinical Biochemistry', 'Molecular Biology', 'Enzymology', 'Nutritional Biochemistry'],

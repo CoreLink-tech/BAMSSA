@@ -205,6 +205,8 @@ function renderSection(section) {
     renderOverview(content);
   } else if (section === 'Administrations') {
     renderAdministrations(content, title);
+  } else if (section === 'Achievements') {
+    renderAchievements(content, title);
   } else if (section === 'Executives') {
     renderExecutives(content, title);
   } else if (section === 'Department Reps') {
