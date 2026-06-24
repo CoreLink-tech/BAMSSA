@@ -390,81 +390,149 @@ document.addEventListener('DOMContentLoaded', () => {
     const hods = hodData || {};
     const items = [
       {
+        key: 'anatomy',
         image: asset('anatomy.webp'),
         title: 'Anatomy',
         subtitle: 'Structure of the human body',
-        text: 'The Department of Anatomy explores gross anatomy, histology, embryology, and neuroanatomy through hands-on learning and imaging.',
+        text: 'Explores gross anatomy, histology, embryology, and neuroanatomy through hands-on learning and imaging.',
         hod: hods['Anatomy'] ? hods['Anatomy'].name : '',
         hodImage: hods['Anatomy'] ? hods['Anatomy'].image : '',
         count: 1200,
-        countLabel: 'students',
         courses: ['Gross Anatomy', 'Histology', 'Embryology', 'Neuroanatomy', 'Radiological Anatomy'],
       },
       {
+        key: 'physiology',
         image: asset('physiology.webp'),
         title: 'Physiology',
         subtitle: 'How the body functions',
-        text: 'The Department of Physiology covers the mechanisms by which the human body operates from cellular signalling to whole-system integration.',
+        text: 'Covers the mechanisms by which the human body operates from cellular signalling to whole-system integration.',
         hod: hods['Physiology'] ? hods['Physiology'].name : '',
         hodImage: hods['Physiology'] ? hods['Physiology'].image : '',
         count: 1050,
-        countLabel: 'students',
         courses: ['General Physiology', 'Cardiovascular Physiology', 'Endocrinology', 'Neurophysiology', 'Renal Physiology'],
       },
       {
+        key: 'biochemistry',
         image: asset('biochemistry.webp'),
         title: 'Biochemistry',
         subtitle: 'Chemistry of life',
-        text: 'The Department of Biochemistry studies the molecular basis of life from enzyme kinetics to metabolic pathways and clinical biochemistry.',
+        text: 'Studies the molecular basis of life from enzyme kinetics to metabolic pathways and clinical biochemistry.',
         hod: hods['Biochemistry'] ? hods['Biochemistry'].name : '',
         hodImage: hods['Biochemistry'] ? hods['Biochemistry'].image : '',
         count: 850,
-        countLabel: 'students',
         courses: ['General Biochemistry', 'Clinical Biochemistry', 'Molecular Biology', 'Enzymology', 'Nutritional Biochemistry'],
       },
     ];
 
     main.innerHTML = `
       <section class="bg-white text-slate-900">
-        <div class="mx-auto max-w-7xl space-y-16 px-4 py-16 sm:px-6 lg:px-8">
-          ${items
-            .map(
-              (item, index) => `
-                <div class="grid gap-10 lg:grid-cols-2 lg:items-center">
-                  <div class="${index % 2 === 1 ? 'lg:order-2' : ''} overflow-hidden rounded-[2rem] border border-slate-200 bg-slate-100 shadow-sm">
-                    <img src="${item.image}" alt="${item.title}" class="h-full w-full object-cover" />
-                  </div>
-                  <div class="${index % 2 === 1 ? 'lg:order-1' : ''}">
-                    <div class="flex items-center gap-2 flex-wrap mb-4">
-                      <span class="inline-flex items-center rounded-full border border-slate-200 bg-white px-2.5 py-0.5 text-xs font-medium text-slate-700">
-                        <span data-count="${item.count}" class="count-up">0</span>
-                        <span class="ml-1 text-slate-500">${item.countLabel}</span>
-                      </span>
-                      <span class="rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-medium text-blue-600">Department</span>
-                    </div>
-                    <h2 class="text-3xl font-black tracking-tight text-slate-900">${item.title}</h2>
-                    <p class="mt-1 text-sm text-slate-500">${item.subtitle}</p>
-                    <p class="mt-4 text-base leading-7 text-slate-600">${item.text}</p>
-                    <div class="mt-6 border-t border-slate-200 pt-6">
-                      <span class="text-xs font-bold uppercase tracking-[0.22em] text-slate-500">Courses offered</span>
-                      <div class="mt-3 flex flex-wrap gap-2">
-                        ${item.courses.map((course) => `<span class="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-sm text-slate-700">${course}</span>`).join('')}
-                      </div>
-                    </div>
-                    <div class="mt-6 pt-6 border-t border-slate-200">
-                      <div class="flex items-center gap-3">
-                        ${item.hodImage ? `<img src="${item.hodImage}" alt="${item.hod}" class="h-10 w-10 rounded-full object-cover border border-slate-200" />` : ''}
-                        <span class="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3 py-1 text-xs text-slate-700">
-                          <span class="h-1.5 w-1.5 rounded-full bg-green-500"></span>${item.hod ? 'HOD: ' + item.hod : 'HOD: Not assigned'}
-                        </span>
+        <div class="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+          <div class="grid gap-8 md:grid-cols-3">
+            ${items.map(item => `
+              <div class="group overflow-hidden rounded-[2rem] border border-slate-200 shadow-sm flex flex-col" style="background:#ffffff;">
+                <div class="overflow-hidden h-52">
+                  <img src="${item.image}" alt="${item.title}" class="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
+                </div>
+                <div class="p-6 flex flex-col flex-1" style="background:#ffffff;">
+                  <span class="text-xs font-bold uppercase tracking-[0.22em]" style="color:#2f6df6;">${item.subtitle}</span>
+                  <h2 class="mt-2 text-2xl font-black" style="color:#0f172a;">${item.title}</h2>
+                  <p class="mt-3 text-sm leading-6" style="color:#475569;">${item.text}</p>
+
+                  <div class="mt-4 pt-4 border-t border-slate-100">
+                    <div class="flex items-center gap-3">
+                      ${item.hodImage
+                        ? `<img src="${item.hodImage}" alt="${item.hod}" class="h-12 w-12 rounded-xl object-cover border-2 border-slate-200 shadow-sm" />`
+                        : `<div class="h-12 w-12 rounded-xl flex items-center justify-center" style="background:#f1f5f9;"><span style="color:#94a3b8;font-size:0.7rem;">No photo</span></div>`
+                      }
+                      <div>
+                        <p class="text-xs font-semibold uppercase tracking-wide" style="color:#64748b;">Head of Department</p>
+                        <p class="text-sm font-bold mt-0.5" style="color:#0f172a;">${item.hod || 'Not assigned'}</p>
                       </div>
                     </div>
                   </div>
-                </div>`,
-            )
-            .join('')}
+
+                  <div class="mt-4">
+                    <span class="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium" style="background:#f0f9ff;color:#0369a1;">
+                      <span class="h-1.5 w-1.5 rounded-full" style="background:#22c55e;display:inline-block;"></span>
+                      ${item.count.toLocaleString()} students
+                    </span>
+                  </div>
+
+                  <div class="mt-auto pt-5">
+                    <button type="button" data-dept="${item.key}" class="dept-detail-btn w-full rounded-2xl py-3 text-sm font-bold transition" style="background:#2f6df6;color:#ffffff;">
+                      See More Info →
+                    </button>
+                  </div>
+                </div>
+              </div>`).join('')}
+          </div>
         </div>
-      </section>`;
+      </section>
+
+      <!-- DEPT DETAIL PANEL -->
+      <div id="dept-detail-panel" class="hidden fixed inset-0 z-50 overflow-y-auto" style="background:rgba(0,0,0,0.6);">
+        <div class="min-h-screen flex items-start justify-center p-4 pt-16">
+          <div class="w-full max-w-2xl rounded-[2rem] overflow-hidden shadow-2xl" style="background:#ffffff;">
+            <div class="relative h-64">
+              <img id="dept-detail-img" src="" alt="" class="h-full w-full object-cover" />
+              <button id="dept-detail-close" class="absolute top-4 right-4 rounded-full px-4 py-2 text-sm font-bold" style="background:rgba(0,0,0,0.5);color:#fff;">Close ✕</button>
+            </div>
+            <div class="p-6 sm:p-8" style="background:#ffffff;">
+              <span id="dept-detail-subtitle" class="text-xs font-bold uppercase tracking-widest" style="color:#2f6df6;"></span>
+              <h2 id="dept-detail-title" class="mt-2 text-3xl font-black" style="color:#0f172a;"></h2>
+              <p id="dept-detail-text" class="mt-4 text-base leading-7" style="color:#475569;"></p>
+
+              <div id="dept-detail-hod" class="mt-6 p-4 rounded-2xl flex items-center gap-4" style="background:#f8fafc;border:1px solid #e2e8f0;">
+                <img id="dept-detail-hod-img" src="" alt="" class="h-16 w-16 rounded-xl object-cover border-2 border-white shadow" style="display:none;" />
+                <div id="dept-detail-hod-placeholder" class="h-16 w-16 rounded-xl flex items-center justify-center" style="background:#e2e8f0;display:flex;">
+                  <span style="color:#94a3b8;font-size:0.75rem;">No photo</span>
+                </div>
+                <div>
+                  <p class="text-xs font-semibold uppercase tracking-wide" style="color:#64748b;">Head of Department</p>
+                  <p id="dept-detail-hod-name" class="text-lg font-black mt-0.5" style="color:#0f172a;"></p>
+                </div>
+              </div>
+
+              <div class="mt-6">
+                <p class="text-xs font-bold uppercase tracking-widest mb-3" style="color:#64748b;">Courses Offered</p>
+                <div id="dept-detail-courses" class="flex flex-wrap gap-2"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>`;
+
+    // Bind dept detail panel
+    const panel = document.getElementById('dept-detail-panel');
+    const closeBtn = document.getElementById('dept-detail-close');
+    closeBtn.addEventListener('click', () => panel.classList.add('hidden'));
+    panel.addEventListener('click', (e) => { if (e.target === panel) panel.classList.add('hidden'); });
+
+    document.querySelectorAll('.dept-detail-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const key = btn.dataset.dept;
+        const item = items.find(i => i.key === key);
+        if (!item) return;
+        document.getElementById('dept-detail-img').src = item.image;
+        document.getElementById('dept-detail-subtitle').textContent = item.subtitle;
+        document.getElementById('dept-detail-title').textContent = item.title;
+        document.getElementById('dept-detail-text').textContent = item.text;
+        document.getElementById('dept-detail-hod-name').textContent = item.hod || 'Not assigned';
+        const hodImg = document.getElementById('dept-detail-hod-img');
+        const hodPlaceholder = document.getElementById('dept-detail-hod-placeholder');
+        if (item.hodImage) {
+          hodImg.src = item.hodImage;
+          hodImg.style.display = 'block';
+          hodPlaceholder.style.display = 'none';
+        } else {
+          hodImg.style.display = 'none';
+          hodPlaceholder.style.display = 'flex';
+        }
+        const coursesEl = document.getElementById('dept-detail-courses');
+        coursesEl.innerHTML = item.courses.map(c => `<span class="rounded-full px-3 py-1 text-sm" style="background:#f1f5f9;color:#334155;border:1px solid #e2e8f0;">${c}</span>`).join('');
+        panel.classList.remove('hidden');
+      });
+    });
   }
 
   function renderGallery(main, galleryItems) {
@@ -1092,6 +1160,22 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   const leaderData = [];
+
+  // HOME GALLERY - fetch latest 6 images from Supabase
+  const homeGalleryGrid = document.getElementById('home-gallery-grid');
+  if (homeGalleryGrid && supabaseClient) {
+    (async () => {
+      const { data, error } = await supabaseClient.from('gallery').select('image_url, title, caption').order('created_at', { ascending: false }).limit(6);
+      if (error || !data || data.length === 0) {
+        homeGalleryGrid.innerHTML = '<p class="col-span-full text-center text-slate-500 py-8">No gallery images yet.</p>';
+        return;
+      }
+      homeGalleryGrid.innerHTML = data.map(item => `
+        <figure class="overflow-hidden rounded-[1.75rem] border border-slate-200 bg-slate-100 shadow-sm">
+          <img src="${item.image_url}" alt="${item.title || ''}" class="h-64 w-full object-cover transition duration-500 hover:scale-105" loading="lazy" />
+        </figure>`).join('');
+    })();
+  }
 
   const leadersGrid = document.getElementById('leaders-grid');
   if (leadersGrid && supabaseClient) {
