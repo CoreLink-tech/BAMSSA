@@ -766,12 +766,12 @@ document.addEventListener('DOMContentLoaded', () => {
             ${data
               .map(
                 (exec, index) => `
-                  <button type="button" data-exec-index="${index}" class="group text-left overflow-hidden rounded-[1.75rem] border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-xl">
-                    ${exec.image ? `<img src="${exec.image}" alt="${exec.name}" class="h-72 w-full object-cover" />` : `<div class="h-72 w-full bg-slate-100 flex items-center justify-center"><span class="text-slate-400 text-sm">No photo</span></div>`}
-                    <div class="p-5">
-                      <p class="text-xs font-bold uppercase tracking-[0.22em] text-slate-500">${exec.role}</p>
-                      <h3 class="mt-2 text-2xl font-black text-slate-900">${exec.name}</h3>
-                      <p class="mt-2 text-sm leading-6 text-slate-600">${exec.summary}</p>
+                  <button type="button" data-exec-index="${index}" class="group text-left overflow-hidden rounded-[1.75rem] border border-slate-200 shadow-sm transition hover:-translate-y-1 hover:shadow-xl" style="background:#ffffff;">
+                    ${exec.image ? `<img src="${exec.image}" alt="${exec.name}" class="h-72 w-full object-cover" />` : `<div class="h-72 w-full flex items-center justify-center" style="background:#f1f5f9;"><span style="color:#94a3b8;" class="text-sm">No photo</span></div>`}
+                    <div class="p-5" style="background:#ffffff;">
+                      <p class="text-xs font-bold uppercase tracking-[0.22em]" style="color:#64748b;">${exec.role}</p>
+                      <h3 class="mt-2 text-2xl font-black" style="color:#0f172a;">${exec.name}</h3>
+                      <p class="mt-2 text-sm leading-6" style="color:#475569;">${exec.summary || ''}</p>
                     </div>
                   </button>`,
               )
