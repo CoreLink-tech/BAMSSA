@@ -1091,93 +1091,87 @@ document.addEventListener('DOMContentLoaded', () => {
     }, duration + 80);
   };
 
-  const leaderData = [
-    {
-      name: 'Amina Yusuf',
-      role: 'President',
-      image: 'images/leaders/president.jpg',
-      department: 'Biochemistry',
-      level: '500 Level',
-      summary: 'Leads the council vision, represents the chapter publicly, and keeps the executive team aligned on priorities.',
-      focus: 'Strategy, advocacy, and chapter representation.',
-      email: 'president@bamssa.delsu.edu.ng',
-      phone: '+234 800 000 1001',
-    },
-    {
-      name: 'Daniel Okafor',
-      role: 'Vice President',
-      image: 'images/leaders/vp.jpg',
-      department: 'Physiology',
-      level: '400 Level',
-      summary: 'Supports the president and coordinates committee work, projects, and follow-up across the council.',
-      focus: 'Operations, committee support, and project delivery.',
-      email: 'vice-president@bamssa.delsu.edu.ng',
-      phone: '+234 800 000 1002',
-    },
-    {
-      name: 'Chisom Eze',
-      role: 'General Secretary',
-      image: 'images/leaders/secretary.jpg',
-      department: 'Anatomy',
-      level: '400 Level',
-      summary: 'Manages records, notices, minutes, and all official correspondence for the chapter.',
-      focus: 'Communication, records, and documentation.',
-      email: 'secretary@bamssa.delsu.edu.ng',
-      phone: '+234 800 000 1003',
-    },
-    {
-      name: 'Ibrahim Musa',
-      role: 'Financial Secretary',
-      image: 'images/leaders/financial-secretary.jpg',
-      department: 'Biochemistry',
-      level: '300 Level',
-      summary: 'Tracks dues, budgets, and financial records with a focus on transparency and consistency.',
-      focus: 'Budget tracking, dues, and accountability.',
-      email: 'finance@bamssa.delsu.edu.ng',
-      phone: '+234 800 000 1004',
-    },
-    {
-      name: 'Maryam Bello',
-      role: 'Treasurer',
-      image: 'images/leaders/treasurer.jpg',
-      department: 'Physiology',
-      level: '300 Level',
-      summary: 'Safeguards funds, handles receipts, and supports responsible spending across chapter activities.',
-      focus: 'Funds management and spending oversight.',
-      email: 'treasurer@bamssa.delsu.edu.ng',
-      phone: '+234 800 000 1005',
-    },
-    {
-      name: 'Samuel Ojo',
-      role: 'Public Relations Officer',
-      image: 'images/leaders/pr.jpg',
-      department: 'Anatomy',
-      level: '400 Level',
-      summary: 'Handles announcements, media updates, and the public voice of the chapter.',
-      focus: 'Media, announcements, and brand voice.',
-      email: 'pr@bamssa.delsu.edu.ng',
-      phone: '+234 800 000 1006',
-    },
-  ];
+  const leaderData = [];
 
-  const leaderCards = document.querySelectorAll('[data-leader-index]');
-  const leaderModal = document.querySelector('[data-leader-modal]');
-  if (leaderCards.length && leaderModal) {
-    const leaderOverlay = leaderModal.querySelector('[data-leader-overlay]');
-    const leaderClose = leaderModal.querySelector('[data-leader-close]');
-    const leaderImage = leaderModal.querySelector('[data-leader-image]');
-    const leaderRole = leaderModal.querySelector('[data-leader-role]');
-    const leaderName = leaderModal.querySelector('[data-leader-name]');
-    const leaderSummary = leaderModal.querySelector('[data-leader-summary]');
-    const leaderDept = leaderModal.querySelector('[data-leader-dept]');
-    const leaderLevel = leaderModal.querySelector('[data-leader-level]');
-    const leaderFocus = leaderModal.querySelector('[data-leader-focus]');
-    const leaderEmail = leaderModal.querySelector('[data-leader-email]');
-    const leaderPhone = leaderModal.querySelector('[data-leader-phone]');
+  const leadersGrid = document.getElementById('leaders-grid');
+  if (leadersGrid && supabaseClient) {
+    (async () => {
+      const { data: admin } = await supabaseClient.from('administrations').select('id').eq('is_current', true).single();
+      if (!admin) { leadersGrid.innerHTML = '<p class="text-slate-500 text-center py-8 col-span-full">No executives found.</p>'; return; }
+      const { data: execs, error } = await supabaseClient.from('executives').select('*').eq('administration_id', admin.id).order('display_order', { ascending: true });
+      if (error || !execs || execs.length === 0) { leadersGrid.innerHTML = '<p class="text-slate-500 text-center py-8 col-span-full">No executives found.</p>'; return; }
+      execs.forEach((exec, index) => { leaderData.push({ name: exec.name, role: exec.role, image: exec.image_url || '', department: exec.department || '', level: exec.level || '', summary: exec.summary || '', focus: exec.focus || '', email: exec.email || '', phone: exec.phone || '' }); });
+      leadersGrid.innerHTML = execs.map((exec, index) => `
+        <button type="button" class="leader-card" data-leader-index="${index}">
+          <div class="leader-img-wrapper">
+            ${exec.image_url ? `<img src="${exec.image_url}" alt="${exec.name}" loading="lazy">` : `<div style="width:100%;height:100%;background:#f1f5f9;display:flex;align-items:center;justify-content:center;"><span style="color:#94a3b8;font-size:0.875rem;">No photo</span></div>`}
+          </div>
+          <div class="leader-info">
+            <h3 class="leader-name">${exec.name}</h3>
+            <span class="leader-role">${exec.role}</span>
+          </div>
+        </button>`).join('');
+
+      const leaderModal = document.querySelector('[data-leader-modal]');
+      if (leaderModal) {
+        const leaderOverlay = leaderModal_legacy.querySelector('[data-leader-overlay]');
+        const leaderClose = leaderModal_legacy.querySelector('[data-leader-close]');
+        const leaderImage = leaderModal_legacy.querySelector('[data-leader-image]');
+        const leaderRole = leaderModal_legacy.querySelector('[data-leader-role]');
+        const leaderName = leaderModal_legacy.querySelector('[data-leader-name]');
+        const leaderSummary = leaderModal_legacy.querySelector('[data-leader-summary]');
+        const leaderDept = leaderModal_legacy.querySelector('[data-leader-dept]');
+        const leaderLevel = leaderModal_legacy.querySelector('[data-leader-level]');
+        const leaderFocus = leaderModal_legacy.querySelector('[data-leader-focus]');
+        const leaderEmail = leaderModal_legacy.querySelector('[data-leader-email]');
+        const leaderPhone = leaderModal_legacy.querySelector('[data-leader-phone]');
+        const hideLeaderModal = () => { leaderModal_legacy.classList.add('hidden'); leaderModal_legacy.classList.remove('flex'); };
+        const showLeaderModal = (index) => {
+          const data = leaderData[index];
+          if (!data) return;
+          leaderImage.src = data.image || '';
+          leaderImage.alt = data.name;
+          leaderRole.textContent = data.role;
+          leaderName.textContent = data.name;
+          leaderSummary.textContent = data.summary;
+          leaderDept.textContent = data.department;
+          leaderLevel.textContent = data.level;
+          leaderFocus.textContent = data.focus;
+          leaderEmail.textContent = data.email;
+          leaderEmail.href = `mailto:${data.email}`;
+          leaderPhone.textContent = data.phone;
+          leaderPhone.href = `tel:${data.phone.replace(/[^+\d]/g, '')}`;
+          leaderModal_legacy.classList.remove('hidden');
+          leaderModal_legacy.classList.add('flex');
+        };
+        leadersGrid.addEventListener('click', (e) => {
+          const card = e.target.closest('[data-leader-index]');
+          if (card) showLeaderModal(parseInt(card.dataset.leaderIndex));
+        });
+        if (leaderOverlay) leaderOverlay.addEventListener('click', hideLeaderModal);
+        if (leaderClose) leaderClose.addEventListener('click', hideLeaderModal);
+      }
+    })();
+  }
+
+  const leaderCards_legacy = document.querySelectorAll('[data-leader-index]');
+  const leaderModal_legacy = document.querySelector('[data-leader-modal]');
+  if (!leadersGrid && leaderCards_legacy.length && leaderModal_legacy) {
+    const leaderOverlay = leaderModal_legacy.querySelector('[data-leader-overlay]');
+    const leaderClose = leaderModal_legacy.querySelector('[data-leader-close]');
+    const leaderImage = leaderModal_legacy.querySelector('[data-leader-image]');
+    const leaderRole = leaderModal_legacy.querySelector('[data-leader-role]');
+    const leaderName = leaderModal_legacy.querySelector('[data-leader-name]');
+    const leaderSummary = leaderModal_legacy.querySelector('[data-leader-summary]');
+    const leaderDept = leaderModal_legacy.querySelector('[data-leader-dept]');
+    const leaderLevel = leaderModal_legacy.querySelector('[data-leader-level]');
+    const leaderFocus = leaderModal_legacy.querySelector('[data-leader-focus]');
+    const leaderEmail = leaderModal_legacy.querySelector('[data-leader-email]');
+    const leaderPhone = leaderModal_legacy.querySelector('[data-leader-phone]');
 
     const hideLeaderModal = () => {
-      leaderModal.classList.add('hidden');
-      leaderModal.classList.remove('flex');
+      leaderModal_legacy.classList.add('hidden');
+      leaderModal_legacy.classList.remove('flex');
     };
 
     const showLeaderModal = (index) => {
@@ -1195,8 +1189,8 @@ document.addEventListener('DOMContentLoaded', () => {
       leaderEmail.href = `mailto:${data.email}`;
       leaderPhone.textContent = data.phone;
       leaderPhone.href = `tel:${data.phone.replace(/[^+\d]/g, '')}`;
-      leaderModal.classList.remove('hidden');
-      leaderModal.classList.add('flex');
+      leaderModal_legacy.classList.remove('hidden');
+      leaderModal_legacy.classList.add('flex');
     };
 
     leaderCards.forEach((card) => {
