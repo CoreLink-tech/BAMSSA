@@ -60,70 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const executiveData = [];
 
-  const staffData = [
-    {
-      name: 'Prof. E. Onuoha',
-      role: 'Faculty Adviser',
-      image: asset('staff-prof.-e.-onuoha.webp'),
-      description: 'Guides the association and supports chapter direction with faculty oversight.',
-    },
-    {
-      name: 'Dr. A. Okoro',
-      role: 'Academic Officer',
-      image: asset('staff-dr.-a.-okoro.webp'),
-      description: 'Coordinates tutorials, revision plans, and academic support activities.',
-    },
-    {
-      name: 'Mrs. N. Udo',
-      role: 'Laboratory Coordinator',
-      image: asset('staff-mrs.-n.-udo.webp'),
-      description: 'Manages lab access, schedules, and practical support for students.',
-    },
-    {
-      name: 'Mr. C. Eke',
-      role: 'Student Welfare Desk',
-      image: asset('staff-mr.-c.-eke.webp'),
-      description: 'Receives welfare requests and follows up with students and committees.',
-    },
-    {
-      name: 'Ms. L. Umeh',
-      role: 'Events Coordinator',
-      image: asset('staff-ms.-l.-umeh.webp'),
-      description: 'Plans forums, outreaches, and faculty gatherings across the academic year.',
-    },
-    {
-      name: 'Dr. I. Bassey',
-      role: 'Records Officer',
-      image: asset('staff-dr.-i.-bassey.webp'),
-      description: 'Keeps chapter records organized, archived, and up to date.',
-    },
-  ];
-
   const galleryData = [];
-
-  const newsData = [
-    {
-      image: asset('whitecoat.webp'),
-      tag: 'Announcement',
-      date: 'May 18, 2026',
-      title: 'BAMSSA elects new executive council for 2026 / 2027 session',
-      text: 'A peaceful and transparent election delivered a new leadership team for the chapter.',
-    },
-    {
-      image: asset('anatomy.webp'),
-      tag: 'Academics',
-      date: 'May 02, 2026',
-      title: 'Anatomy department wins national quiz competition',
-      text: 'The DELSU BAMSSA Anatomy team emerged top at the National Association of Basic Medical Sciences Quiz.',
-    },
-    {
-      image: asset('outreach.webp'),
-      tag: 'Outreach',
-      date: 'Apr 22, 2026',
-      title: 'Free medical outreach reaches 800 residents in Abraka',
-      text: 'BAMSSA provided screenings, health education, and community support in three rural communities.',
-    },
-  ];
 
   const eventData = [
     {
@@ -182,7 +119,7 @@ document.addEventListener('DOMContentLoaded', () => {
           <p class="text-xs sm:text-sm text-slate-200/90">Delta State University, Abraka - College of Health Sciences</p>
           <div class="hidden items-center gap-6 text-xs sm:flex">
             <a href="mailto:bamssa@delsu.edu.ng" class="hover:text-white">bamssa@delsu.edu.ng</a>
-            <a href="tel:+2348000000000" class="hover:text-white">+234 800 000 0000</a>
+            <a href="tel:+2349069212042" class="hover:text-white">+234 906 921 2042</a>
           </div>
         </div>
       </div>
@@ -202,6 +139,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <a href="about.html" class="${pageKey === 'about' ? 'rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-white' : 'rounded-full px-4 py-2 text-sm font-semibold text-slate-200 hover:bg-white/10 hover:text-white'}">About</a>
             <a href="departments.html" class="${pageKey === 'departments' ? 'rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-white' : 'rounded-full px-4 py-2 text-sm font-semibold text-slate-200 hover:bg-white/10 hover:text-white'}">Departments</a>
             <a href="gallery.html" class="${pageKey === 'gallery' ? 'rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-white' : 'rounded-full px-4 py-2 text-sm font-semibold text-slate-200 hover:bg-white/10 hover:text-white'}">Gallery</a>
+            <a href="news.html" class="${pageKey === 'news' ? 'rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-white' : 'rounded-full px-4 py-2 text-sm font-semibold text-slate-200 hover:bg-white/10 hover:text-white'}">News</a>
             <a href="staff.html" class="${pageKey === 'staff' ? 'rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-white' : 'rounded-full px-4 py-2 text-sm font-semibold text-slate-200 hover:bg-white/10 hover:text-white'}">Staff</a>
             <a href="executives.html" class="${pageKey === 'executives' ? 'rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-white' : 'rounded-full px-4 py-2 text-sm font-semibold text-slate-200 hover:bg-white/10 hover:text-white'}">Executives</a>
             <a href="suggestions.html" class="${pageKey === 'suggestions' ? 'rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-white' : 'rounded-full px-4 py-2 text-sm font-semibold text-slate-200 hover:bg-white/10 hover:text-white'}">Suggestions</a>
@@ -215,6 +153,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <a href="about.html" class="rounded-xl ${pageKey === 'about' ? 'bg-white/10 text-white' : 'text-slate-200 hover:bg-white/10 hover:text-white'} px-4 py-3 text-sm font-semibold">About</a>
             <a href="departments.html" class="rounded-xl ${pageKey === 'departments' ? 'bg-white/10 text-white' : 'text-slate-200 hover:bg-white/10 hover:text-white'} px-4 py-3 text-sm font-semibold">Departments</a>
             <a href="gallery.html" class="rounded-xl ${pageKey === 'gallery' ? 'bg-white/10 text-white' : 'text-slate-200 hover:bg-white/10 hover:text-white'} px-4 py-3 text-sm font-semibold">Gallery</a>
+            <a href="news.html" class="rounded-xl ${pageKey === 'news' ? 'bg-white/10 text-white' : 'text-slate-200 hover:bg-white/10 hover:text-white'} px-4 py-3 text-sm font-semibold">News</a>
             <a href="staff.html" class="rounded-xl ${pageKey === 'staff' ? 'bg-white/10 text-white' : 'text-slate-200 hover:bg-white/10 hover:text-white'} px-4 py-3 text-sm font-semibold">Staff</a>
             <a href="executives.html" class="rounded-xl ${pageKey === 'executives' ? 'bg-white/10 text-white' : 'text-slate-200 hover:bg-white/10 hover:text-white'} px-4 py-3 text-sm font-semibold">Executives</a>
             <a href="suggestions.html" class="rounded-xl ${pageKey === 'suggestions' ? 'bg-white/10 text-white' : 'text-slate-200 hover:bg-white/10 hover:text-white'} px-4 py-3 text-sm font-semibold">Suggestions</a>
@@ -282,7 +221,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <ul class="mt-4 space-y-3 text-sm text-slate-300">
               <li>Faculty of Basic Medical Sciences, DELSU, Abraka, Delta State</li>
               <li><a href="mailto:bamssa@delsu.edu.ng" class="hover:text-white">bamssa@delsu.edu.ng</a></li>
-              <li><a href="tel:+2348000000000" class="hover:text-white">+234 800 000 0000</a></li>
+              <li><a href="tel:+2349069212042" class="hover:text-white">+234 906 921 2042</a></li>
             </ul>
           </div>
         </div>
@@ -307,7 +246,8 @@ document.addEventListener('DOMContentLoaded', () => {
       </section>`;
   }
 
-  function renderAbout(main) {
+  function renderAbout(main, achievements) {
+    const milestones = achievements || [];
     main.innerHTML = `
       <section class="border-b border-white/10 bg-[#0b1c39] text-white">
         <div class="mx-auto grid max-w-7xl gap-10 px-4 py-16 sm:px-6 lg:grid-cols-2 lg:px-8 lg:py-20">
@@ -358,30 +298,27 @@ document.addEventListener('DOMContentLoaded', () => {
             <span class="text-xs font-bold uppercase tracking-[0.22em] text-slate-500">Milestones</span>
             <h3 class="mt-3 text-3xl font-black tracking-tight text-slate-900 sm:text-4xl">Our journey so far.</h3>
           </div>
-          <div class="space-y-4">
-            ${[
-              ['2008', 'Founding of BAMSSA at DELSU', 'An inaugural council was formed to unify the three BMS departments.'],
-              ['2014', 'First medical outreach', 'The chapter launched its first community health outreach in Abraka.'],
-              ['2019', 'Tutorial scheme launched', 'Free peer-led tutorials were introduced for 200 level students.'],
-              ['2024', 'National quiz champions', 'The chapter won a national BMS inter-university quiz competition.'],
-              ['2026', 'Digital relaunch', 'Communications were modernized and this new website was rolled out.'],
-            ]
-              .map(
-                ([year, title, text]) => `
-                  <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm md:flex md:items-start md:gap-8">
-                    <div class="md:w-28 flex-shrink-0 mb-2 md:mb-0">
-                      <span class="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-medium text-slate-700">
-                        <span class="h-1.5 w-1.5 rounded-full bg-blue-600"></span>${year}
-                      </span>
-                    </div>
-                    <div class="flex-1">
-                      <h4 class="text-base font-semibold text-slate-900">${title}</h4>
-                      <p class="mt-1 text-sm leading-relaxed text-slate-600">${text}</p>
-                    </div>
-                  </div>`,
-              )
-              .join('')}
-          </div>
+          ${milestones.length ? `
+            <div class="space-y-4">
+              ${milestones
+                .map(
+                  (m) => `
+                    <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm md:flex md:items-start md:gap-8">
+                      <div class="md:w-28 flex-shrink-0 mb-2 md:mb-0">
+                        <span class="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-medium text-slate-700">
+                          <span class="h-1.5 w-1.5 rounded-full bg-blue-600"></span>${m.year}
+                        </span>
+                      </div>
+                      <div class="flex-1">
+                        <h4 class="text-base font-semibold text-slate-900">${m.title}</h4>
+                        <p class="mt-1 text-sm leading-relaxed text-slate-600">${m.text}</p>
+                        <a href="achievement-detail.html?id=${m.id}" class="mt-2 inline-flex items-center gap-1 text-sm font-semibold text-blue-600 hover:text-blue-700">See more →</a>
+                      </div>
+                    </div>`,
+                )
+                .join('')}
+            </div>
+          ` : '<p class="text-center text-slate-500 py-10">Milestones will appear here once they are added in the admin dashboard.</p>'}
         </div>
       </section>`;
   }
@@ -572,6 +509,48 @@ document.addEventListener('DOMContentLoaded', () => {
       </section>`;
   }
 
+  function renderAchievementDetail(main, detail) {
+    const { achievement, images } = detail;
+    document.title = `${achievement.title} - BAMSSA DELSU Chapter`;
+    const dateLabel = achievement.date ? new Date(achievement.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : '';
+    const description = achievement.description || '';
+
+    main.innerHTML = `
+      <section style="background:#ffffff;">
+        <div class="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
+          <a href="about.html" class="inline-flex items-center gap-2 text-sm font-semibold mb-8" style="color:#2f6df6;">
+            ← Back to About BAMSSA
+          </a>
+
+          ${achievement.tag ? `<span class="text-xs font-bold uppercase tracking-widest" style="color:#2f6df6;">${achievement.tag}</span>` : ''}
+          <h1 class="mt-2 text-4xl font-black" style="color:#0f172a;">${achievement.title}</h1>
+          ${dateLabel ? `<p class="mt-3 text-sm font-medium" style="color:#64748b;">${dateLabel}</p>` : ''}
+
+          ${achievement.image_url ? `
+            <div class="mt-8 overflow-hidden rounded-2xl">
+              <img src="${achievement.image_url}" alt="${achievement.title}" class="w-full object-cover" style="max-height:420px;" />
+            </div>` : ''}
+
+          <div class="mt-8 text-base leading-7" style="color:#475569;">${description}</div>
+
+          <div class="mt-12">
+            <p class="text-xs font-bold uppercase tracking-widest mb-4" style="color:#64748b;">Gallery</p>
+            ${images.length
+              ? `<div class="grid gap-4 sm:grid-cols-2">
+                  ${images.map(img => `
+                    <figure class="overflow-hidden rounded-2xl" style="border:1px solid #e2e8f0;">
+                      <img src="${img.image_url}" alt="${achievement.title}" class="w-full object-cover" style="height:220px;" loading="lazy" />
+                    </figure>`).join('')}
+                </div>`
+              : `<div class="rounded-2xl py-12 flex items-center justify-center" style="background:#f8fafc;border:1px dashed #cbd5e1;">
+                  <p style="color:#94a3b8;" class="text-sm">No extra images for this achievement yet.</p>
+                </div>`
+            }
+          </div>
+        </div>
+      </section>`;
+  }
+
   function renderGallery(main, galleryItems) {
     const data = galleryItems || galleryData;
     main.innerHTML = `
@@ -596,30 +575,56 @@ document.addEventListener('DOMContentLoaded', () => {
       </section>`;
   }
 
-  function renderStaff(main) {
+  function renderStaff(main, staffPayload) {
+    const payload = staffPayload || { staff: [], leadership: [] };
+    const staff = payload.staff || [];
+    const leadership = payload.leadership || [];
     main.innerHTML = `
       <section class="bg-white text-slate-900">
         <div class="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+          ${leadership.length ? `
+            <div class="mb-14">
+              <span class="text-xs font-bold uppercase tracking-[0.22em] text-slate-500">College Leadership</span>
+              <div class="mt-5 grid gap-5 sm:grid-cols-2">
+                ${leadership.map(l => `
+                  <article class="flex items-center gap-5 overflow-hidden rounded-[1.75rem] border border-slate-200 bg-slate-50 p-6 shadow-sm">
+                    ${l.image
+                      ? `<img src="${l.image}" alt="${l.name}" class="h-24 w-24 flex-shrink-0 rounded-2xl object-cover" />`
+                      : `<div class="h-24 w-24 flex-shrink-0 rounded-2xl flex items-center justify-center bg-slate-200"><span class="text-xs text-slate-500">No photo</span></div>`
+                    }
+                    <div>
+                      <span class="inline-flex rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-medium text-blue-600">${l.role}</span>
+                      <h3 class="mt-2 text-xl font-black text-slate-900">${l.name}</h3>
+                      ${l.bio ? `<p class="mt-1 text-sm leading-6 text-slate-600">${l.bio}</p>` : ''}
+                    </div>
+                  </article>`).join('')}
+              </div>
+            </div>
+          ` : ''}
           <div class="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-            ${staffData
+            ${staff.length ? staff
               .map(
-                (staff) => `
+                (member) => `
                   <article class="overflow-hidden rounded-[1.75rem] border border-slate-200 bg-white shadow-sm">
-                    <img src="${staff.image}" alt="${staff.name}" class="h-80 w-full object-cover" />
+                    ${member.image
+                      ? `<img src="${member.image}" alt="${member.name}" class="h-80 w-full object-cover" />`
+                      : `<div class="h-80 w-full flex items-center justify-center bg-slate-100"><span class="text-sm text-slate-400">No photo</span></div>`
+                    }
                     <div class="p-6">
-                      <span class="inline-flex rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-700">${staff.role}</span>
-                      <h3 class="mt-3 text-2xl font-black text-slate-900">${staff.name}</h3>
-                      <p class="mt-3 text-sm leading-6 text-slate-600">${staff.description}</p>
+                      <span class="inline-flex rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-700">${member.role}${member.department ? ` · ${member.department}` : ''}</span>
+                      <h3 class="mt-3 text-2xl font-black text-slate-900">${member.name}</h3>
+                      ${member.description ? `<p class="mt-3 text-sm leading-6 text-slate-600">${member.description}</p>` : ''}
                     </div>
                   </article>`,
               )
-              .join('')}
+              .join('') : '<p class="col-span-full text-center text-slate-500 py-16">No staff members listed yet.</p>'}
           </div>
         </div>
       </section>`;
   }
 
-  function renderNews(main) {
+  function renderNews(main, newsItems) {
+    const data = newsItems || [];
     main.innerHTML = `
       <section class="border-b border-white/10 bg-[#0b1c39] text-white">
         <div class="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
@@ -630,24 +635,29 @@ document.addEventListener('DOMContentLoaded', () => {
       </section>
       <section class="bg-white text-slate-900">
         <div class="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-          <div class="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-            ${newsData
-              .map(
-                (article) => `
-                  <article class="overflow-hidden rounded-[1.75rem] border border-slate-200 bg-white shadow-sm">
-                    <img src="${article.image}" alt="${article.title}" class="h-56 w-full object-cover" />
-                    <div class="p-6">
-        <div class="flex items-center gap-2">
-                        <span class="rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-medium text-blue-600">${article.tag}</span>
-                        <span class="text-xs text-slate-500">${article.date}</span>
+          ${data.length ? `
+            <div class="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+              ${data
+                .map(
+                  (article) => `
+                    <article class="overflow-hidden rounded-[1.75rem] border border-slate-200 bg-white shadow-sm">
+                      ${article.image
+                        ? `<img src="${article.image}" alt="${article.title}" class="h-56 w-full object-cover" />`
+                        : ''
+                      }
+                      <div class="p-6">
+          <div class="flex items-center gap-2">
+                          ${article.tag ? `<span class="rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-medium text-blue-600">${article.tag}</span>` : ''}
+                          <span class="text-xs text-slate-500">${article.date}</span>
+                        </div>
+                        <h3 class="mt-3 text-xl font-black text-slate-900">${article.title}</h3>
+                        <div class="mt-3 text-sm leading-6 text-slate-600">${article.text || ''}</div>
                       </div>
-                      <h3 class="mt-3 text-xl font-black text-slate-900">${article.title}</h3>
-                      <p class="mt-3 text-sm leading-6 text-slate-600">${article.text}</p>
-                    </div>
-                  </article>`,
-              )
-              .join('')}
-          </div>
+                    </article>`,
+                )
+                .join('')}
+            </div>
+          ` : '<p class="text-center text-slate-500 py-16">No news and updates at the moment. Check back soon.</p>'}
         </div>
       </section>`;
   }
@@ -762,15 +772,15 @@ document.addEventListener('DOMContentLoaded', () => {
               <ul class="mt-5 space-y-4 text-sm text-slate-600">
                 <li><span class="font-semibold text-slate-900">Address:</span> Faculty of Basic Medical Sciences, DELSU, Abraka, Delta State</li>
                 <li><span class="font-semibold text-slate-900">Email:</span> bamssa@delsu.edu.ng</li>
-                <li><span class="font-semibold text-slate-900">Phone:</span> +234 800 000 0000</li>
+                <li><span class="font-semibold text-slate-900">Phone:</span> +234 906 921 2042</li>
               </ul>
             </div>
             <div class="grid gap-4 sm:grid-cols-2">
               ${[
-                ['WhatsApp', 'https://wa.me/2348000000000', 'Chat with us on WhatsApp', '#22c55e'],
-                ['Instagram', 'https://instagram.com/bamssa_delsu', 'See photos and updates', '#ec4899'],
-                ['TikTok', 'https://www.tiktok.com/@bamssa_delsu', 'Short videos and highlights', '#111827'],
-                ['Facebook', 'https://facebook.com/bamssa.delsu', 'News and chapter updates', '#2563eb'],
+                ['WhatsApp', 'https://wa.me/2349069212042', 'Chat with us on WhatsApp', '#22c55e'],
+                ['Instagram', 'https://www.instagram.com/bamssa._delsu?igsh=MWo4a3VuczRtdTI3cQ==', 'See photos and updates', '#ec4899'],
+                ['TikTok', 'https://www.tiktok.com/@bamssa.delsu?_r=1&_t=ZP-97TaRQFWorH', 'Short videos and highlights', '#111827'],
+                ['Facebook', 'https://www.facebook.com/share/1DynFBxdJH/', 'News and chapter updates', '#2563eb'],
               ]
                 .map(
                   ([name, url, text, color]) => `
@@ -897,13 +907,13 @@ document.addEventListener('DOMContentLoaded', () => {
           </div>
         </div>
       </section>
-      <div data-exec-modal class="fixed inset-0 z-[60] hidden items-center justify-center px-4 py-8">
+      <div data-exec-modal class="fixed inset-0 z-[60] hidden items-center justify-center p-4">
         <div data-exec-overlay class="absolute inset-0 bg-[#061021]/75 backdrop-blur-sm"></div>
-        <div class="relative z-10 w-full max-w-4xl overflow-hidden rounded-[2rem] border border-white/10 bg-[#081429] text-white shadow-2xl">
-          <button type="button" data-exec-close class="absolute right-4 top-4 rounded-full border border-white/15 bg-white/10 px-3 py-2 text-sm font-semibold text-white">Close</button>
+        <button type="button" data-exec-close aria-label="Close" class="absolute right-4 top-4 sm:right-6 sm:top-6 z-20 flex h-10 w-10 items-center justify-center rounded-full border border-white/15 bg-white/10 text-xl font-semibold text-white hover:bg-white/20">&times;</button>
+        <div class="relative z-10 max-h-[88vh] w-full max-w-4xl overflow-y-auto rounded-[2rem] border border-white/10 bg-[#081429] text-white shadow-2xl">
           <div class="grid gap-0 lg:grid-cols-[0.95fr_1.05fr]">
             <div class="bg-white/5">
-              <img data-exec-image src="" alt="" class="h-full w-full object-cover" />
+              <img data-exec-image src="" alt="" class="h-64 w-full object-cover sm:h-80 lg:h-full" />
             </div>
             <div class="p-6 sm:p-8">
               <p data-exec-role class="text-xs font-bold uppercase tracking-[0.22em] text-slate-300"></p>
@@ -983,6 +993,67 @@ document.addEventListener('DOMContentLoaded', () => {
     return result;
   }
 
+  async function fetchNewsData() {
+    if (!supabaseClient) return null;
+    const { data, error } = await supabaseClient.from('news').select('*').order('created_at', { ascending: false });
+    if (error) return null;
+    return data.map(row => ({
+      id: row.id,
+      image: row.image_url,
+      tag: row.tag,
+      date: row.created_at ? new Date(row.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '',
+      title: row.title,
+      text: row.body
+    }));
+  }
+
+  async function fetchStaffData() {
+    if (!supabaseClient) return null;
+    const [{ data: staffRows, error: staffErr }, { data: leadershipRows, error: leadErr }] = await Promise.all([
+      supabaseClient.from('staff').select('*').order('display_order', { ascending: true }),
+      supabaseClient.from('college_leadership').select('*'),
+    ]);
+    if (staffErr || leadErr) return null;
+    return {
+      staff: staffRows.map(row => ({
+        name: row.name,
+        role: row.role,
+        department: row.department,
+        image: row.image_url,
+        description: row.bio
+      })),
+      leadership: leadershipRows
+        .filter(row => row.name)
+        .map(row => ({ role: row.role, name: row.name, image: row.image_url, bio: row.bio }))
+    };
+  }
+
+  async function fetchAchievementsData() {
+    if (!supabaseClient) return null;
+    const { data: admin } = await supabaseClient.from('administrations').select('id').eq('is_current', true).single();
+    let query = supabaseClient.from('achievements').select('*').order('date', { ascending: false });
+    if (admin) query = query.eq('administration_id', admin.id);
+    const { data, error } = await query;
+    if (error) return null;
+    return data.map(row => ({
+      id: row.id,
+      year: row.date ? new Date(row.date).getFullYear() : '',
+      title: row.title,
+      text: row.description ? row.description.replace(/<[^>]*>/g, '') : '',
+      tag: row.tag,
+      image: row.image_url,
+      date: row.date
+    }));
+  }
+
+  async function fetchAchievementDetail(id) {
+    if (!supabaseClient || !id) return null;
+    const { data: achievement, error } = await supabaseClient.from('achievements').select('*').eq('id', id).single();
+    if (error || !achievement) return null;
+    const { data: images } = await supabaseClient.from('achievement_images').select('*').eq('achievement_id', id).order('display_order', { ascending: true });
+    return { achievement, images: images || [] };
+  }
+
   async function renderPageAsync(pageKey, main) {
     switch (pageKey) {
       case 'executives': {
@@ -1010,6 +1081,30 @@ document.addEventListener('DOMContentLoaded', () => {
         injectLoading(main);
         const hods = await fetchHodsData();
         if (hods !== null) { renderDepartments(main, hods); } else { injectError(main); }
+        break;
+      }
+      case 'news': {
+        injectLoading(main);
+        const news = await fetchNewsData();
+        if (news !== null) { renderNews(main, news); } else { injectError(main); }
+        break;
+      }
+      case 'staff': {
+        injectLoading(main);
+        const staffData = await fetchStaffData();
+        if (staffData !== null) { renderStaff(main, staffData); } else { injectError(main); }
+        break;
+      }
+      case 'about': {
+        const achievements = await fetchAchievementsData();
+        renderAbout(main, achievements || []);
+        break;
+      }
+      case 'achievement-detail': {
+        injectLoading(main);
+        const params = new URLSearchParams(window.location.search);
+        const detail = await fetchAchievementDetail(params.get('id'));
+        if (detail) { renderAchievementDetail(main, detail); } else { injectError(main); }
         break;
       }
       default:
@@ -1058,7 +1153,7 @@ document.addEventListener('DOMContentLoaded', () => {
       injectHero(pageConfigs[pageKey]);
     }
     document.body.classList.add('js-ready');
-    if (['executives', 'gallery', 'departments', 'suggestions', 'department-detail'].includes(pageKey)) {
+    if (['executives', 'gallery', 'departments', 'suggestions', 'department-detail', 'news', 'staff', 'about', 'achievement-detail'].includes(pageKey)) {
       if (supabaseClient) {
         renderPageAsync(pageKey, main);
       } else {
