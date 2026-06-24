@@ -386,15 +386,16 @@ document.addEventListener('DOMContentLoaded', () => {
       </section>`;
   }
 
-  function renderDepartments(main, hodNames) {
-    const hods = hodNames || {};
+  function renderDepartments(main, hodData) {
+    const hods = hodData || {};
     const items = [
       {
         image: asset('anatomy.webp'),
         title: 'Anatomy',
         subtitle: 'Structure of the human body',
         text: 'The Department of Anatomy explores gross anatomy, histology, embryology, and neuroanatomy through hands-on learning and imaging.',
-        hod: hods['Anatomy'] || '',
+        hod: hods['Anatomy'] ? hods['Anatomy'].name : '',
+        hodImage: hods['Anatomy'] ? hods['Anatomy'].image : '',
         count: 1200,
         countLabel: 'students',
         courses: ['Gross Anatomy', 'Histology', 'Embryology', 'Neuroanatomy', 'Radiological Anatomy'],
@@ -404,7 +405,8 @@ document.addEventListener('DOMContentLoaded', () => {
         title: 'Physiology',
         subtitle: 'How the body functions',
         text: 'The Department of Physiology covers the mechanisms by which the human body operates from cellular signalling to whole-system integration.',
-        hod: hods['Physiology'] || '',
+        hod: hods['Physiology'] ? hods['Physiology'].name : '',
+        hodImage: hods['Physiology'] ? hods['Physiology'].image : '',
         count: 1050,
         countLabel: 'students',
         courses: ['General Physiology', 'Cardiovascular Physiology', 'Endocrinology', 'Neurophysiology', 'Renal Physiology'],
@@ -414,7 +416,8 @@ document.addEventListener('DOMContentLoaded', () => {
         title: 'Biochemistry',
         subtitle: 'Chemistry of life',
         text: 'The Department of Biochemistry studies the molecular basis of life from enzyme kinetics to metabolic pathways and clinical biochemistry.',
-        hod: hods['Biochemistry'] || '',
+        hod: hods['Biochemistry'] ? hods['Biochemistry'].name : '',
+        hodImage: hods['Biochemistry'] ? hods['Biochemistry'].image : '',
         count: 850,
         countLabel: 'students',
         courses: ['General Biochemistry', 'Clinical Biochemistry', 'Molecular Biology', 'Enzymology', 'Nutritional Biochemistry'],
@@ -449,9 +452,12 @@ document.addEventListener('DOMContentLoaded', () => {
                       </div>
                     </div>
                     <div class="mt-6 pt-6 border-t border-slate-200">
-                      <span class="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3 py-1 text-xs text-slate-700">
-                        <span class="h-1.5 w-1.5 rounded-full bg-green-500"></span>HOD: ${item.hod}
-                      </span>
+                      <div class="flex items-center gap-3">
+                        ${item.hodImage ? `<img src="${item.hodImage}" alt="${item.hod}" class="h-10 w-10 rounded-full object-cover border border-slate-200" />` : ''}
+                        <span class="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3 py-1 text-xs text-slate-700">
+                          <span class="h-1.5 w-1.5 rounded-full bg-green-500"></span>${item.hod ? 'HOD: ' + item.hod : 'HOD: Not assigned'}
+                        </span>
+                      </div>
                     </div>
                   </div>
                 </div>`,
@@ -761,7 +767,7 @@ document.addEventListener('DOMContentLoaded', () => {
               .map(
                 (exec, index) => `
                   <button type="button" data-exec-index="${index}" class="group text-left overflow-hidden rounded-[1.75rem] border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-xl">
-                    <img src="${exec.image}" alt="${exec.name}" class="h-72 w-full object-cover" />
+                    ${exec.image ? `<img src="${exec.image}" alt="${exec.name}" class="h-72 w-full object-cover" />` : `<div class="h-72 w-full bg-slate-100 flex items-center justify-center"><span class="text-slate-400 text-sm">No photo</span></div>`}
                     <div class="p-5">
                       <p class="text-xs font-bold uppercase tracking-[0.22em] text-slate-500">${exec.role}</p>
                       <h3 class="mt-2 text-2xl font-black text-slate-900">${exec.name}</h3>
@@ -868,7 +874,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const { data, error } = await supabaseClient.from('hods').select('department, name, image_url').order('department', { ascending: true });
     if (error) return null;
     const result = {};
-    data.forEach(row => { result[row.department] = row.name || ''; });
+    data.forEach(row => { result[row.department] = { name: row.name || '', image: row.image_url || '' }; });
     return result;
   }
 
@@ -1005,7 +1011,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const show = (index) => {
       const data = _currentExecutiveData[index];
       if (!data) return;
-      image.src = data.image;
+      image.src = data.image || '';
       image.alt = data.name;
       role.textContent = data.role;
       name.textContent = data.name;
