@@ -1,7 +1,7 @@
 // BAMSSA Admin Dashboard
 // Sections: Auth, Overview, Administrations, Achievements, Executives, Department Reps, HODs, Gallery
 
-const SECTIONS = ['Overview', 'Administrations', 'Achievements', 'Executives', 'Department Reps', 'HODs', 'Gallery', 'Suggestions'];
+const SECTIONS = ['Overview', 'Administrations', 'Achievements', 'Executives', 'Department Reps', 'HODs', 'Staff', 'News & Updates', 'Gallery', 'Suggestions'];
 
 document.addEventListener('DOMContentLoaded', async () => {
   const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
@@ -213,6 +213,10 @@ function renderSection(section) {
     renderDepartmentReps(content, title);
   } else if (section === 'HODs') {
     renderHODs(content, title);
+  } else if (section === 'Staff') {
+    renderStaff(content, title);
+  } else if (section === 'News & Updates') {
+    renderNews(content, title);
   } else if (section === 'Gallery') {
     renderGallery(content, title);
   } else if (section === 'Suggestions') {
@@ -238,14 +242,51 @@ function getDeptBadgeColor(dept) {
   return map[dept] || 'bg-slate-100 text-slate-800';
 }
 
+async function convertToWebp(file, quality = 0.85) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = img.naturalWidth;
+        canvas.height = img.naturalHeight;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0);
+        canvas.toBlob((blob) => {
+          if (!blob) { reject(new Error('WebP conversion produced no data')); return; }
+          const newName = file.name.replace(/\.[^.]+$/, '') + '.webp';
+          resolve(new File([blob], newName, { type: 'image/webp' }));
+        }, 'image/webp', quality);
+      };
+      img.onerror = () => reject(new Error('Could not load image for conversion'));
+      img.src = e.target.result;
+    };
+    reader.onerror = () => reject(new Error('Could not read file for conversion'));
+    reader.readAsDataURL(file);
+  });
+}
+
 async function uploadPhoto(file, bucketName) {
   if (!file) return null;
   const validTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
   if (!validTypes.includes(file.type)) { showToast('Invalid image type. Use JPG, PNG, WebP, or GIF.', 'error'); return null; }
   if (file.size > 5 * 1024 * 1024) { showToast('Image must be under 5MB.', 'error'); return null; }
-  const fileExt = file.name.split('.').pop();
+
+  // Convert to WebP for faster loading, but leave animated GIFs and existing WebP files untouched.
+  let uploadFile = file;
+  if (file.type !== 'image/webp' && file.type !== 'image/gif') {
+    try {
+      uploadFile = await convertToWebp(file);
+    } catch (err) {
+      console.error('WebP conversion failed, uploading original file instead:', err);
+      uploadFile = file;
+    }
+  }
+
+  const fileExt = uploadFile.name.split('.').pop();
   const fileName = `${Date.now()}_${Math.random().toString(36).substring(7)}.${fileExt}`;
-  const { error } = await supabase.storage.from(bucketName).upload(fileName, file);
+  const { error } = await supabase.storage.from(bucketName).upload(fileName, uploadFile);
   if (error) { showToast(error.message, 'error'); return null; }
   const { data } = supabase.storage.from(bucketName).getPublicUrl(fileName);
   return data.publicUrl;
@@ -972,6 +1013,443 @@ async function renderHODs(content, title) {
   }
 }
 
+// STAFF
+
+function renderStaffCard(staff) {
+  return `
+    <div class="bg-white rounded-[1.75rem] border border-slate-200 shadow-sm overflow-hidden flex flex-col">
+      <img src="${escapeHtml(staff.image_url || '')}" alt="${escapeHtml(staff.name)}" class="h-48 w-full object-cover ${!staff.image_url ? 'bg-slate-100' : ''}" />
+      <div class="p-4 flex-1 flex flex-col">
+        <h4 class="text-lg font-semibold text-slate-900">${escapeHtml(staff.name)}</h4>
+        <p class="text-sm text-slate-500">${escapeHtml(staff.role)}</p>
+        ${staff.department ? `<span class="inline-flex items-center mt-2 px-2.5 py-0.5 rounded-full text-xs font-medium ${getDeptBadgeColor(staff.department)} self-start">${escapeHtml(staff.department)}</span>` : ''}
+        <div class="mt-auto pt-4 flex gap-2">
+          <button data-action="edit-staff" data-id="${staff.id}" class="flex-1 text-xs px-3 py-1.5 rounded-full bg-slate-100 text-slate-700 hover:bg-slate-200 transition">Edit</button>
+          <button data-action="delete-staff" data-id="${staff.id}" class="flex-1 text-xs px-3 py-1.5 rounded-full bg-red-50 text-red-600 hover:bg-red-100 transition">Delete</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+async function renderStaff(content, title) {
+  title.textContent = 'Staff';
+
+  const staffDepts = ['Anatomy', 'Physiology', 'Biochemistry', 'Administration'];
+  const leadershipRoles = ['Dean', 'Provost'];
+
+  const [{ data: staffList, error: staffErr }, { data: leadership, error: leadErr }] = await Promise.all([
+    supabase.from('staff').select('*').order('display_order', { ascending: true }),
+    supabase.from('college_leadership').select('*').order('role', { ascending: true }),
+  ]);
+  if (staffErr) { showToast('Failed to load staff', 'error'); return; }
+  if (leadErr) { showToast('Failed to load college leadership', 'error'); return; }
+
+  function renderLeadershipCard(entry) {
+    const editing = entry.role === window._editingLeadershipRole;
+    return `
+      <div class="bg-white rounded-[1.75rem] border border-slate-200 shadow-sm p-6" data-leadership-role="${entry.role}">
+        ${editing ? `
+          <form id="leadership-form" class="space-y-4">
+            <h3 class="text-lg font-semibold text-slate-900 mb-4">${escapeHtml(entry.role)}</h3>
+            <div>
+              <label class="block text-sm font-medium text-slate-700 mb-1">Full Name</label>
+              <input type="text" id="leadership-name" value="${escapeHtml(entry.name || '')}" required class="w-full px-4 py-2 rounded-lg border border-slate-300 focus:outline-none focus:border-[#2f6df6]" />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-slate-700 mb-1">Bio</label>
+              <textarea id="leadership-bio" rows="3" class="w-full px-4 py-2 rounded-lg border border-slate-300 focus:outline-none focus:border-[#2f6df6]">${escapeHtml(entry.bio || '')}</textarea>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-slate-700 mb-1">Photo</label>
+              <input type="file" id="leadership-photo" accept="image/*" class="w-full px-4 py-2 rounded-lg border border-slate-300 focus:outline-none focus:border-[#2f6df6]" />
+              ${entry.image_url ? `<img src="${escapeHtml(entry.image_url)}" class="mt-2 h-24 w-24 object-cover rounded" />` : ''}
+              <img id="leadership-photo-preview" class="mt-2 h-24 w-24 object-cover rounded hidden" />
+            </div>
+            <div class="flex gap-3">
+              <button type="submit" class="px-6 py-2 rounded-lg bg-[#2f6df6] text-white font-semibold hover:bg-blue-600 transition">Save</button>
+              <button type="button" id="leadership-cancel" class="px-6 py-2 rounded-lg bg-slate-200 text-slate-700 hover:bg-slate-300 transition">Cancel</button>
+            </div>
+          </form>
+        ` : `
+          <h3 class="text-xl font-semibold text-slate-900 mb-2">${escapeHtml(entry.role)}</h3>
+          <p class="text-lg font-medium text-slate-700">${escapeHtml(entry.name || 'Not yet assigned')}</p>
+          ${entry.image_url ? `<img src="${escapeHtml(entry.image_url)}" class="mt-3 h-48 w-full object-cover rounded-lg" />` : ''}
+          ${entry.bio ? `<p class="mt-3 text-sm text-slate-600">${escapeHtml(entry.bio)}</p>` : ''}
+          <button data-action="edit-leadership" data-role="${entry.role}" class="mt-4 px-4 py-2 rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200 transition">Edit</button>
+        `}
+      </div>
+    `;
+  }
+
+  function renderStaffForm(staffMember = null) {
+    const isEdit = !!staffMember;
+    return `
+      <div class="bg-white rounded-[1.75rem] border border-slate-200 shadow-sm p-6 mb-6">
+        <h3 class="text-lg font-semibold text-slate-900 mb-4">${isEdit ? 'Edit Staff Member' : 'Add Staff Member'}</h3>
+        <form id="staff-form" class="space-y-4">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-slate-700 mb-1">Full Name</label>
+              <input type="text" id="staff-name" required value="${staffMember ? escapeHtml(staffMember.name) : ''}" class="w-full px-4 py-2 rounded-lg border border-slate-300 focus:outline-none focus:border-[#2f6df6]" />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-slate-700 mb-1">Position</label>
+              <input type="text" id="staff-role" required value="${staffMember ? escapeHtml(staffMember.role) : ''}" class="w-full px-4 py-2 rounded-lg border border-slate-300 focus:outline-none focus:border-[#2f6df6]" />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-slate-700 mb-1">Department</label>
+              <select id="staff-dept" required class="w-full px-4 py-2 rounded-lg border border-slate-300 focus:outline-none focus:border-[#2f6df6]">
+                ${staffDepts.map(d => `<option value="${d}" ${staffMember && staffMember.department === d ? 'selected' : ''}>${d}</option>`).join('')}
+              </select>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-slate-700 mb-1">Display Order</label>
+              <input type="number" id="staff-order" value="${staffMember ? staffMember.display_order || 0 : 0}" class="w-full px-4 py-2 rounded-lg border border-slate-300 focus:outline-none focus:border-[#2f6df6]" />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-slate-700 mb-1">Email</label>
+              <input type="email" id="staff-email" value="${staffMember ? escapeHtml(staffMember.email || '') : ''}" class="w-full px-4 py-2 rounded-lg border border-slate-300 focus:outline-none focus:border-[#2f6df6]" />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-slate-700 mb-1">Phone</label>
+              <input type="tel" id="staff-phone" value="${staffMember ? escapeHtml(staffMember.phone || '') : ''}" class="w-full px-4 py-2 rounded-lg border border-slate-300 focus:outline-none focus:border-[#2f6df6]" />
+            </div>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-700 mb-1">Bio</label>
+            <textarea id="staff-bio" rows="3" class="w-full px-4 py-2 rounded-lg border border-slate-300 focus:outline-none focus:border-[#2f6df6]">${staffMember ? escapeHtml(staffMember.bio || '') : ''}</textarea>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-700 mb-1">Photo</label>
+            <input type="file" id="staff-photo" accept="image/*" class="w-full px-4 py-2 rounded-lg border border-slate-300 focus:outline-none focus:border-[#2f6df6]" />
+            ${staffMember && staffMember.image_url ? `<img src="${escapeHtml(staffMember.image_url)}" class="mt-2 h-24 w-24 object-cover rounded" />` : ''}
+            <img id="staff-photo-preview" class="mt-2 h-24 w-24 object-cover rounded hidden" />
+          </div>
+          <div class="flex gap-3">
+            <button type="submit" class="px-6 py-2 rounded-lg bg-[#2f6df6] text-white font-semibold hover:bg-blue-600 transition">${isEdit ? 'Update' : 'Save'}</button>
+            ${isEdit ? `<button type="button" id="staff-cancel" class="px-6 py-2 rounded-lg bg-slate-200 text-slate-700 hover:bg-slate-300 transition">Cancel</button>` : ''}
+          </div>
+        </form>
+      </div>
+    `;
+  }
+
+  let editingStaffId = null;
+  let isStaffAddMode = false;
+
+  async function renderStaffSection() {
+    const leadershipBlock = `
+      <div class="mb-8">
+        <h3 class="text-base font-semibold text-slate-900 mb-3">College Leadership</h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+          ${leadershipRoles.map(r => {
+            const entry = leadership.find(l => l.role === r) || { role: r, name: '', image_url: '', bio: '' };
+            return renderLeadershipCard(entry);
+          }).join('')}
+        </div>
+      </div>
+    `;
+
+    if (editingStaffId || isStaffAddMode) {
+      const staffMember = editingStaffId ? staffList.find(s => s.id === editingStaffId) : null;
+      content.innerHTML = leadershipBlock + renderStaffForm(staffMember) + `<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">${staffList.map(renderStaffCard).join('')}</div>`;
+    } else {
+      content.innerHTML = leadershipBlock + `
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="text-base font-semibold text-slate-900">Department & Admin Staff</h3>
+          <button id="staff-add" class="px-4 py-2 rounded-lg bg-[#2f6df6] text-white font-semibold hover:bg-blue-600 transition">Add Staff Member</button>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          ${staffList.length ? staffList.map(renderStaffCard).join('') : '<p class="text-slate-500 col-span-full">No staff members yet.</p>'}
+        </div>
+      `;
+    }
+    bindStaffEvents();
+  }
+
+  function bindStaffEvents() {
+    document.getElementById('staff-add')?.addEventListener('click', () => { isStaffAddMode = true; editingStaffId = null; renderStaffSection(); });
+    document.getElementById('staff-cancel')?.addEventListener('click', () => { isStaffAddMode = false; editingStaffId = null; renderSection('Staff'); });
+
+    const photoInput = document.getElementById('staff-photo');
+    const preview = document.getElementById('staff-photo-preview');
+    if (photoInput && preview) {
+      photoInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = (ev) => { preview.src = ev.target.result; preview.classList.remove('hidden'); };
+          reader.readAsDataURL(file);
+        }
+      });
+    }
+
+    document.getElementById('staff-form')?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const name = document.getElementById('staff-name').value.trim();
+      const role = document.getElementById('staff-role').value.trim();
+      const dept = document.getElementById('staff-dept').value;
+      const order = parseInt(document.getElementById('staff-order').value) || 0;
+      const email = document.getElementById('staff-email').value.trim();
+      const phone = document.getElementById('staff-phone').value.trim();
+      const bio = document.getElementById('staff-bio').value.trim();
+      const photoFile = document.getElementById('staff-photo').files[0];
+
+      let image_url = staffList.find(s => s.id === editingStaffId)?.image_url || null;
+      if (photoFile) {
+        const url = await uploadPhoto(photoFile, 'staff');
+        if (!url) return;
+        image_url = url;
+      }
+
+      const payload = { name, role, department: dept, bio, email, phone, display_order: order, image_url };
+
+      let error;
+      if (editingStaffId) {
+        ({ error } = await supabase.from('staff').update(payload).eq('id', editingStaffId));
+      } else {
+        ({ error } = await supabase.from('staff').insert([payload]));
+      }
+
+      if (error) { showToast(error.message, 'error'); } else { showToast(editingStaffId ? 'Staff member updated' : 'Staff member added', 'success'); renderSection('Staff'); }
+    });
+
+    document.querySelectorAll('[data-action="edit-staff"][data-id]').forEach(btn => {
+      btn.addEventListener('click', () => { isStaffAddMode = false; editingStaffId = btn.dataset.id; renderStaffSection(); });
+    });
+    document.querySelectorAll('[data-action="delete-staff"][data-id]').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const id = btn.dataset.id;
+        const confirmed = await showConfirm('Delete this staff member? This cannot be undone.');
+        if (!confirmed) return;
+        const { error } = await supabase.from('staff').delete().eq('id', id);
+        if (error) { showToast(error.message, 'error'); } else { showToast('Staff member deleted', 'success'); renderSection('Staff'); }
+      });
+    });
+
+    document.querySelectorAll('[data-action="edit-leadership"]').forEach(btn => {
+      btn.addEventListener('click', () => { window._editingLeadershipRole = btn.dataset.role; renderStaffSection(); });
+    });
+
+    if (window._editingLeadershipRole) {
+      document.getElementById('leadership-form')?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const role = window._editingLeadershipRole;
+        const name = document.getElementById('leadership-name').value.trim();
+        const bio = document.getElementById('leadership-bio').value.trim();
+        const photoFile = document.getElementById('leadership-photo').files[0];
+
+        let image_url = leadership.find(l => l.role === role)?.image_url || null;
+        if (photoFile) {
+          const url = await uploadPhoto(photoFile, 'staff');
+          if (!url) return;
+          image_url = url;
+        }
+
+        const { error } = await supabase.from('college_leadership').upsert({ role, name, bio, image_url }, { onConflict: ['role'] });
+        if (error) { showToast(error.message, 'error'); } else { showToast(`${role} info updated`, 'success'); delete window._editingLeadershipRole; renderSection('Staff'); }
+      });
+      document.getElementById('leadership-cancel')?.addEventListener('click', () => { delete window._editingLeadershipRole; renderSection('Staff'); });
+
+      const leadershipPhotoInput = document.getElementById('leadership-photo');
+      const leadershipPreview = document.getElementById('leadership-photo-preview');
+      if (leadershipPhotoInput && leadershipPreview) {
+        leadershipPhotoInput.addEventListener('change', (e) => {
+          const file = e.target.files[0];
+          if (file) {
+            const reader = new FileReader();
+            reader.onload = (ev) => { leadershipPreview.src = ev.target.result; leadershipPreview.classList.remove('hidden'); };
+            reader.readAsDataURL(file);
+          }
+        });
+      }
+    }
+  }
+
+  await renderStaffSection();
+}
+
+// NEWS & UPDATES
+
+const newsTags = ['Announcement', 'Academic', 'Outreach', 'Event', 'Welfare'];
+
+function renderNewsCard(item) {
+  return `
+    <div class="bg-white rounded-[1.75rem] border border-slate-200 shadow-sm overflow-hidden flex flex-col" data-id="${item.id}">
+      ${item.image_url ? `<img src="${escapeHtml(item.image_url)}" alt="${escapeHtml(item.title)}" class="h-40 w-full object-cover" />` : ''}
+      <div class="p-4 flex-1 flex flex-col">
+        <h4 class="text-lg font-semibold text-slate-900">${escapeHtml(item.title)}</h4>
+        ${item.tag ? `<span class="inline-flex items-center mt-2 px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-800 self-start">${escapeHtml(item.tag)}</span>` : ''}
+        <p class="text-xs text-slate-500 mt-2">${item.created_at ? new Date(item.created_at).toLocaleDateString() : ''}</p>
+        <div class="mt-3 text-sm text-slate-600 line-clamp-3">${item.body || ''}</div>
+        <div class="mt-auto pt-4 flex gap-2">
+          <button data-action="edit-news" data-id="${item.id}" class="flex-1 text-xs px-3 py-1.5 rounded-full bg-slate-100 text-slate-700 hover:bg-slate-200 transition">Edit</button>
+          <button data-action="delete-news" data-id="${item.id}" class="flex-1 text-xs px-3 py-1.5 rounded-full bg-red-50 text-red-600 hover:bg-red-100 transition">Delete</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+async function renderNews(content, title) {
+  title.textContent = 'News & Updates';
+
+  const { data: newsList, error } = await supabase.from('news').select('*').order('created_at', { ascending: false });
+  if (error) { showToast('Failed to load news', 'error'); return; }
+
+  content.innerHTML = `
+    <div class="space-y-6">
+      <form id="add-news-form" class="bg-white rounded-[1.75rem] border border-slate-200 shadow-sm p-6">
+        <h3 class="text-lg font-semibold text-slate-900 mb-4">Post an Update</h3>
+        <div>
+          <label class="block text-sm font-medium text-slate-700 mb-1">Title</label>
+          <input type="text" id="news-title" required class="w-full px-4 py-2 rounded-lg border border-slate-300 focus:outline-none focus:border-[#2f6df6]" />
+        </div>
+        <div class="mt-4">
+          <label class="block text-sm font-medium text-slate-700 mb-1">Body</label>
+          <div id="news-editor" class="bg-white rounded-lg border border-slate-300" style="min-height: 120px;"></div>
+        </div>
+        <div class="mt-4">
+          <label class="block text-sm font-medium text-slate-700 mb-1">Tag</label>
+          <select id="news-tag" class="w-full px-4 py-2 rounded-lg border border-slate-300 focus:outline-none focus:border-[#2f6df6]">
+            ${newsTags.map(t => `<option value="${t}">${t}</option>`).join('')}
+          </select>
+        </div>
+        <div class="mt-4">
+          <label class="block text-sm font-medium text-slate-700 mb-1">Image (optional)</label>
+          <input type="file" id="news-image" accept="image/*" class="w-full px-4 py-2 rounded-lg border border-slate-300 focus:outline-none focus:border-[#2f6df6]" />
+          <img id="news-preview" class="mt-2 h-24 w-24 object-cover rounded hidden" />
+        </div>
+        <button type="submit" class="mt-4 px-6 py-2 rounded-lg bg-[#2f6df6] text-white font-semibold hover:bg-blue-600 transition">Publish</button>
+      </form>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        ${newsList.length ? newsList.map(renderNewsCard).join('') : '<p class="text-slate-500 col-span-full">No updates posted yet.</p>'}
+      </div>
+    </div>
+  `;
+
+  initQuill('#news-editor');
+
+  document.getElementById('news-image')?.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (ev) => { document.getElementById('news-preview').src = ev.target.result; document.getElementById('news-preview').classList.remove('hidden'); };
+      reader.readAsDataURL(file);
+    }
+  });
+
+  document.getElementById('add-news-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const newsTitle = document.getElementById('news-title').value.trim();
+    const body = _quillInstance.root.innerHTML;
+    const tag = document.getElementById('news-tag').value;
+    const file = document.getElementById('news-image').files[0];
+
+    let image_url = null;
+    if (file) {
+      const url = await uploadPhoto(file, 'news');
+      if (!url) return;
+      image_url = url;
+    }
+
+    const { error: insertErr } = await supabase.from('news').insert([{ title: newsTitle, body, tag, image_url }]);
+    if (insertErr) { showToast(insertErr.message, 'error'); } else { showToast('Update published', 'success'); renderSection('News & Updates'); }
+  });
+
+  document.querySelectorAll('[data-action="edit-news"]').forEach(btn => {
+    btn.addEventListener('click', () => { editNews(btn.dataset.id); });
+  });
+
+  document.querySelectorAll('[data-action="delete-news"]').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const id = btn.dataset.id;
+      const confirmed = await showConfirm('Permanently delete this update? This cannot be undone.');
+      if (!confirmed) return;
+      const { error: delErr } = await supabase.from('news').delete().eq('id', id);
+      if (delErr) { showToast(delErr.message, 'error'); } else { showToast('Update deleted', 'success'); renderSection('News & Updates'); }
+    });
+  });
+}
+
+async function editNews(id) {
+  const { data, error } = await supabase.from('news').select('*').eq('id', id).single();
+  if (error) { showToast('Failed to load update', 'error'); return; }
+
+  const content = document.getElementById('section-content');
+  const title = document.getElementById('section-title');
+  title.textContent = 'Edit Update';
+
+  content.innerHTML = `
+    <div class="bg-white rounded-[1.75rem] border border-slate-200 shadow-sm p-6">
+      <h3 class="text-lg font-semibold text-slate-900 mb-4">Edit Update</h3>
+      <form id="edit-news-form" class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-slate-700 mb-1">Title</label>
+          <input type="text" id="edit-news-title" value="${escapeHtml(data.title)}" required class="w-full px-4 py-2 rounded-lg border border-slate-300 focus:outline-none focus:border-[#2f6df6]" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-slate-700 mb-1">Body</label>
+          <div id="edit-news-editor" class="bg-white rounded-lg border border-slate-300" style="min-height: 120px;"></div>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-slate-700 mb-1">Tag</label>
+          <select id="edit-news-tag" class="w-full px-4 py-2 rounded-lg border border-slate-300 focus:outline-none focus:border-[#2f6df6]">
+            ${newsTags.map(t => `<option value="${t}" ${data.tag === t ? 'selected' : ''}>${t}</option>`).join('')}
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-slate-700 mb-1">Image</label>
+          <input type="file" id="edit-news-image" accept="image/*" class="w-full px-4 py-2 rounded-lg border border-slate-300 focus:outline-none focus:border-[#2f6df6]" />
+          ${data.image_url ? `<img src="${escapeHtml(data.image_url)}" class="mt-2 h-24 w-24 object-cover rounded" />` : ''}
+          <img id="edit-news-preview" class="mt-2 h-24 w-24 object-cover rounded hidden" />
+        </div>
+        <div class="flex gap-3">
+          <button type="submit" class="px-6 py-2 rounded-lg bg-[#2f6df6] text-white font-semibold hover:bg-blue-600 transition">Save</button>
+          <button type="button" id="edit-news-cancel" class="px-6 py-2 rounded-lg bg-slate-200 text-slate-700 hover:bg-slate-300 transition">Cancel</button>
+        </div>
+      </form>
+    </div>
+  `;
+
+  initQuill('#edit-news-editor', data.body);
+
+  document.getElementById('edit-news-image')?.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (ev) => { document.getElementById('edit-news-preview').src = ev.target.result; document.getElementById('edit-news-preview').classList.remove('hidden'); };
+      reader.readAsDataURL(file);
+    }
+  });
+
+  document.getElementById('edit-news-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const newsTitle = document.getElementById('edit-news-title').value.trim();
+    const body = _quillInstance.root.innerHTML;
+    const tag = document.getElementById('edit-news-tag').value;
+    const file = document.getElementById('edit-news-image').files[0];
+
+    let image_url = data.image_url;
+    if (file) {
+      if (data.image_url) {
+        const oldPath = data.image_url.split('/').pop();
+        await supabase.storage.from('news').remove([oldPath]);
+      }
+      const url = await uploadPhoto(file, 'news');
+      if (!url) return;
+      image_url = url;
+    }
+
+    const { error: updateErr } = await supabase.from('news').update({ title: newsTitle, body, tag, image_url }).eq('id', id);
+    if (updateErr) { showToast(updateErr.message, 'error'); } else { showToast('Update saved', 'success'); renderSection('News & Updates'); }
+  });
+
+  document.getElementById('edit-news-cancel').addEventListener('click', () => { renderSection('News & Updates'); });
+}
+
 // GALLERY
 
 async function renderGallery(content, title) {
@@ -1355,8 +1833,10 @@ async function renderAchievements(content, title) {
       image_url = url;
     }
     
-    const { error } = await supabase.from('achievements').insert([{ administration_id: adminId, title, description, date, tag, image_url }]);
-    if (error) { showToast(error.message, 'error'); } else { showToast('Achievement added', 'success'); renderSection('Achievements'); }
+    const { data: inserted, error } = await supabase.from('achievements').insert([{ administration_id: adminId, title, description, date, tag, image_url }]).select().single();
+    if (error) { showToast(error.message, 'error'); return; }
+    showToast('Achievement added — add gallery images below', 'success');
+    editAchievement(inserted.id);
   });
   
   document.getElementById('achieve-image')?.addEventListener('change', (e) => {
@@ -1432,8 +1912,58 @@ async function editAchievement(id) {
           <button type="button" id="edit-achieve-cancel" class="px-6 py-2 rounded-lg bg-slate-200 text-slate-700 hover:bg-slate-300 transition">Cancel</button>
         </div>
       </form>
+      <div class="mt-8 pt-6 border-t border-slate-200">
+        <h4 class="text-base font-semibold text-slate-900 mb-1">Gallery Images</h4>
+        <p class="text-sm text-slate-500 mb-4">These extra photos show up on the achievement's "See more" detail page.</p>
+        <div id="achieve-gallery-list" class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4"></div>
+        <div class="flex items-center gap-3">
+          <input type="file" id="achieve-gallery-add-input" accept="image/*" class="flex-1 px-4 py-2 rounded-lg border border-slate-300 focus:outline-none focus:border-[#2f6df6]" />
+          <button type="button" id="achieve-gallery-add-btn" class="px-4 py-2 rounded-lg bg-slate-800 text-white text-sm font-semibold hover:bg-slate-700 transition whitespace-nowrap">Add Image</button>
+        </div>
+      </div>
     </div>
   `;
+
+  async function loadAchievementGallery() {
+    const listEl = document.getElementById('achieve-gallery-list');
+    if (!listEl) return;
+    const { data: images, error: imgErr } = await supabase.from('achievement_images').select('*').eq('achievement_id', id).order('display_order', { ascending: true });
+    if (imgErr) { listEl.innerHTML = '<p class="text-sm text-red-500 col-span-full">Could not load gallery images.</p>'; return; }
+    listEl.innerHTML = images.length
+      ? images.map(img => `
+          <div class="relative group" data-img-id="${img.id}">
+            <img src="${escapeHtml(img.image_url)}" class="h-24 w-full object-cover rounded-lg" />
+            <button type="button" data-action="delete-achieve-img" data-id="${img.id}" data-path="${escapeHtml(img.image_url.split('/').pop())}" class="absolute top-1 right-1 h-6 w-6 flex items-center justify-center rounded-full bg-red-600 text-white text-xs font-bold hover:bg-red-700">&times;</button>
+          </div>
+        `).join('')
+      : '<p class="text-sm text-slate-500 col-span-full">No gallery images yet.</p>';
+
+    listEl.querySelectorAll('[data-action="delete-achieve-img"]').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const confirmed = await showConfirm('Remove this image from the gallery?');
+        if (!confirmed) return;
+        await supabase.storage.from('executives').remove([btn.dataset.path]);
+        await supabase.from('achievement_images').delete().eq('id', btn.dataset.id);
+        showToast('Image removed', 'success');
+        loadAchievementGallery();
+      });
+    });
+  }
+
+  document.getElementById('achieve-gallery-add-btn').addEventListener('click', async () => {
+    const input = document.getElementById('achieve-gallery-add-input');
+    const file = input.files[0];
+    if (!file) { showToast('Choose an image first', 'error'); return; }
+    const url = await uploadPhoto(file, 'executives');
+    if (!url) return;
+    const { error: insertErr } = await supabase.from('achievement_images').insert([{ achievement_id: id, image_url: url }]);
+    if (insertErr) { showToast(insertErr.message, 'error'); return; }
+    input.value = '';
+    showToast('Image added', 'success');
+    loadAchievementGallery();
+  });
+
+  loadAchievementGallery();
   
   initQuill('#edit-achieve-editor', data.description);
   
