@@ -391,7 +391,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const items = [
       {
         key: 'anatomy',
-        image: asset('anatomy.webp'),
+        image: '',
         title: 'Anatomy',
         subtitle: 'Structure of the human body',
         text: 'Explores gross anatomy, histology, embryology, and neuroanatomy through hands-on learning and imaging.',
@@ -402,7 +402,7 @@ document.addEventListener('DOMContentLoaded', () => {
       },
       {
         key: 'physiology',
-        image: asset('physiology.webp'),
+        image: '',
         title: 'Physiology',
         subtitle: 'How the body functions',
         text: 'Covers the mechanisms by which the human body operates from cellular signalling to whole-system integration.',
@@ -413,7 +413,7 @@ document.addEventListener('DOMContentLoaded', () => {
       },
       {
         key: 'biochemistry',
-        image: asset('biochemistry.webp'),
+        image: '',
         title: 'Biochemistry',
         subtitle: 'Chemistry of life',
         text: 'Studies the molecular basis of life from enzyme kinetics to metabolic pathways and clinical biochemistry.',
@@ -430,8 +430,10 @@ document.addEventListener('DOMContentLoaded', () => {
           <div class="grid gap-8 md:grid-cols-3">
             ${items.map(item => `
               <div class="group overflow-hidden rounded-[2rem] border border-slate-200 shadow-sm flex flex-col" style="background:#ffffff;">
-                <div class="overflow-hidden h-52">
-                  <img src="${item.image}" alt="${item.title}" class="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
+                <div class="overflow-hidden h-52 flex items-center justify-center" style="background:#f1f5f9;">
+                  ${item.image
+                    ? `<img src="${item.image}" alt="${item.title}" class="h-full w-full object-cover transition duration-500 group-hover:scale-105" />`
+                    : `<span style="color:#94a3b8;font-size:0.875rem;">No image uploaded</span>`}
                 </div>
                 <div class="p-6 flex flex-col flex-1" style="background:#ffffff;">
                   <span class="text-xs font-bold uppercase tracking-[0.22em]" style="color:#2f6df6;">${item.subtitle}</span>
@@ -459,80 +461,115 @@ document.addEventListener('DOMContentLoaded', () => {
                   </div>
 
                   <div class="mt-auto pt-5">
-                    <button type="button" data-dept="${item.key}" class="dept-detail-btn w-full rounded-2xl py-3 text-sm font-bold transition" style="background:#2f6df6;color:#ffffff;">
+                    <a href="department-detail.html?dept=${item.key}" class="block w-full rounded-2xl py-3 text-sm font-bold text-center transition" style="background:#2f6df6;color:#ffffff;">
                       See More Info →
-                    </button>
+                    </a>
                   </div>
                 </div>
               </div>`).join('')}
           </div>
         </div>
-      </section>
+      </section>`;
+  }
 
-      <!-- DEPT DETAIL PANEL -->
-      <div id="dept-detail-panel" class="hidden fixed inset-0 z-50 overflow-y-auto" style="background:rgba(0,0,0,0.6);">
-        <div class="min-h-screen flex items-start justify-center p-4 pt-16">
-          <div class="w-full max-w-2xl rounded-[2rem] overflow-hidden shadow-2xl" style="background:#ffffff;">
-            <div class="relative h-64">
-              <img id="dept-detail-img" src="" alt="" class="h-full w-full object-cover" />
-              <button id="dept-detail-close" class="absolute top-4 right-4 rounded-full px-4 py-2 text-sm font-bold" style="background:rgba(0,0,0,0.5);color:#fff;">Close ✕</button>
-            </div>
-            <div class="p-6 sm:p-8" style="background:#ffffff;">
-              <span id="dept-detail-subtitle" class="text-xs font-bold uppercase tracking-widest" style="color:#2f6df6;"></span>
-              <h2 id="dept-detail-title" class="mt-2 text-3xl font-black" style="color:#0f172a;"></h2>
-              <p id="dept-detail-text" class="mt-4 text-base leading-7" style="color:#475569;"></p>
+  async function renderDepartmentDetail(main) {
+    const params = new URLSearchParams(window.location.search);
+    const deptKey = (params.get('dept') || '').toLowerCase();
+    const deptMap = {
+      anatomy: {
+        title: 'Anatomy', subtitle: 'Structure of the human body',
+        text: 'The Department of Anatomy explores the structure of the human body through gross anatomy, histology, embryology, and neuroanatomy. Students gain hands-on experience in dissection labs, microscopy, and radiological imaging.',
+        courses: ['Gross Anatomy', 'Histology', 'Embryology', 'Neuroanatomy', 'Radiological Anatomy'],
+        count: 1200, supabaseName: 'Anatomy'
+      },
+      physiology: {
+        title: 'Physiology', subtitle: 'How the body functions',
+        text: 'The Department of Physiology covers the functional mechanisms of the human body from cellular signalling to whole-system integration. Key areas include cardiovascular, renal, endocrine, and neurophysiology.',
+        courses: ['General Physiology', 'Cardiovascular Physiology', 'Endocrinology', 'Neurophysiology', 'Renal Physiology'],
+        count: 1050, supabaseName: 'Physiology'
+      },
+      biochemistry: {
+        title: 'Biochemistry', subtitle: 'Chemistry of life',
+        text: 'The Department of Biochemistry studies the molecular basis of life. From enzyme kinetics to metabolic pathways, students learn the chemical foundations of medicine and clinical biochemistry applications.',
+        courses: ['General Biochemistry', 'Clinical Biochemistry', 'Molecular Biology', 'Enzymology', 'Nutritional Biochemistry'],
+        count: 850, supabaseName: 'Biochemistry'
+      }
+    };
 
-              <div id="dept-detail-hod" class="mt-6 p-4 rounded-2xl flex items-center gap-4" style="background:#f8fafc;border:1px solid #e2e8f0;">
-                <img id="dept-detail-hod-img" src="" alt="" class="h-16 w-16 rounded-xl object-cover border-2 border-white shadow" style="display:none;" />
-                <div id="dept-detail-hod-placeholder" class="h-16 w-16 rounded-xl flex items-center justify-center" style="background:#e2e8f0;display:flex;">
-                  <span style="color:#94a3b8;font-size:0.75rem;">No photo</span>
-                </div>
-                <div>
-                  <p class="text-xs font-semibold uppercase tracking-wide" style="color:#64748b;">Head of Department</p>
-                  <p id="dept-detail-hod-name" class="text-lg font-black mt-0.5" style="color:#0f172a;"></p>
-                </div>
-              </div>
+    const dept = deptMap[deptKey];
+    if (!dept) {
+      main.innerHTML = `<div class="flex items-center justify-center py-32"><p style="color:#94a3b8;">Department not found. <a href="departments.html" style="color:#2f6df6;">Go back</a></p></div>`;
+      return;
+    }
 
-              <div class="mt-6">
-                <p class="text-xs font-bold uppercase tracking-widest mb-3" style="color:#64748b;">Courses Offered</p>
-                <div id="dept-detail-courses" class="flex flex-wrap gap-2"></div>
-              </div>
+    // Update page title
+    document.title = `${dept.title} - BAMSSA DELSU Chapter`;
+
+    // Fetch HOD and gallery images from Supabase
+    let hodName = '', hodImage = '', galleryImages = [];
+    if (supabaseClient) {
+      const { data: hodData } = await supabaseClient.from('hods').select('name, image_url').eq('department', dept.supabaseName).single();
+      if (hodData) { hodName = hodData.name || ''; hodImage = hodData.image_url || ''; }
+      const { data: galleryData } = await supabaseClient.from('gallery').select('image_url, title, caption').eq('department', dept.supabaseName).order('created_at', { ascending: false });
+      if (galleryData) galleryImages = galleryData;
+    }
+
+    main.innerHTML = `
+      <section style="background:#ffffff;">
+        <div class="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
+
+          <a href="departments.html" class="inline-flex items-center gap-2 text-sm font-semibold mb-8" style="color:#2f6df6;">
+            ← Back to Departments
+          </a>
+
+          <span class="text-xs font-bold uppercase tracking-widest" style="color:#2f6df6;">${dept.subtitle}</span>
+          <h1 class="mt-2 text-4xl font-black" style="color:#0f172a;">${dept.title}</h1>
+          <p class="mt-4 text-base leading-7" style="color:#475569;">${dept.text}</p>
+
+          <div class="mt-8 inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium" style="background:#f0f9ff;color:#0369a1;">
+            <span class="h-2 w-2 rounded-full" style="background:#22c55e;display:inline-block;"></span>
+            ${dept.count.toLocaleString()} registered students
+          </div>
+
+          <!-- HOD CARD -->
+          <div class="mt-10 rounded-2xl p-6 flex items-center gap-5" style="background:#f8fafc;border:1px solid #e2e8f0;">
+            ${hodImage
+              ? `<img src="${hodImage}" alt="${hodName}" class="rounded-xl object-cover shadow" style="width:80px;height:80px;border:2px solid #fff;" />`
+              : `<div class="rounded-xl flex items-center justify-center" style="width:80px;height:80px;background:#e2e8f0;flex-shrink:0;"><span style="color:#94a3b8;font-size:0.75rem;text-align:center;">No<br>photo</span></div>`
+            }
+            <div>
+              <p class="text-xs font-bold uppercase tracking-widest" style="color:#64748b;">Head of Department</p>
+              <p class="text-xl font-black mt-1" style="color:#0f172a;">${hodName || 'Not yet assigned'}</p>
             </div>
           </div>
+
+          <!-- COURSES -->
+          <div class="mt-10">
+            <p class="text-xs font-bold uppercase tracking-widest mb-4" style="color:#64748b;">Courses Offered</p>
+            <div class="flex flex-wrap gap-2">
+              ${dept.courses.map(c => `<span class="rounded-full px-4 py-2 text-sm font-medium" style="background:#f1f5f9;color:#334155;border:1px solid #e2e8f0;">${c}</span>`).join('')}
+            </div>
+          </div>
+
+          <!-- GALLERY -->
+          <div class="mt-12">
+            <p class="text-xs font-bold uppercase tracking-widest mb-4" style="color:#64748b;">Department Gallery</p>
+            ${galleryImages.length > 0
+              ? `<div class="grid gap-4 sm:grid-cols-2">
+                  ${galleryImages.map(img => `
+                    <figure class="overflow-hidden rounded-2xl" style="border:1px solid #e2e8f0;">
+                      <img src="${img.image_url}" alt="${img.title || ''}" class="w-full object-cover" style="height:200px;" loading="lazy" />
+                      ${img.caption ? `<figcaption class="p-3 text-sm" style="color:#64748b;">${img.caption}</figcaption>` : ''}
+                    </figure>`).join('')}
+                </div>`
+              : `<div class="rounded-2xl py-12 flex items-center justify-center" style="background:#f8fafc;border:1px dashed #cbd5e1;">
+                  <p style="color:#94a3b8;" class="text-sm">No images uploaded for this department yet.</p>
+                </div>`
+            }
+          </div>
+
         </div>
-      </div>`;
-
-    // Bind dept detail panel
-    const panel = document.getElementById('dept-detail-panel');
-    const closeBtn = document.getElementById('dept-detail-close');
-    closeBtn.addEventListener('click', () => panel.classList.add('hidden'));
-    panel.addEventListener('click', (e) => { if (e.target === panel) panel.classList.add('hidden'); });
-
-    document.querySelectorAll('.dept-detail-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const key = btn.dataset.dept;
-        const item = items.find(i => i.key === key);
-        if (!item) return;
-        document.getElementById('dept-detail-img').src = item.image;
-        document.getElementById('dept-detail-subtitle').textContent = item.subtitle;
-        document.getElementById('dept-detail-title').textContent = item.title;
-        document.getElementById('dept-detail-text').textContent = item.text;
-        document.getElementById('dept-detail-hod-name').textContent = item.hod || 'Not assigned';
-        const hodImg = document.getElementById('dept-detail-hod-img');
-        const hodPlaceholder = document.getElementById('dept-detail-hod-placeholder');
-        if (item.hodImage) {
-          hodImg.src = item.hodImage;
-          hodImg.style.display = 'block';
-          hodPlaceholder.style.display = 'none';
-        } else {
-          hodImg.style.display = 'none';
-          hodPlaceholder.style.display = 'flex';
-        }
-        const coursesEl = document.getElementById('dept-detail-courses');
-        coursesEl.innerHTML = item.courses.map(c => `<span class="rounded-full px-3 py-1 text-sm" style="background:#f1f5f9;color:#334155;border:1px solid #e2e8f0;">${c}</span>`).join('');
-        panel.classList.remove('hidden');
-      });
-    });
+      </section>`;
   }
 
   function renderGallery(main, galleryItems) {
@@ -964,6 +1001,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (gallery) { renderGallery(main, gallery); } else { injectError(main); }
         break;
       }
+      case 'department-detail': {
+        injectLoading(main);
+        await renderDepartmentDetail(main);
+        break;
+      }
       case 'departments': {
         injectLoading(main);
         const hods = await fetchHodsData();
@@ -1016,7 +1058,7 @@ document.addEventListener('DOMContentLoaded', () => {
       injectHero(pageConfigs[pageKey]);
     }
     document.body.classList.add('js-ready');
-    if (['executives', 'gallery', 'departments', 'suggestions'].includes(pageKey)) {
+    if (['executives', 'gallery', 'departments', 'suggestions', 'department-detail'].includes(pageKey)) {
       if (supabaseClient) {
         renderPageAsync(pageKey, main);
       } else {
