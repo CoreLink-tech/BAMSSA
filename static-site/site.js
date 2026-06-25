@@ -139,21 +139,21 @@ document.addEventListener('DOMContentLoaded', () => {
             <a href="about.html" class="${pageKey === 'about' ? 'rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-white' : 'rounded-full px-4 py-2 text-sm font-semibold text-slate-200 hover:bg-white/10 hover:text-white'}">About</a>
             <a href="departments.html" class="${pageKey === 'departments' ? 'rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-white' : 'rounded-full px-4 py-2 text-sm font-semibold text-slate-200 hover:bg-white/10 hover:text-white'}">Departments</a>
             <a href="gallery.html" class="${pageKey === 'gallery' ? 'rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-white' : 'rounded-full px-4 py-2 text-sm font-semibold text-slate-200 hover:bg-white/10 hover:text-white'}">Gallery</a>
-            <a href="marketplace.html" class="${pageKey === 'marketplace' ? 'rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-white' : 'rounded-full px-4 py-2 text-sm font-semibold text-slate-200 hover:bg-white/10 hover:text-white'}">Marketplace</a>
-            <a href="news.html" class="${pageKey === 'news' ? 'rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-white' : 'rounded-full px-4 py-2 text-sm font-semibold text-slate-200 hover:bg-white/10 hover:text-white'}">News</a>
             <a href="staff.html" class="${pageKey === 'staff' ? 'rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-white' : 'rounded-full px-4 py-2 text-sm font-semibold text-slate-200 hover:bg-white/10 hover:text-white'}">Staff</a>
             <a href="executives.html" class="${pageKey === 'executives' ? 'rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-white' : 'rounded-full px-4 py-2 text-sm font-semibold text-slate-200 hover:bg-white/10 hover:text-white'}">Executives</a>
             <div class="relative" data-student-utility>
-              <button type="button" data-student-utility-toggle class="${pageKey === 'suggestions' ? 'rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-white' : 'rounded-full px-4 py-2 text-sm font-semibold text-slate-200 hover:bg-white/10 hover:text-white'} inline-flex items-center gap-1">
+              <button type="button" data-student-utility-toggle class="${['suggestions','news','marketplace','contact'].includes(pageKey) ? 'rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-white' : 'rounded-full px-4 py-2 text-sm font-semibold text-slate-200 hover:bg-white/10 hover:text-white'} inline-flex items-center gap-1">
                 Student Utility
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" /></svg>
               </button>
-              <div data-student-utility-menu class="hidden absolute right-0 mt-2 w-48 rounded-xl border border-white/10 bg-[#0f1f3d] py-2 shadow-2xl z-50">
+              <div data-student-utility-menu class="hidden absolute right-0 mt-2 w-56 rounded-xl border border-white/10 bg-[#0f1f3d] py-2 shadow-2xl z-50">
                 <a href="suggestions.html" class="block px-4 py-2 text-sm text-slate-200 hover:bg-white/10 hover:text-white">Suggestions</a>
+                <a href="news.html" class="block px-4 py-2 text-sm text-slate-200 hover:bg-white/10 hover:text-white">News &amp; Updates</a>
+                <a href="contact.html" class="block px-4 py-2 text-sm text-slate-200 hover:bg-white/10 hover:text-white">Contact</a>
                 <button type="button" data-elibrary-link class="block w-full text-left px-4 py-2 text-sm text-slate-200 hover:bg-white/10 hover:text-white">E-Library</button>
+                <a href="marketplace.html" class="block px-4 py-2 text-sm text-slate-200 hover:bg-white/10 hover:text-white">Marketplace</a>
               </div>
             </div>
-            <a href="contact.html" class="${pageKey === 'contact' ? 'rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-white' : 'rounded-full px-4 py-2 text-sm font-semibold text-slate-200 hover:bg-white/10 hover:text-white'}">Contact</a>
           </nav>
           <button data-menu-toggle type="button" class="inline-flex items-center rounded-full border border-white/15 px-4 py-2 text-sm font-semibold text-white lg:hidden">Menu</button>
         </div>
@@ -163,16 +163,21 @@ document.addEventListener('DOMContentLoaded', () => {
             <a href="about.html" class="rounded-xl ${pageKey === 'about' ? 'bg-white/10 text-white' : 'text-slate-200 hover:bg-white/10 hover:text-white'} px-4 py-3 text-sm font-semibold">About</a>
             <a href="departments.html" class="rounded-xl ${pageKey === 'departments' ? 'bg-white/10 text-white' : 'text-slate-200 hover:bg-white/10 hover:text-white'} px-4 py-3 text-sm font-semibold">Departments</a>
             <a href="gallery.html" class="rounded-xl ${pageKey === 'gallery' ? 'bg-white/10 text-white' : 'text-slate-200 hover:bg-white/10 hover:text-white'} px-4 py-3 text-sm font-semibold">Gallery</a>
-            <a href="marketplace.html" class="rounded-xl ${pageKey === 'marketplace' ? 'bg-white/10 text-white' : 'text-slate-200 hover:bg-white/10 hover:text-white'} px-4 py-3 text-sm font-semibold">Marketplace</a>
-            <a href="news.html" class="rounded-xl ${pageKey === 'news' ? 'bg-white/10 text-white' : 'text-slate-200 hover:bg-white/10 hover:text-white'} px-4 py-3 text-sm font-semibold">News</a>
             <a href="staff.html" class="rounded-xl ${pageKey === 'staff' ? 'bg-white/10 text-white' : 'text-slate-200 hover:bg-white/10 hover:text-white'} px-4 py-3 text-sm font-semibold">Staff</a>
             <a href="executives.html" class="rounded-xl ${pageKey === 'executives' ? 'bg-white/10 text-white' : 'text-slate-200 hover:bg-white/10 hover:text-white'} px-4 py-3 text-sm font-semibold">Executives</a>
             <div class="mt-1 border-t border-white/10 pt-2">
-              <p class="px-4 pb-1 text-xs font-bold uppercase tracking-wide text-slate-400">Student Utility</p>
-              <a href="suggestions.html" class="block rounded-xl ${pageKey === 'suggestions' ? 'bg-white/10 text-white' : 'text-slate-200 hover:bg-white/10 hover:text-white'} px-4 py-3 text-sm font-semibold">Suggestions</a>
-              <button type="button" data-elibrary-link class="block w-full text-left rounded-xl text-slate-200 hover:bg-white/10 hover:text-white px-4 py-3 text-sm font-semibold">E-Library</button>
+              <button type="button" data-mobile-utility-toggle class="flex w-full items-center justify-between rounded-xl px-4 py-3 text-sm font-semibold ${['suggestions','news','marketplace','contact'].includes(pageKey) ? 'bg-white/10 text-white' : 'text-slate-200 hover:bg-white/10 hover:text-white'}">
+                Student Utility
+                <svg data-mobile-utility-arrow xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 transition-transform" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" /></svg>
+              </button>
+              <div data-mobile-utility-menu class="hidden pl-2 space-y-1 mt-1">
+                <a href="suggestions.html" class="block rounded-xl ${pageKey === 'suggestions' ? 'bg-white/10 text-white' : 'text-slate-200 hover:bg-white/10 hover:text-white'} px-4 py-2.5 text-sm font-semibold">Suggestions</a>
+                <a href="news.html" class="block rounded-xl ${pageKey === 'news' ? 'bg-white/10 text-white' : 'text-slate-200 hover:bg-white/10 hover:text-white'} px-4 py-2.5 text-sm font-semibold">News &amp; Updates</a>
+                <a href="contact.html" class="block rounded-xl ${pageKey === 'contact' ? 'bg-white/10 text-white' : 'text-slate-200 hover:bg-white/10 hover:text-white'} px-4 py-2.5 text-sm font-semibold">Contact</a>
+                <button type="button" data-elibrary-link class="block w-full text-left rounded-xl text-slate-200 hover:bg-white/10 hover:text-white px-4 py-2.5 text-sm font-semibold">E-Library</button>
+                <a href="marketplace.html" class="block rounded-xl ${pageKey === 'marketplace' ? 'bg-white/10 text-white' : 'text-slate-200 hover:bg-white/10 hover:text-white'} px-4 py-2.5 text-sm font-semibold">Marketplace</a>
+              </div>
             </div>
-            <a href="contact.html" class="rounded-xl ${pageKey === 'contact' ? 'bg-white/10 text-white' : 'text-slate-200 hover:bg-white/10 hover:text-white'} px-4 py-3 text-sm font-semibold">Contact</a>
           </div>
         </div>
       </div>`;
@@ -1646,6 +1651,25 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  // Mobile Student Utility accordion toggle
+  const mobileUtilityToggle = document.querySelector('[data-mobile-utility-toggle]');
+  if (mobileUtilityToggle) {
+    const mobileUtilityMenu = document.querySelector('[data-mobile-utility-menu]');
+    const mobileUtilityArrow = mobileUtilityToggle.querySelector('[data-mobile-utility-arrow]');
+    // Auto-expand if current page is inside Student Utility
+    if (mobileUtilityMenu && ['suggestions','news','marketplace','contact'].includes(pageKey)) {
+      mobileUtilityMenu.classList.remove('hidden');
+      if (mobileUtilityArrow) mobileUtilityArrow.style.transform = 'rotate(180deg)';
+    }
+    mobileUtilityToggle.addEventListener('click', () => {
+      if (mobileUtilityMenu) mobileUtilityMenu.classList.toggle('hidden');
+      if (mobileUtilityArrow) {
+        const isOpen = !mobileUtilityMenu.classList.contains('hidden');
+        mobileUtilityArrow.style.transform = isOpen ? 'rotate(180deg)' : '';
+      }
+    });
+  }
+
   // E-Library - admin sets a Google Drive link; tapping it goes straight there
   let _elibraryLink = null;
   async function goToELibrary() {
@@ -1957,3 +1981,4 @@ document.addEventListener('DOMContentLoaded', () => {
     countTargets.forEach((target) => animateCount(target));
   }
 });
+
