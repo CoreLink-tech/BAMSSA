@@ -142,7 +142,16 @@ document.addEventListener('DOMContentLoaded', () => {
             <a href="news.html" class="${pageKey === 'news' ? 'rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-white' : 'rounded-full px-4 py-2 text-sm font-semibold text-slate-200 hover:bg-white/10 hover:text-white'}">News</a>
             <a href="staff.html" class="${pageKey === 'staff' ? 'rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-white' : 'rounded-full px-4 py-2 text-sm font-semibold text-slate-200 hover:bg-white/10 hover:text-white'}">Staff</a>
             <a href="executives.html" class="${pageKey === 'executives' ? 'rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-white' : 'rounded-full px-4 py-2 text-sm font-semibold text-slate-200 hover:bg-white/10 hover:text-white'}">Executives</a>
-            <a href="suggestions.html" class="${pageKey === 'suggestions' ? 'rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-white' : 'rounded-full px-4 py-2 text-sm font-semibold text-slate-200 hover:bg-white/10 hover:text-white'}">Suggestions</a>
+            <div class="relative" data-student-utility>
+              <button type="button" data-student-utility-toggle class="${pageKey === 'suggestions' ? 'rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-white' : 'rounded-full px-4 py-2 text-sm font-semibold text-slate-200 hover:bg-white/10 hover:text-white'} inline-flex items-center gap-1">
+                Student Utility
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" /></svg>
+              </button>
+              <div data-student-utility-menu class="hidden absolute right-0 mt-2 w-48 rounded-xl border border-white/10 bg-[#0f1f3d] py-2 shadow-2xl z-50">
+                <a href="suggestions.html" class="block px-4 py-2 text-sm text-slate-200 hover:bg-white/10 hover:text-white">Suggestions</a>
+                <button type="button" data-elibrary-link class="block w-full text-left px-4 py-2 text-sm text-slate-200 hover:bg-white/10 hover:text-white">E-Library</button>
+              </div>
+            </div>
             <a href="contact.html" class="${pageKey === 'contact' ? 'rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-white' : 'rounded-full px-4 py-2 text-sm font-semibold text-slate-200 hover:bg-white/10 hover:text-white'}">Contact</a>
           </nav>
           <button data-menu-toggle type="button" class="inline-flex items-center rounded-full border border-white/15 px-4 py-2 text-sm font-semibold text-white lg:hidden">Menu</button>
@@ -156,7 +165,11 @@ document.addEventListener('DOMContentLoaded', () => {
             <a href="news.html" class="rounded-xl ${pageKey === 'news' ? 'bg-white/10 text-white' : 'text-slate-200 hover:bg-white/10 hover:text-white'} px-4 py-3 text-sm font-semibold">News</a>
             <a href="staff.html" class="rounded-xl ${pageKey === 'staff' ? 'bg-white/10 text-white' : 'text-slate-200 hover:bg-white/10 hover:text-white'} px-4 py-3 text-sm font-semibold">Staff</a>
             <a href="executives.html" class="rounded-xl ${pageKey === 'executives' ? 'bg-white/10 text-white' : 'text-slate-200 hover:bg-white/10 hover:text-white'} px-4 py-3 text-sm font-semibold">Executives</a>
-            <a href="suggestions.html" class="rounded-xl ${pageKey === 'suggestions' ? 'bg-white/10 text-white' : 'text-slate-200 hover:bg-white/10 hover:text-white'} px-4 py-3 text-sm font-semibold">Suggestions</a>
+            <div class="mt-1 border-t border-white/10 pt-2">
+              <p class="px-4 pb-1 text-xs font-bold uppercase tracking-wide text-slate-400">Student Utility</p>
+              <a href="suggestions.html" class="block rounded-xl ${pageKey === 'suggestions' ? 'bg-white/10 text-white' : 'text-slate-200 hover:bg-white/10 hover:text-white'} px-4 py-3 text-sm font-semibold">Suggestions</a>
+              <button type="button" data-elibrary-link class="block w-full text-left rounded-xl text-slate-200 hover:bg-white/10 hover:text-white px-4 py-3 text-sm font-semibold">E-Library</button>
+            </div>
             <a href="contact.html" class="rounded-xl ${pageKey === 'contact' ? 'bg-white/10 text-white' : 'text-slate-200 hover:bg-white/10 hover:text-white'} px-4 py-3 text-sm font-semibold">Contact</a>
           </div>
         </div>
@@ -233,6 +246,72 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
       </div>`;
     document.body.appendChild(footer);
+  }
+
+  // Shared "See more info" popup used by HOD, Dept Reps, College Leadership, and Staff.
+  function ensureInfoModal() {
+    let modal = document.querySelector('[data-info-modal]');
+    if (modal) return modal;
+    modal = document.createElement('div');
+    modal.setAttribute('data-info-modal', '');
+    modal.className = 'fixed inset-0 z-[60] hidden items-center justify-center p-4';
+    modal.innerHTML = `
+      <div data-info-overlay class="absolute inset-0 bg-[#061021]/75 backdrop-blur-sm"></div>
+      <button type="button" data-info-close aria-label="Close" class="absolute right-4 top-4 sm:right-6 sm:top-6 z-20 flex h-10 w-10 items-center justify-center rounded-full border border-white/15 bg-white/10 text-xl font-semibold text-white hover:bg-white/20">&times;</button>
+      <div class="relative z-10 max-h-[88vh] w-full max-w-4xl overflow-y-auto rounded-[2rem] border border-white/10 bg-[#081429] text-white shadow-2xl">
+        <div class="grid gap-0 lg:grid-cols-[0.95fr_1.05fr]">
+          <div class="bg-white/5">
+            <img data-info-image src="" alt="" class="hidden h-64 w-full object-cover sm:h-80 lg:h-full" />
+            <div data-info-placeholder class="flex h-64 w-full items-center justify-center sm:h-80 lg:h-full"><span class="text-sm text-slate-400">No photo</span></div>
+          </div>
+          <div class="p-6 sm:p-8">
+            <span data-info-tag class="hidden inline-flex rounded-full bg-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-blue-300"></span>
+            <h3 data-info-name class="mt-3 text-2xl font-black"></h3>
+            <p data-info-role class="mt-1 text-sm font-medium text-slate-300"></p>
+            <p data-info-bio class="mt-4 text-sm leading-6 text-slate-300"></p>
+            <div data-info-contact class="mt-6 space-y-2 text-sm"></div>
+          </div>
+        </div>
+      </div>`;
+    document.body.appendChild(modal);
+    const hide = () => { modal.classList.add('hidden'); modal.classList.remove('flex'); };
+    modal.querySelector('[data-info-close]').addEventListener('click', hide);
+    modal.querySelector('[data-info-overlay]').addEventListener('click', hide);
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') hide(); });
+    return modal;
+  }
+
+  function showInfoModal({ tag, name, role, image, bio, email, phone }) {
+    const modal = ensureInfoModal();
+    const imgEl = modal.querySelector('[data-info-image]');
+    const placeholderEl = modal.querySelector('[data-info-placeholder]');
+    if (image) { imgEl.src = image; imgEl.alt = name || ''; imgEl.classList.remove('hidden'); placeholderEl.classList.add('hidden'); }
+    else { imgEl.classList.add('hidden'); placeholderEl.classList.remove('hidden'); }
+
+    const tagEl = modal.querySelector('[data-info-tag]');
+    if (tag) { tagEl.textContent = tag; tagEl.classList.remove('hidden'); } else { tagEl.classList.add('hidden'); }
+
+    modal.querySelector('[data-info-name]').textContent = name || '';
+    modal.querySelector('[data-info-role]').textContent = role || '';
+    const bioEl = modal.querySelector('[data-info-bio]');
+    bioEl.textContent = bio || '';
+    bioEl.classList.toggle('hidden', !bio);
+
+    const contactEl = modal.querySelector('[data-info-contact]');
+    contactEl.innerHTML = '';
+    if (email) {
+      const p = document.createElement('p');
+      p.innerHTML = `<a href="mailto:${email}" class="text-blue-300 hover:text-blue-200">${email}</a>`;
+      contactEl.appendChild(p);
+    }
+    if (phone) {
+      const p = document.createElement('p');
+      p.innerHTML = `<a href="tel:${phone.replace(/[^+\d]/g, '')}" class="text-blue-300 hover:text-blue-200">${phone}</a>`;
+      contactEl.appendChild(p);
+    }
+
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
   }
 
   function makeSection(title, eyebrow, body) {
@@ -442,14 +521,23 @@ document.addEventListener('DOMContentLoaded', () => {
     // Update page title
     document.title = `${dept.title} - BAMSSA DELSU Chapter`;
 
-    // Fetch HOD and gallery images from Supabase
-    let hodName = '', hodImage = '', galleryImages = [];
+    // Fetch HOD, department president(s), and gallery images from Supabase
+    let hod = null, reps = [], galleryImages = [];
     if (supabaseClient) {
-      const { data: hodData } = await supabaseClient.from('hods').select('name, image_url').eq('department', dept.supabaseName).single();
-      if (hodData) { hodName = hodData.name || ''; hodImage = hodData.image_url || ''; }
+      const { data: hodData } = await supabaseClient.from('hods').select('name, image_url, bio, email, phone').eq('department', dept.supabaseName).single();
+      if (hodData) hod = hodData;
+
+      const { data: admin } = await supabaseClient.from('administrations').select('id').eq('is_current', true).single();
+      let repsQuery = supabaseClient.from('department_reps').select('*').eq('department', dept.supabaseName).order('display_order', { ascending: true });
+      if (admin) repsQuery = repsQuery.eq('administration_id', admin.id);
+      const { data: repsData } = await repsQuery;
+      if (repsData) reps = repsData;
+
       const { data: galleryData } = await supabaseClient.from('gallery').select('image_url, title, caption').eq('department', dept.supabaseName).order('created_at', { ascending: false });
       if (galleryData) galleryImages = galleryData;
     }
+    const hodName = hod ? (hod.name || '') : '';
+    const hodImage = hod ? (hod.image_url || '') : '';
 
     main.innerHTML = `
       <section style="background:#ffffff;">
@@ -474,11 +562,30 @@ document.addEventListener('DOMContentLoaded', () => {
               ? `<img src="${hodImage}" alt="${hodName}" class="rounded-xl object-cover shadow" style="width:80px;height:80px;border:2px solid #fff;" />`
               : `<div class="rounded-xl flex items-center justify-center" style="width:80px;height:80px;background:#e2e8f0;flex-shrink:0;"><span style="color:#94a3b8;font-size:0.75rem;text-align:center;">No<br>photo</span></div>`
             }
-            <div>
+            <div class="flex-1">
               <p class="text-xs font-bold uppercase tracking-widest" style="color:#64748b;">Head of Department</p>
               <p class="text-xl font-black mt-1" style="color:#0f172a;">${hodName || 'Not yet assigned'}</p>
             </div>
+            ${hodName ? `<button type="button" data-info-trigger="hod" class="text-sm font-bold flex-shrink-0" style="color:#2f6df6;">See more info →</button>` : ''}
           </div>
+
+          <!-- DEPARTMENT PRESIDENT -->
+          ${reps.length ? `
+            <div class="mt-5 space-y-4">
+              ${reps.map((rep, i) => `
+                <div class="rounded-2xl p-6 flex items-center gap-5" style="background:#f8fafc;border:1px solid #e2e8f0;">
+                  ${rep.image_url
+                    ? `<img src="${rep.image_url}" alt="${rep.name}" class="rounded-xl object-cover shadow" style="width:80px;height:80px;border:2px solid #fff;" />`
+                    : `<div class="rounded-xl flex items-center justify-center" style="width:80px;height:80px;background:#e2e8f0;flex-shrink:0;"><span style="color:#94a3b8;font-size:0.75rem;text-align:center;">No<br>photo</span></div>`
+                  }
+                  <div class="flex-1">
+                    <p class="text-xs font-bold uppercase tracking-widest" style="color:#64748b;">${rep.role || 'Department President'}</p>
+                    <p class="text-xl font-black mt-1" style="color:#0f172a;">${rep.name}</p>
+                  </div>
+                  <button type="button" data-info-trigger="rep" data-info-index="${i}" class="text-sm font-bold flex-shrink-0" style="color:#2f6df6;">See more info →</button>
+                </div>`).join('')}
+            </div>
+          ` : ''}
 
           <!-- COURSES -->
           <div class="mt-10">
@@ -507,6 +614,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
         </div>
       </section>`;
+
+    main.querySelector('[data-info-trigger="hod"]')?.addEventListener('click', () => {
+      showInfoModal({ tag: 'Head of Department', name: hod.name, role: dept.title, image: hod.image_url, bio: hod.bio, email: hod.email, phone: hod.phone });
+    });
+    main.querySelectorAll('[data-info-trigger="rep"]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const rep = reps[parseInt(btn.dataset.infoIndex)];
+        if (!rep) return;
+        showInfoModal({ tag: dept.title, name: rep.name, role: rep.role, image: rep.image_url, bio: rep.bio, email: rep.email, phone: rep.phone });
+      });
+    });
   }
 
   function renderAchievementDetail(main, detail) {
@@ -586,17 +704,17 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="mb-14">
               <span class="text-xs font-bold uppercase tracking-[0.22em] text-slate-500">College Leadership</span>
               <div class="mt-5 grid gap-5 sm:grid-cols-2">
-                ${leadership.map(l => `
+                ${leadership.map((l, i) => `
                   <article class="flex items-center gap-5 overflow-hidden rounded-[1.75rem] border border-slate-200 bg-slate-50 p-6 shadow-sm">
                     ${l.image
                       ? `<img src="${l.image}" alt="${l.name}" class="h-24 w-24 flex-shrink-0 rounded-2xl object-cover" />`
                       : `<div class="h-24 w-24 flex-shrink-0 rounded-2xl flex items-center justify-center bg-slate-200"><span class="text-xs text-slate-500">No photo</span></div>`
                     }
-                    <div>
+                    <div class="flex-1">
                       <span class="inline-flex rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-medium text-blue-600">${l.role}</span>
                       <h3 class="mt-2 text-xl font-black text-slate-900">${l.name}</h3>
-                      ${l.bio ? `<p class="mt-1 text-sm leading-6 text-slate-600">${l.bio}</p>` : ''}
                     </div>
+                    <button type="button" data-leadership-info="${i}" class="text-sm font-bold text-blue-600 hover:text-blue-700 flex-shrink-0">See more info →</button>
                   </article>`).join('')}
               </div>
             </div>
@@ -604,16 +722,16 @@ document.addEventListener('DOMContentLoaded', () => {
           <div class="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
             ${staff.length ? staff
               .map(
-                (member) => `
+                (member, i) => `
                   <article class="overflow-hidden rounded-[1.75rem] border border-slate-200 bg-white shadow-sm">
                     ${member.image
-                      ? `<img src="${member.image}" alt="${member.name}" class="h-80 w-full object-cover" />`
-                      : `<div class="h-80 w-full flex items-center justify-center bg-slate-100"><span class="text-sm text-slate-400">No photo</span></div>`
+                      ? `<img src="${member.image}" alt="${member.name}" class="h-56 w-full object-cover" />`
+                      : `<div class="h-56 w-full flex items-center justify-center bg-slate-100"><span class="text-sm text-slate-400">No photo</span></div>`
                     }
                     <div class="p-6">
                       <span class="inline-flex rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-700">${member.role}${member.department ? ` · ${member.department}` : ''}</span>
                       <h3 class="mt-3 text-2xl font-black text-slate-900">${member.name}</h3>
-                      ${member.description ? `<p class="mt-3 text-sm leading-6 text-slate-600">${member.description}</p>` : ''}
+                      <button type="button" data-staff-info="${i}" class="mt-3 text-sm font-bold text-blue-600 hover:text-blue-700">See more info →</button>
                     </div>
                   </article>`,
               )
@@ -621,6 +739,21 @@ document.addEventListener('DOMContentLoaded', () => {
           </div>
         </div>
       </section>`;
+
+    main.querySelectorAll('[data-leadership-info]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const l = leadership[parseInt(btn.dataset.leadershipInfo)];
+        if (!l) return;
+        showInfoModal({ tag: 'College Leadership', name: l.name, role: l.role, image: l.image, bio: l.bio });
+      });
+    });
+    main.querySelectorAll('[data-staff-info]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const member = staff[parseInt(btn.dataset.staffInfo)];
+        if (!member) return;
+        showInfoModal({ tag: 'Staff', name: member.name, role: `${member.role}${member.department ? ` · ${member.department}` : ''}`, image: member.image, bio: member.description, email: member.email, phone: member.phone });
+      });
+    });
   }
 
   function renderNews(main, newsItems) {
@@ -986,10 +1119,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   async function fetchHodsData() {
     if (!supabaseClient) return null;
-    const { data, error } = await supabaseClient.from('hods').select('department, name, image_url').order('department', { ascending: true });
+    const { data, error } = await supabaseClient.from('hods').select('department, name, image_url, bio, email, phone').order('department', { ascending: true });
     if (error) return null;
     const result = {};
-    data.forEach(row => { result[row.department] = { name: row.name || '', image: row.image_url || '' }; });
+    data.forEach(row => { result[row.department] = { name: row.name || '', image: row.image_url || '', bio: row.bio || '', email: row.email || '', phone: row.phone || '' }; });
     return result;
   }
 
@@ -1020,7 +1153,9 @@ document.addEventListener('DOMContentLoaded', () => {
         role: row.role,
         department: row.department,
         image: row.image_url,
-        description: row.bio
+        description: row.bio,
+        email: row.email,
+        phone: row.phone
       })),
       leadership: leadershipRows
         .filter(row => row.name)
@@ -1173,6 +1308,40 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // Student Utility dropdown (desktop) - Suggestions + E-Library
+  document.querySelectorAll('[data-student-utility-toggle]').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const menu = btn.parentElement.querySelector('[data-student-utility-menu]');
+      if (menu) menu.classList.toggle('hidden');
+    });
+  });
+  document.addEventListener('click', (e) => {
+    document.querySelectorAll('[data-student-utility-menu]').forEach(menu => {
+      if (!menu.classList.contains('hidden') && !menu.parentElement.contains(e.target)) {
+        menu.classList.add('hidden');
+      }
+    });
+  });
+
+  // E-Library - admin sets a Google Drive link; tapping it goes straight there
+  let _elibraryLink = null;
+  async function goToELibrary() {
+    if (!supabaseClient) { window.alert('E-Library is unavailable right now. Please try again shortly.'); return; }
+    if (!_elibraryLink) {
+      const { data, error } = await supabaseClient.from('site_links').select('url').eq('key', 'e_library').maybeSingle();
+      if (!error && data && data.url) _elibraryLink = data.url;
+    }
+    if (_elibraryLink) {
+      window.open(_elibraryLink, '_blank', 'noopener');
+    } else {
+      window.alert('The E-Library link has not been set up yet. Please check back soon.');
+    }
+  }
+  document.querySelectorAll('[data-elibrary-link]').forEach(btn => {
+    btn.addEventListener('click', () => { goToELibrary(); });
+  });
+
   const eventTabs = document.querySelectorAll('[data-event-filter]');
   const eventCards = document.querySelectorAll('.event-card');
   if (eventTabs.length && eventCards.length) {
@@ -1312,6 +1481,23 @@ document.addEventListener('DOMContentLoaded', () => {
           <img src="${item.image_url}" alt="${item.title || ''}" class="h-64 w-full object-cover transition duration-500 hover:scale-105" loading="lazy" />
         </figure>`).join('');
     })();
+  }
+
+  // HOME DEPARTMENT CARDS - source HOD photo from Supabase, never hardcoded images
+  const deptCardImageEls = document.querySelectorAll('[data-dept-card-image]');
+  if (deptCardImageEls.length && supabaseClient) {
+    (async () => {
+      const hods = await fetchHodsData();
+      deptCardImageEls.forEach(el => {
+        const deptName = el.getAttribute('data-dept-card-image');
+        const hod = hods && hods[deptName];
+        el.innerHTML = (hod && hod.image)
+          ? `<img src="${hod.image}" alt="${deptName}" class="h-full w-full object-cover transition duration-500 group-hover:scale-105" loading="lazy" />`
+          : `<span class="text-xs text-slate-400">No image uploaded</span>`;
+      });
+    })();
+  } else if (deptCardImageEls.length) {
+    deptCardImageEls.forEach(el => { el.innerHTML = '<span class="text-xs text-slate-400">No image uploaded</span>'; });
   }
 
   const leadersGrid = document.getElementById('leaders-grid');

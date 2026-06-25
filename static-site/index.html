@@ -45,7 +45,16 @@
           <a href="gallery.html" class="rounded-full px-4 py-2 text-sm font-semibold text-slate-200 hover:bg-white/10 hover:text-white">Gallery</a>
 <a href="news.html" class="rounded-full px-4 py-2 text-sm font-semibold text-slate-200 hover:bg-white/10 hover:text-white">News</a>
 <a href="staff.html" class="rounded-full px-4 py-2 text-sm font-semibold text-slate-200 hover:bg-white/10 hover:text-white">Staff</a>
-          <a href="suggestions.html" class="rounded-full px-4 py-2 text-sm font-semibold text-slate-200 hover:bg-white/10 hover:text-white">Suggestions</a>
+          <div class="relative" data-student-utility>
+            <button type="button" data-student-utility-toggle class="rounded-full px-4 py-2 text-sm font-semibold text-slate-200 hover:bg-white/10 hover:text-white inline-flex items-center gap-1">
+              Student Utility
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" /></svg>
+            </button>
+            <div data-student-utility-menu class="hidden absolute right-0 mt-2 w-48 rounded-xl border border-white/10 bg-[#0f1f3d] py-2 shadow-2xl z-50">
+              <a href="suggestions.html" class="block px-4 py-2 text-sm text-slate-200 hover:bg-white/10 hover:text-white">Suggestions</a>
+              <button type="button" data-elibrary-link class="block w-full text-left px-4 py-2 text-sm text-slate-200 hover:bg-white/10 hover:text-white">E-Library</button>
+            </div>
+          </div>
           <a href="contact.html" class="rounded-full px-4 py-2 text-sm font-semibold text-slate-200 hover:bg-white/10 hover:text-white">Contact</a>
         </nav>
 
@@ -61,7 +70,11 @@
           <a href="gallery.html" class="rounded-xl px-4 py-3 text-sm font-semibold text-slate-200 hover:bg-white/10 hover:text-white">Gallery</a>
 <a href="news.html" class="rounded-xl px-4 py-3 text-sm font-semibold text-slate-200 hover:bg-white/10 hover:text-white">News</a>
 <a href="staff.html" class="rounded-xl px-4 py-3 text-sm font-semibold text-slate-200 hover:bg-white/10 hover:text-white">Staff</a>
-          <a href="suggestions.html" class="rounded-xl px-4 py-3 text-sm font-semibold text-slate-200 hover:bg-white/10 hover:text-white">Suggestions</a>
+          <div class="mt-1 border-t border-white/10 pt-2">
+            <p class="px-4 pb-1 text-xs font-bold uppercase tracking-wide text-slate-400">Student Utility</p>
+            <a href="suggestions.html" class="block rounded-xl px-4 py-3 text-sm font-semibold text-slate-200 hover:bg-white/10 hover:text-white">Suggestions</a>
+            <button type="button" data-elibrary-link class="block w-full text-left rounded-xl text-slate-200 hover:bg-white/10 hover:text-white px-4 py-3 text-sm font-semibold">E-Library</button>
+          </div>
             <a href="contact.html" class="rounded-xl px-4 py-3 text-sm font-semibold text-slate-200 hover:bg-white/10 hover:text-white">Contact</a>
           </div>
         </div>
@@ -225,8 +238,8 @@
 
         <div class="mt-10 grid gap-5 md:grid-cols-3">
           <a href="departments.html" class="group overflow-hidden rounded-[1.75rem] border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-xl">
-            <div class="aspect-[4/3] overflow-hidden bg-slate-100">
-              <img src="assets/anatomy.webp" alt="Anatomy" class="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
+            <div class="aspect-[4/3] overflow-hidden bg-slate-100 flex items-center justify-center" data-dept-card-image="Anatomy">
+              <span class="text-xs text-slate-400">Loading…</span>
             </div>
             <div class="p-6">
               <p class="text-xs font-bold uppercase tracking-[0.22em] text-slate-500">Anatomy</p>
@@ -236,8 +249,8 @@
           </a>
 
           <a href="departments.html" class="group overflow-hidden rounded-[1.75rem] border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-xl">
-            <div class="aspect-[4/3] overflow-hidden bg-slate-100">
-              <img src="assets/physiology.webp" alt="Physiology" class="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
+            <div class="aspect-[4/3] overflow-hidden bg-slate-100 flex items-center justify-center" data-dept-card-image="Physiology">
+              <span class="text-xs text-slate-400">Loading…</span>
             </div>
             <div class="p-6">
               <p class="text-xs font-bold uppercase tracking-[0.22em] text-slate-500">Physiology</p>
@@ -247,8 +260,8 @@
           </a>
 
           <a href="departments.html" class="group overflow-hidden rounded-[1.75rem] border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-xl">
-            <div class="aspect-[4/3] overflow-hidden bg-slate-100">
-              <img src="assets/biochemistry.webp" alt="Biochemistry" class="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
+            <div class="aspect-[4/3] overflow-hidden bg-slate-100 flex items-center justify-center" data-dept-card-image="Biochemistry">
+              <span class="text-xs text-slate-400">Loading…</span>
             </div>
             <div class="p-6">
               <p class="text-xs font-bold uppercase tracking-[0.22em] text-slate-500">Biochemistry</p>
