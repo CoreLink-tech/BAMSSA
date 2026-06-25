@@ -1,7 +1,7 @@
 // BAMSSA Admin Dashboard
 // Sections: Auth, Overview, Administrations, Achievements, Executives, Department Reps, HODs, Gallery
 
-const SECTIONS = ['Overview', 'Administrations', 'Achievements', 'Executives', 'Department Reps', 'HODs', 'Staff', 'News & Updates', 'Gallery', 'Suggestions'];
+const SECTIONS = ['Overview', 'Administrations', 'Achievements', 'Executives', 'Department Reps', 'HODs', 'Staff', 'News & Updates', 'Gallery', 'E-Library', 'Suggestions'];
 
 document.addEventListener('DOMContentLoaded', async () => {
   const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
@@ -219,6 +219,8 @@ function renderSection(section) {
     renderNews(content, title);
   } else if (section === 'Gallery') {
     renderGallery(content, title);
+  } else if (section === 'E-Library') {
+    renderELibrary(content, title);
   } else if (section === 'Suggestions') {
     renderSuggestions(content, title);
   } else {
@@ -941,7 +943,24 @@ async function renderHODs(content, title) {
         ${editing ? `
           <form id="hod-form" class="space-y-4">
             <h3 class="text-lg font-semibold text-slate-900 mb-4">${escapeHtml(hod.department)} HOD</h3>
-            <input type="text" id="hod-name" value="${escapeHtml(hod.name)}" required class="w-full px-4 py-2 rounded-lg border border-slate-300 focus:outline-none focus:border-[#2f6df6]" />
+            <div>
+              <label class="block text-sm font-medium text-slate-700 mb-1">Full Name</label>
+              <input type="text" id="hod-name" value="${escapeHtml(hod.name)}" required class="w-full px-4 py-2 rounded-lg border border-slate-300 focus:outline-none focus:border-[#2f6df6]" />
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-medium text-slate-700 mb-1">Email</label>
+                <input type="email" id="hod-email" value="${escapeHtml(hod.email || '')}" class="w-full px-4 py-2 rounded-lg border border-slate-300 focus:outline-none focus:border-[#2f6df6]" />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-slate-700 mb-1">Phone</label>
+                <input type="tel" id="hod-phone" value="${escapeHtml(hod.phone || '')}" class="w-full px-4 py-2 rounded-lg border border-slate-300 focus:outline-none focus:border-[#2f6df6]" />
+              </div>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-slate-700 mb-1">Bio</label>
+              <textarea id="hod-bio" rows="3" class="w-full px-4 py-2 rounded-lg border border-slate-300 focus:outline-none focus:border-[#2f6df6]">${escapeHtml(hod.bio || '')}</textarea>
+            </div>
             <div>
               <label class="block text-sm font-medium text-slate-700 mb-1">Photo</label>
               <input type="file" id="hod-photo" accept="image/*" class="w-full px-4 py-2 rounded-lg border border-slate-300 focus:outline-none focus:border-[#2f6df6]" />
@@ -966,7 +985,7 @@ async function renderHODs(content, title) {
   content.innerHTML = `
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
       ${depts.map(d => {
-        const hod = data.find(h => h.department === d) || { department: d, name: '', image_url: '' };
+        const hod = data.find(h => h.department === d) || { department: d, name: '', image_url: '', bio: '', email: '', phone: '' };
         return renderHODCard(hod);
       }).join('')}
     </div>
@@ -983,6 +1002,9 @@ async function renderHODs(content, title) {
     document.getElementById('hod-form').addEventListener('submit', async (e) => {
       e.preventDefault();
       const name = document.getElementById('hod-name').value.trim();
+      const email = document.getElementById('hod-email').value.trim();
+      const phone = document.getElementById('hod-phone').value.trim();
+      const bio = document.getElementById('hod-bio').value.trim();
       const photoFile = document.getElementById('hod-photo').files[0];
       
       let image_url = data.find(h => h.department === window._editingHodId)?.image_url || null;
@@ -992,7 +1014,7 @@ async function renderHODs(content, title) {
         image_url = url;
       }
       
-      const { error } = await supabase.from('hods').upsert({ department: window._editingHodId, name, image_url }, { onConflict: ['department'] });
+      const { error } = await supabase.from('hods').upsert({ department: window._editingHodId, name, email, phone, bio, image_url }, { onConflict: ['department'] });
       if (error) { showToast(error.message, 'error'); } else { showToast('HOD updated', 'success'); delete window._editingHodId; renderSection('HODs'); }
     });
     
@@ -1448,6 +1470,38 @@ async function editNews(id) {
   });
 
   document.getElementById('edit-news-cancel').addEventListener('click', () => { renderSection('News & Updates'); });
+}
+
+// E-LIBRARY
+
+async function renderELibrary(content, title) {
+  title.textContent = 'E-Library';
+
+  const { data, error } = await supabase.from('site_links').select('*').eq('key', 'e_library').maybeSingle();
+  if (error) { showToast('Failed to load E-Library link', 'error'); return; }
+
+  content.innerHTML = `
+    <div class="bg-white rounded-[1.75rem] border border-slate-200 shadow-sm p-6 max-w-xl">
+      <h3 class="text-lg font-semibold text-slate-900 mb-2">E-Library Link</h3>
+      <p class="text-sm text-slate-500 mb-4">Paste the Google Drive link students should land on when they tap "E-Library" in the navbar.</p>
+      <form id="elibrary-form" class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-slate-700 mb-1">Google Drive Link</label>
+          <input type="url" id="elibrary-url" required placeholder="https://drive.google.com/..." value="${data && data.url ? escapeHtml(data.url) : ''}" class="w-full px-4 py-2 rounded-lg border border-slate-300 focus:outline-none focus:border-[#2f6df6]" />
+        </div>
+        <button type="submit" class="px-6 py-2 rounded-lg bg-[#2f6df6] text-white font-semibold hover:bg-blue-600 transition">Save Link</button>
+      </form>
+      ${data && data.url ? `<p class="mt-4 text-xs text-slate-500">Currently live: <a href="${escapeHtml(data.url)}" target="_blank" class="text-[#2f6df6] hover:underline">${escapeHtml(data.url)}</a></p>` : '<p class="mt-4 text-xs text-slate-500">No link set yet — the E-Library button will tell students to check back soon.</p>'}
+    </div>
+  `;
+
+  document.getElementById('elibrary-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const url = document.getElementById('elibrary-url').value.trim();
+    if (!/^https?:\/\//i.test(url)) { showToast('Please enter a valid link starting with http:// or https://', 'error'); return; }
+    const { error: upsertErr } = await supabase.from('site_links').upsert({ key: 'e_library', url, updated_at: new Date().toISOString() }, { onConflict: ['key'] });
+    if (upsertErr) { showToast(upsertErr.message, 'error'); } else { showToast('E-Library link saved', 'success'); renderSection('E-Library'); }
+  });
 }
 
 // GALLERY
