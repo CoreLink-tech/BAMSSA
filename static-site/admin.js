@@ -1,7 +1,7 @@
 // BAMSSA Admin Dashboard
 // Sections: Auth, Overview, Administrations, Achievements, Executives, Department Reps, HODs, Gallery
 
-const SECTIONS = ['Overview', 'Administrations', 'Achievements', 'Executives', 'Department Reps', 'HODs', 'Staff', 'News & Updates', 'Gallery', 'E-Library', 'Suggestions'];
+const SECTIONS = ['Overview', 'Administrations', 'Achievements', 'Executives', 'Department Reps', 'HODs', 'Staff', 'News & Updates', 'Gallery', 'E-Library', 'Marketplace', 'Suggestions'];
 
 document.addEventListener('DOMContentLoaded', async () => {
   const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
@@ -221,6 +221,8 @@ function renderSection(section) {
     renderGallery(content, title);
   } else if (section === 'E-Library') {
     renderELibrary(content, title);
+  } else if (section === 'Marketplace') {
+    renderMarketplaceAdmin(content, title);
   } else if (section === 'Suggestions') {
     renderSuggestions(content, title);
   } else {
@@ -1470,6 +1472,53 @@ async function editNews(id) {
   });
 
   document.getElementById('edit-news-cancel').addEventListener('click', () => { renderSection('News & Updates'); });
+}
+
+// MARKETPLACE (moderation only — listings are posted publicly with no login)
+
+async function renderMarketplaceAdmin(content, title) {
+  title.textContent = 'Marketplace';
+
+  const { data, error } = await supabase.from('marketplace_products').select('*').order('created_at', { ascending: false });
+  if (error) { showToast('Failed to load marketplace listings', 'error'); return; }
+
+  function isExpired(p) { return new Date(p.expires_at).getTime() < Date.now(); }
+
+  content.innerHTML = `
+    <p class="text-sm text-slate-500 mb-4">Anyone can post a listing without logging in. Use this page to remove anything inappropriate or spammy before its 5-day window ends.</p>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+      ${data.length ? data.map(p => `
+        <div class="bg-white rounded-[1.75rem] border border-slate-200 shadow-sm overflow-hidden flex flex-col">
+          ${p.image_urls && p.image_urls[0] ? `<img src="${escapeHtml(p.image_urls[0])}" class="h-40 w-full object-cover" />` : ''}
+          <div class="p-4 flex-1 flex flex-col">
+            <span class="inline-flex rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-700 self-start">${escapeHtml(p.category || 'Other')}</span>
+            <h4 class="text-lg font-semibold text-slate-900 mt-2">${escapeHtml(p.title)}</h4>
+            <p class="text-sm text-slate-600">₦${Number(p.price).toLocaleString()}</p>
+            <p class="text-xs text-slate-500 mt-1">WhatsApp: ${escapeHtml(p.whatsapp_number)}</p>
+            <p class="text-xs ${isExpired(p) ? 'text-red-500' : 'text-slate-400'} mt-1">${isExpired(p) ? 'Expired' : 'Expires'} ${new Date(p.expires_at).toLocaleDateString()}</p>
+            <div class="mt-auto pt-4">
+              <button data-action="delete-product" data-id="${p.id}" class="w-full text-xs px-3 py-1.5 rounded-full bg-red-50 text-red-600 hover:bg-red-100 transition">Delete Listing</button>
+            </div>
+          </div>
+        </div>
+      `).join('') : '<p class="text-slate-500 col-span-full">No marketplace listings yet.</p>'}
+    </div>
+  `;
+
+  document.querySelectorAll('[data-action="delete-product"]').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const id = btn.dataset.id;
+      const product = data.find(p => p.id === id);
+      const confirmed = await showConfirm('Delete this listing? This cannot be undone.');
+      if (!confirmed) return;
+      if (product && product.image_urls && product.image_urls.length) {
+        const paths = product.image_urls.map(url => url.split('/').pop());
+        await supabase.storage.from('marketplace').remove(paths);
+      }
+      const { error: delErr } = await supabase.from('marketplace_products').delete().eq('id', id);
+      if (delErr) { showToast(delErr.message, 'error'); } else { showToast('Listing deleted', 'success'); renderSection('Marketplace'); }
+    });
+  });
 }
 
 // E-LIBRARY

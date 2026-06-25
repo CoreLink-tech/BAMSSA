@@ -139,6 +139,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <a href="about.html" class="${pageKey === 'about' ? 'rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-white' : 'rounded-full px-4 py-2 text-sm font-semibold text-slate-200 hover:bg-white/10 hover:text-white'}">About</a>
             <a href="departments.html" class="${pageKey === 'departments' ? 'rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-white' : 'rounded-full px-4 py-2 text-sm font-semibold text-slate-200 hover:bg-white/10 hover:text-white'}">Departments</a>
             <a href="gallery.html" class="${pageKey === 'gallery' ? 'rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-white' : 'rounded-full px-4 py-2 text-sm font-semibold text-slate-200 hover:bg-white/10 hover:text-white'}">Gallery</a>
+            <a href="marketplace.html" class="${pageKey === 'marketplace' ? 'rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-white' : 'rounded-full px-4 py-2 text-sm font-semibold text-slate-200 hover:bg-white/10 hover:text-white'}">Marketplace</a>
             <a href="news.html" class="${pageKey === 'news' ? 'rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-white' : 'rounded-full px-4 py-2 text-sm font-semibold text-slate-200 hover:bg-white/10 hover:text-white'}">News</a>
             <a href="staff.html" class="${pageKey === 'staff' ? 'rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-white' : 'rounded-full px-4 py-2 text-sm font-semibold text-slate-200 hover:bg-white/10 hover:text-white'}">Staff</a>
             <a href="executives.html" class="${pageKey === 'executives' ? 'rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-white' : 'rounded-full px-4 py-2 text-sm font-semibold text-slate-200 hover:bg-white/10 hover:text-white'}">Executives</a>
@@ -162,6 +163,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <a href="about.html" class="rounded-xl ${pageKey === 'about' ? 'bg-white/10 text-white' : 'text-slate-200 hover:bg-white/10 hover:text-white'} px-4 py-3 text-sm font-semibold">About</a>
             <a href="departments.html" class="rounded-xl ${pageKey === 'departments' ? 'bg-white/10 text-white' : 'text-slate-200 hover:bg-white/10 hover:text-white'} px-4 py-3 text-sm font-semibold">Departments</a>
             <a href="gallery.html" class="rounded-xl ${pageKey === 'gallery' ? 'bg-white/10 text-white' : 'text-slate-200 hover:bg-white/10 hover:text-white'} px-4 py-3 text-sm font-semibold">Gallery</a>
+            <a href="marketplace.html" class="rounded-xl ${pageKey === 'marketplace' ? 'bg-white/10 text-white' : 'text-slate-200 hover:bg-white/10 hover:text-white'} px-4 py-3 text-sm font-semibold">Marketplace</a>
             <a href="news.html" class="rounded-xl ${pageKey === 'news' ? 'bg-white/10 text-white' : 'text-slate-200 hover:bg-white/10 hover:text-white'} px-4 py-3 text-sm font-semibold">News</a>
             <a href="staff.html" class="rounded-xl ${pageKey === 'staff' ? 'bg-white/10 text-white' : 'text-slate-200 hover:bg-white/10 hover:text-white'} px-4 py-3 text-sm font-semibold">Staff</a>
             <a href="executives.html" class="rounded-xl ${pageKey === 'executives' ? 'bg-white/10 text-white' : 'text-slate-200 hover:bg-white/10 hover:text-white'} px-4 py-3 text-sm font-semibold">Executives</a>
@@ -225,6 +227,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <h4 class="text-sm font-bold uppercase tracking-[0.22em] text-slate-300">Students</h4>
             <ul class="mt-4 space-y-3">
               <li><a href="news.html" class="text-sm text-slate-300 hover:text-white">News &amp; Updates</a></li>
+              <li><a href="marketplace.html" class="text-sm text-slate-300 hover:text-white">Market Place</a></li>
               <li><a href="staff.html" class="text-sm text-slate-300 hover:text-white">Staff</a></li>
               <li><a href="contact.html" class="text-sm text-slate-300 hover:text-white">Contact Us</a></li>
             </ul>
@@ -1189,6 +1192,321 @@ document.addEventListener('DOMContentLoaded', () => {
     return { achievement, images: images || [] };
   }
 
+  // ===== MARKETPLACE =====
+
+  const MARKETPLACE_CATEGORIES = ['Textbooks', 'Electronics', 'Fashion', 'Lab Equipment', 'Services', 'Other'];
+
+  // Compress + resize an image client-side before it ever reaches Supabase storage.
+  async function compressMarketplaceImage(file, maxDimension = 1280, quality = 0.7) {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        img.onload = () => {
+          let { naturalWidth: w, naturalHeight: h } = img;
+          if (w > maxDimension || h > maxDimension) {
+            if (w >= h) { h = Math.round(h * (maxDimension / w)); w = maxDimension; }
+            else { w = Math.round(w * (maxDimension / h)); h = maxDimension; }
+          }
+          const canvas = document.createElement('canvas');
+          canvas.width = w;
+          canvas.height = h;
+          canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+          canvas.toBlob((blob) => {
+            if (!blob) { reject(new Error('Compression failed')); return; }
+            const newName = file.name.replace(/\.[^.]+$/, '') + '.webp';
+            resolve(new File([blob], newName, { type: 'image/webp' }));
+          }, 'image/webp', quality);
+        };
+        img.onerror = () => reject(new Error('Could not read image'));
+        img.src = e.target.result;
+      };
+      reader.onerror = () => reject(new Error('Could not read file'));
+      reader.readAsDataURL(file);
+    });
+  }
+
+  function formatNaira(amount) {
+    const n = Number(amount) || 0;
+    return '₦' + n.toLocaleString('en-NG');
+  }
+
+  function whatsappDigits(raw) {
+    let digits = (raw || '').replace(/[^\d]/g, '');
+    if (digits.startsWith('0')) digits = '234' + digits.slice(1);
+    else if (digits.startsWith('234')) { /* already fine */ }
+    else if (!digits.startsWith('234')) digits = '234' + digits;
+    return digits;
+  }
+
+  function daysLeft(expiresAt) {
+    const ms = new Date(expiresAt).getTime() - Date.now();
+    return Math.max(0, Math.ceil(ms / (1000 * 60 * 60 * 24)));
+  }
+
+  function ensureProductModal() {
+    let modal = document.querySelector('[data-product-modal]');
+    if (modal) return modal;
+    modal = document.createElement('div');
+    modal.setAttribute('data-product-modal', '');
+    modal.className = 'fixed inset-0 z-[60] hidden items-center justify-center p-4';
+    modal.innerHTML = `
+      <div data-product-overlay class="absolute inset-0 bg-[#061021]/75 backdrop-blur-sm"></div>
+      <button type="button" data-product-close aria-label="Close" class="absolute right-4 top-4 sm:right-6 sm:top-6 z-20 flex h-10 w-10 items-center justify-center rounded-full border border-white/15 bg-white/10 text-xl font-semibold text-white hover:bg-white/20">&times;</button>
+      <div class="relative z-10 max-h-[88vh] w-full max-w-2xl overflow-y-auto rounded-[2rem] border border-white/10 bg-[#081429] text-white shadow-2xl">
+        <div data-product-main-image class="flex h-72 w-full items-center justify-center overflow-hidden bg-white/5 sm:h-96">
+          <img data-product-image src="" alt="" class="hidden h-full w-full object-cover" />
+          <span data-product-placeholder class="text-sm text-slate-400">No photo</span>
+        </div>
+        <div data-product-thumbs class="hidden gap-2 overflow-x-auto bg-black/20 p-3"></div>
+        <div class="p-6 sm:p-8">
+          <span data-product-tag class="inline-flex rounded-full bg-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-blue-300"></span>
+          <h3 data-product-title class="mt-3 text-2xl font-black"></h3>
+          <p data-product-price class="mt-1 text-xl font-bold" style="color:#4ade80;"></p>
+          <p data-product-desc class="mt-4 text-sm leading-6 text-slate-300"></p>
+          <p data-product-expiry class="mt-4 text-xs text-slate-400"></p>
+          <a data-product-buy target="_blank" rel="noopener" class="mt-4 inline-flex items-center gap-2 rounded-full bg-[#22c55e] px-6 py-3 text-sm font-bold text-white hover:bg-[#16a34a] transition">Buy Now on WhatsApp →</a>
+        </div>
+      </div>`;
+    document.body.appendChild(modal);
+    const hide = () => { modal.classList.add('hidden'); modal.classList.remove('flex'); };
+    modal.querySelector('[data-product-close]').addEventListener('click', hide);
+    modal.querySelector('[data-product-overlay]').addEventListener('click', hide);
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') hide(); });
+    return modal;
+  }
+
+  function showProductModal(product) {
+    const modal = ensureProductModal();
+    const images = (product.image_urls && product.image_urls.length) ? product.image_urls : [];
+    const mainImg = modal.querySelector('[data-product-image]');
+    const placeholder = modal.querySelector('[data-product-placeholder]');
+    const thumbsWrap = modal.querySelector('[data-product-thumbs]');
+    let activeIdx = 0;
+
+    function paintMain() {
+      if (images.length) {
+        mainImg.src = images[activeIdx];
+        mainImg.alt = product.title;
+        mainImg.classList.remove('hidden');
+        placeholder.classList.add('hidden');
+      } else {
+        mainImg.classList.add('hidden');
+        placeholder.classList.remove('hidden');
+      }
+    }
+
+    thumbsWrap.innerHTML = '';
+    if (images.length > 1) {
+      thumbsWrap.classList.remove('hidden');
+      thumbsWrap.classList.add('flex');
+      images.forEach((url, i) => {
+        const t = document.createElement('img');
+        t.src = url;
+        t.className = 'h-14 w-14 flex-shrink-0 rounded-lg object-cover cursor-pointer border-2 ' + (i === 0 ? 'border-blue-400' : 'border-transparent');
+        t.addEventListener('click', () => {
+          activeIdx = i;
+          paintMain();
+          thumbsWrap.querySelectorAll('img').forEach((el, j) => el.classList.toggle('border-blue-400', j === i));
+        });
+        thumbsWrap.appendChild(t);
+      });
+    } else {
+      thumbsWrap.classList.add('hidden');
+      thumbsWrap.classList.remove('flex');
+    }
+    paintMain();
+
+    modal.querySelector('[data-product-tag]').textContent = product.category || 'Marketplace';
+    modal.querySelector('[data-product-title]').textContent = product.title;
+    modal.querySelector('[data-product-price]').textContent = formatNaira(product.price);
+    const descEl = modal.querySelector('[data-product-desc]');
+    descEl.textContent = product.description || '';
+    descEl.classList.toggle('hidden', !product.description);
+
+    const left = daysLeft(product.expires_at);
+    modal.querySelector('[data-product-expiry]').textContent = left > 0 ? `Listing active for ${left} more day${left === 1 ? '' : 's'}` : 'Listing expiring soon';
+
+    const message = encodeURIComponent(`Hi, I saw your "${product.title}" listing on the BAMSSA Market Place for ${formatNaira(product.price)}. Is it still available?`);
+    modal.querySelector('[data-product-buy]').href = `https://wa.me/${whatsappDigits(product.whatsapp_number)}?text=${message}`;
+
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+  }
+
+  async function loadMarketplaceProducts(grid, category) {
+    grid.innerHTML = '<p class="col-span-full text-center text-slate-500 py-16">Loading listings…</p>';
+    if (!supabaseClient) { grid.innerHTML = '<p class="col-span-full text-center text-slate-500 py-16">Marketplace is unavailable right now.</p>'; return; }
+    let query = supabaseClient.from('marketplace_products').select('*').order('created_at', { ascending: false });
+    if (category && category !== 'All') query = query.eq('category', category);
+    const { data, error } = await query;
+    if (error) { grid.innerHTML = '<p class="col-span-full text-center text-slate-500 py-16">Could not load listings. Please refresh.</p>'; return; }
+    if (!data.length) { grid.innerHTML = '<p class="col-span-full text-center text-slate-500 py-16">No products listed yet. Be the first to add one!</p>'; return; }
+
+    grid.innerHTML = data.map((p, i) => `
+      <button type="button" data-product-card="${i}" class="text-left overflow-hidden rounded-[1.75rem] border border-slate-200 bg-white shadow-sm hover:shadow-lg transition">
+        ${p.image_urls && p.image_urls[0]
+          ? `<img src="${p.image_urls[0]}" alt="${p.title}" class="h-48 w-full object-cover" loading="lazy" />`
+          : `<div class="h-48 w-full flex items-center justify-center bg-slate-100"><span class="text-sm text-slate-400">No photo</span></div>`
+        }
+        <div class="p-4">
+          <span class="inline-flex rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-700">${p.category || 'Other'}</span>
+          <h3 class="mt-2 text-lg font-black text-slate-900 truncate">${p.title}</h3>
+          <p class="mt-1 text-base font-bold text-blue-600">${formatNaira(p.price)}</p>
+        </div>
+      </button>`).join('');
+
+    grid.querySelectorAll('[data-product-card]').forEach(btn => {
+      btn.addEventListener('click', () => showProductModal(data[parseInt(btn.dataset.productCard)]));
+    });
+  }
+
+  function renderMarketplace(main) {
+    main.innerHTML = `
+      <section class="border-b border-white/10 bg-[#0b1c39] text-white">
+        <div class="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
+          <span class="text-xs font-bold uppercase tracking-[0.22em] text-slate-300">Market Place</span>
+          <h1 class="mt-3 max-w-3xl text-4xl font-black tracking-tight sm:text-5xl">Buy and sell within BAMSSA.</h1>
+          <p class="mt-5 max-w-3xl text-lg leading-8 text-slate-200">List textbooks, gadgets, and more for fellow students. No account needed — just post, and buyers reach you directly on WhatsApp. Listings run for 5 days.</p>
+          <button type="button" id="mp-add-toggle" class="mt-7 inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-bold text-[#0b1c39] hover:bg-slate-100 transition">+ Add Product</button>
+        </div>
+      </section>
+
+      <section id="mp-add-section" class="hidden border-b border-slate-200 bg-slate-50">
+        <div class="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8">
+          <h2 class="text-2xl font-black text-slate-900 mb-1">List a product</h2>
+          <p class="text-sm text-slate-500 mb-6">Buyers will see exactly what you enter here, and will reach you on the WhatsApp number you provide.</p>
+          <form id="mp-add-form" class="space-y-4 bg-white rounded-[1.75rem] border border-slate-200 shadow-sm p-6">
+            <div>
+              <label class="block text-sm font-medium text-slate-700 mb-1">Product Title</label>
+              <input type="text" id="mp-title" required class="w-full px-4 py-2 rounded-lg border border-slate-300 focus:outline-none focus:border-[#2f6df6]" />
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-medium text-slate-700 mb-1">Category</label>
+                <select id="mp-category" class="w-full px-4 py-2 rounded-lg border border-slate-300 focus:outline-none focus:border-[#2f6df6]">
+                  ${MARKETPLACE_CATEGORIES.map(c => `<option value="${c}">${c}</option>`).join('')}
+                </select>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-slate-700 mb-1">Price (₦)</label>
+                <input type="number" id="mp-price" min="0" step="1" required class="w-full px-4 py-2 rounded-lg border border-slate-300 focus:outline-none focus:border-[#2f6df6]" />
+              </div>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-slate-700 mb-1">Your WhatsApp Number</label>
+              <input type="tel" id="mp-whatsapp" required placeholder="080..." class="w-full px-4 py-2 rounded-lg border border-slate-300 focus:outline-none focus:border-[#2f6df6]" />
+              <p class="text-xs text-slate-400 mt-1">Buyers will message you here. This is shown to anyone who views your listing.</p>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-slate-700 mb-1">Description</label>
+              <textarea id="mp-description" rows="3" required class="w-full px-4 py-2 rounded-lg border border-slate-300 focus:outline-none focus:border-[#2f6df6]"></textarea>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-slate-700 mb-1">Photos (up to 4)</label>
+              <input type="file" id="mp-photos" accept="image/*" multiple class="w-full px-4 py-2 rounded-lg border border-slate-300 focus:outline-none focus:border-[#2f6df6]" />
+              <div id="mp-photo-preview" class="mt-2 flex gap-2 flex-wrap"></div>
+            </div>
+            <div class="flex gap-3 items-center">
+              <button type="submit" id="mp-submit-btn" class="px-6 py-2 rounded-lg bg-[#2f6df6] text-white font-semibold hover:bg-blue-600 transition disabled:opacity-50">Post Listing</button>
+              <button type="button" id="mp-cancel" class="px-6 py-2 rounded-lg bg-slate-200 text-slate-700 hover:bg-slate-300 transition">Cancel</button>
+              <span id="mp-submit-status" class="text-sm text-slate-500"></span>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <section class="bg-white text-slate-900">
+        <div class="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+          <div id="mp-category-filter" class="flex gap-2 mb-8 flex-wrap">
+            ${['All', ...MARKETPLACE_CATEGORIES].map(c => `<button type="button" data-mp-filter="${c}" class="rounded-full px-4 py-2 text-sm font-semibold border ${c === 'All' ? 'bg-[#0b1c39] text-white border-[#0b1c39]' : 'bg-white text-slate-700 border-slate-200 hover:border-slate-400'}">${c}</button>`).join('')}
+          </div>
+          <div id="mp-grid" class="grid gap-5 md:grid-cols-2 xl:grid-cols-3"></div>
+        </div>
+      </section>`;
+
+    const grid = document.getElementById('mp-grid');
+    let currentCategory = 'All';
+    loadMarketplaceProducts(grid, currentCategory);
+
+    document.querySelectorAll('[data-mp-filter]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('[data-mp-filter]').forEach(b => b.className = 'rounded-full px-4 py-2 text-sm font-semibold border bg-white text-slate-700 border-slate-200 hover:border-slate-400');
+        btn.className = 'rounded-full px-4 py-2 text-sm font-semibold border bg-[#0b1c39] text-white border-[#0b1c39]';
+        currentCategory = btn.dataset.mpFilter;
+        loadMarketplaceProducts(grid, currentCategory);
+      });
+    });
+
+    const addSection = document.getElementById('mp-add-section');
+    document.getElementById('mp-add-toggle').addEventListener('click', () => {
+      addSection.classList.toggle('hidden');
+      if (!addSection.classList.contains('hidden')) addSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+    document.getElementById('mp-cancel').addEventListener('click', () => { addSection.classList.add('hidden'); });
+
+    document.getElementById('mp-photos').addEventListener('change', (e) => {
+      const preview = document.getElementById('mp-photo-preview');
+      preview.innerHTML = '';
+      Array.from(e.target.files).slice(0, 4).forEach(file => {
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+          const img = document.createElement('img');
+          img.src = ev.target.result;
+          img.className = 'h-16 w-16 rounded-lg object-cover';
+          preview.appendChild(img);
+        };
+        reader.readAsDataURL(file);
+      });
+    });
+
+    document.getElementById('mp-add-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const submitBtn = document.getElementById('mp-submit-btn');
+      const status = document.getElementById('mp-submit-status');
+      const files = Array.from(document.getElementById('mp-photos').files).slice(0, 4);
+      if (!files.length) { status.textContent = 'Please add at least one photo.'; return; }
+
+      submitBtn.disabled = true;
+      const imageUrls = [];
+      try {
+        for (let i = 0; i < files.length; i++) {
+          status.textContent = `Compressing photo ${i + 1} of ${files.length}…`;
+          const compressed = await compressMarketplaceImage(files[i]);
+          status.textContent = `Uploading photo ${i + 1} of ${files.length}…`;
+          const fileName = `${Date.now()}_${Math.random().toString(36).slice(2)}.webp`;
+          const { error: upErr } = await supabaseClient.storage.from('marketplace').upload(fileName, compressed);
+          if (upErr) throw upErr;
+          const { data: urlData } = supabaseClient.storage.from('marketplace').getPublicUrl(fileName);
+          imageUrls.push(urlData.publicUrl);
+        }
+
+        status.textContent = 'Publishing listing…';
+        const payload = {
+          title: document.getElementById('mp-title').value.trim(),
+          category: document.getElementById('mp-category').value,
+          price: parseFloat(document.getElementById('mp-price').value) || 0,
+          whatsapp_number: document.getElementById('mp-whatsapp').value.trim(),
+          description: document.getElementById('mp-description').value.trim(),
+          image_urls: imageUrls
+        };
+        const { error: insertErr } = await supabaseClient.from('marketplace_products').insert([payload]);
+        if (insertErr) throw insertErr;
+
+        status.textContent = 'Listed! Visible for 5 days.';
+        document.getElementById('mp-add-form').reset();
+        document.getElementById('mp-photo-preview').innerHTML = '';
+        setTimeout(() => { addSection.classList.add('hidden'); status.textContent = ''; }, 1500);
+        loadMarketplaceProducts(grid, currentCategory);
+      } catch (err) {
+        console.error(err);
+        status.textContent = 'Something went wrong. Please try again.';
+      } finally {
+        submitBtn.disabled = false;
+      }
+    });
+  }
+
   async function renderPageAsync(pageKey, main) {
     switch (pageKey) {
       case 'executives': {
@@ -1242,6 +1560,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (detail) { renderAchievementDetail(main, detail); } else { injectError(main); }
         break;
       }
+      case 'marketplace': {
+        renderMarketplace(main);
+        break;
+      }
       default:
         renderPage(pageKey, main);
     }
@@ -1288,7 +1610,7 @@ document.addEventListener('DOMContentLoaded', () => {
       injectHero(pageConfigs[pageKey]);
     }
     document.body.classList.add('js-ready');
-    if (['executives', 'gallery', 'departments', 'suggestions', 'department-detail', 'news', 'staff', 'about', 'achievement-detail'].includes(pageKey)) {
+    if (['executives', 'gallery', 'departments', 'suggestions', 'department-detail', 'news', 'staff', 'about', 'achievement-detail', 'marketplace'].includes(pageKey)) {
       if (supabaseClient) {
         renderPageAsync(pageKey, main);
       } else {
