@@ -142,16 +142,21 @@ document.addEventListener('DOMContentLoaded', () => {
             <a href="staff.html" class="${pageKey === 'staff' ? 'rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-white' : 'rounded-full px-4 py-2 text-sm font-semibold text-slate-200 hover:bg-white/10 hover:text-white'}">Staff</a>
             <a href="executives.html" class="${pageKey === 'executives' ? 'rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-white' : 'rounded-full px-4 py-2 text-sm font-semibold text-slate-200 hover:bg-white/10 hover:text-white'}">Executives</a>
             <div class="relative" data-student-utility>
-              <button type="button" data-student-utility-toggle class="${['suggestions','news','marketplace','contact'].includes(pageKey) ? 'rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-white' : 'rounded-full px-4 py-2 text-sm font-semibold text-slate-200 hover:bg-white/10 hover:text-white'} inline-flex items-center gap-1">
+              <button type="button" data-student-utility-toggle class="${['suggestions', 'news', 'contact', 'marketplace'].includes(pageKey) ? 'border border-blue-300/40 bg-white/15 px-4 py-2 text-sm font-semibold text-white' : 'border border-white/15 bg-white/5 px-4 py-2 text-sm font-semibold text-slate-200 hover:bg-white/10 hover:text-white'} relative rounded-full inline-flex items-center gap-1.5">
                 Student Utility
+                <span data-student-utility-badge class="flex h-4 w-4 items-center justify-center rounded-full bg-blue-500 text-[10px] font-bold text-white">5</span>
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" /></svg>
               </button>
+              <div data-student-utility-tooltip class="hidden absolute right-0 mt-2 w-64 rounded-xl border border-blue-300/30 bg-[#11264a] p-3 text-xs leading-5 text-slate-200 shadow-2xl z-40">
+                Tools made for you: drop a suggestion, catch the latest news, browse the E-Library, buy or sell in the Market Place, or reach us directly.
+              </div>
               <div data-student-utility-menu class="hidden absolute right-0 mt-2 w-56 rounded-xl border border-white/10 bg-[#0f1f3d] py-2 shadow-2xl z-50">
+                <p class="px-4 pb-1.5 pt-1 text-[0.65rem] font-bold uppercase tracking-wide text-slate-400">Tools for students</p>
                 <a href="suggestions.html" class="block px-4 py-2 text-sm text-slate-200 hover:bg-white/10 hover:text-white">Suggestions</a>
                 <a href="news.html" class="block px-4 py-2 text-sm text-slate-200 hover:bg-white/10 hover:text-white">News &amp; Updates</a>
-                <a href="contact.html" class="block px-4 py-2 text-sm text-slate-200 hover:bg-white/10 hover:text-white">Contact</a>
                 <button type="button" data-elibrary-link class="block w-full text-left px-4 py-2 text-sm text-slate-200 hover:bg-white/10 hover:text-white">E-Library</button>
-                <a href="marketplace.html" class="block px-4 py-2 text-sm text-slate-200 hover:bg-white/10 hover:text-white">Marketplace</a>
+                <a href="marketplace.html" class="block px-4 py-2 text-sm text-slate-200 hover:bg-white/10 hover:text-white">Market Place</a>
+                <a href="contact.html" class="block px-4 py-2 text-sm text-slate-200 hover:bg-white/10 hover:text-white">Contact</a>
               </div>
             </div>
           </nav>
@@ -165,18 +170,20 @@ document.addEventListener('DOMContentLoaded', () => {
             <a href="gallery.html" class="rounded-xl ${pageKey === 'gallery' ? 'bg-white/10 text-white' : 'text-slate-200 hover:bg-white/10 hover:text-white'} px-4 py-3 text-sm font-semibold">Gallery</a>
             <a href="staff.html" class="rounded-xl ${pageKey === 'staff' ? 'bg-white/10 text-white' : 'text-slate-200 hover:bg-white/10 hover:text-white'} px-4 py-3 text-sm font-semibold">Staff</a>
             <a href="executives.html" class="rounded-xl ${pageKey === 'executives' ? 'bg-white/10 text-white' : 'text-slate-200 hover:bg-white/10 hover:text-white'} px-4 py-3 text-sm font-semibold">Executives</a>
-            <div class="mt-1 border-t border-white/10 pt-2">
-              <button type="button" data-mobile-utility-toggle class="flex w-full items-center justify-between rounded-xl px-4 py-3 text-sm font-semibold ${['suggestions','news','marketplace','contact'].includes(pageKey) ? 'bg-white/10 text-white' : 'text-slate-200 hover:bg-white/10 hover:text-white'}">
+            <button type="button" data-mobile-utility-toggle class="mt-1 flex w-full items-center justify-between rounded-xl border border-white/15 bg-white/5 px-4 py-3 text-sm font-semibold text-slate-200 hover:bg-white/10 hover:text-white">
+              <span class="inline-flex items-center gap-2">
                 Student Utility
-                <svg data-mobile-utility-arrow xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 transition-transform" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" /></svg>
-              </button>
-              <div data-mobile-utility-menu class="hidden pl-2 space-y-1 mt-1">
-                <a href="suggestions.html" class="block rounded-xl ${pageKey === 'suggestions' ? 'bg-white/10 text-white' : 'text-slate-200 hover:bg-white/10 hover:text-white'} px-4 py-2.5 text-sm font-semibold">Suggestions</a>
-                <a href="news.html" class="block rounded-xl ${pageKey === 'news' ? 'bg-white/10 text-white' : 'text-slate-200 hover:bg-white/10 hover:text-white'} px-4 py-2.5 text-sm font-semibold">News &amp; Updates</a>
-                <a href="contact.html" class="block rounded-xl ${pageKey === 'contact' ? 'bg-white/10 text-white' : 'text-slate-200 hover:bg-white/10 hover:text-white'} px-4 py-2.5 text-sm font-semibold">Contact</a>
-                <button type="button" data-elibrary-link class="block w-full text-left rounded-xl text-slate-200 hover:bg-white/10 hover:text-white px-4 py-2.5 text-sm font-semibold">E-Library</button>
-                <a href="marketplace.html" class="block rounded-xl ${pageKey === 'marketplace' ? 'bg-white/10 text-white' : 'text-slate-200 hover:bg-white/10 hover:text-white'} px-4 py-2.5 text-sm font-semibold">Marketplace</a>
-              </div>
+                <span class="flex h-4 w-4 items-center justify-center rounded-full bg-blue-500 text-[10px] font-bold text-white">5</span>
+              </span>
+              <svg data-mobile-utility-chevron xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 transition-transform" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" /></svg>
+            </button>
+            <div data-mobile-utility-panel class="hidden flex-col gap-1 rounded-xl bg-white/5 p-2 pl-2">
+              <p class="px-3 pb-1 pt-1 text-[0.65rem] font-bold uppercase tracking-wide text-slate-400">Suggestions, news, E-Library, Market Place &amp; Contact - all in one place</p>
+              <a href="suggestions.html" class="block rounded-lg ${pageKey === 'suggestions' ? 'bg-white/10 text-white' : 'text-slate-200 hover:bg-white/10 hover:text-white'} px-3 py-2.5 text-sm font-semibold">Suggestions</a>
+              <a href="news.html" class="block rounded-lg ${pageKey === 'news' ? 'bg-white/10 text-white' : 'text-slate-200 hover:bg-white/10 hover:text-white'} px-3 py-2.5 text-sm font-semibold">News &amp; Updates</a>
+              <button type="button" data-elibrary-link class="block w-full text-left rounded-lg text-slate-200 hover:bg-white/10 hover:text-white px-3 py-2.5 text-sm font-semibold">E-Library</button>
+              <a href="marketplace.html" class="block rounded-lg ${pageKey === 'marketplace' ? 'bg-white/10 text-white' : 'text-slate-200 hover:bg-white/10 hover:text-white'} px-3 py-2.5 text-sm font-semibold">Market Place</a>
+              <a href="contact.html" class="block rounded-lg ${pageKey === 'contact' ? 'bg-white/10 text-white' : 'text-slate-200 hover:bg-white/10 hover:text-white'} px-3 py-2.5 text-sm font-semibold">Contact</a>
             </div>
           </div>
         </div>
@@ -1635,11 +1642,14 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Student Utility dropdown (desktop) - Suggestions + E-Library
+  // Student Utility dropdown (desktop) - Suggestions, News, E-Library, Marketplace, Contact
   document.querySelectorAll('[data-student-utility-toggle]').forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
-      const menu = btn.parentElement.querySelector('[data-student-utility-menu]');
+      const wrap = btn.parentElement;
+      const menu = wrap.querySelector('[data-student-utility-menu]');
+      const tooltip = wrap.querySelector('[data-student-utility-tooltip]');
+      if (tooltip) tooltip.classList.add('hidden');
       if (menu) menu.classList.toggle('hidden');
     });
   });
@@ -1651,23 +1661,27 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Mobile Student Utility accordion toggle
+  // Student Utility accordion (mobile)
   const mobileUtilityToggle = document.querySelector('[data-mobile-utility-toggle]');
-  if (mobileUtilityToggle) {
-    const mobileUtilityMenu = document.querySelector('[data-mobile-utility-menu]');
-    const mobileUtilityArrow = mobileUtilityToggle.querySelector('[data-mobile-utility-arrow]');
-    // Auto-expand if current page is inside Student Utility
-    if (mobileUtilityMenu && ['suggestions','news','marketplace','contact'].includes(pageKey)) {
-      mobileUtilityMenu.classList.remove('hidden');
-      if (mobileUtilityArrow) mobileUtilityArrow.style.transform = 'rotate(180deg)';
-    }
+  const mobileUtilityPanel = document.querySelector('[data-mobile-utility-panel]');
+  const mobileUtilityChevron = document.querySelector('[data-mobile-utility-chevron]');
+  if (mobileUtilityToggle && mobileUtilityPanel) {
     mobileUtilityToggle.addEventListener('click', () => {
-      if (mobileUtilityMenu) mobileUtilityMenu.classList.toggle('hidden');
-      if (mobileUtilityArrow) {
-        const isOpen = !mobileUtilityMenu.classList.contains('hidden');
-        mobileUtilityArrow.style.transform = isOpen ? 'rotate(180deg)' : '';
-      }
+      const isHidden = mobileUtilityPanel.classList.contains('hidden');
+      mobileUtilityPanel.classList.toggle('hidden');
+      mobileUtilityPanel.classList.toggle('flex');
+      if (mobileUtilityChevron) mobileUtilityChevron.style.transform = isHidden ? 'rotate(180deg)' : '';
     });
+  }
+
+  // One-time sign explaining what's inside Student Utility, shown the first time a visitor sees the navbar this session
+  const utilityTooltip = document.querySelector('[data-student-utility-tooltip]');
+  if (utilityTooltip && !sessionStorage.getItem('bamssa_utility_tooltip_seen')) {
+    setTimeout(() => {
+      utilityTooltip.classList.remove('hidden');
+      sessionStorage.setItem('bamssa_utility_tooltip_seen', '1');
+      setTimeout(() => { utilityTooltip.classList.add('hidden'); }, 6000);
+    }, 1200);
   }
 
   // E-Library - admin sets a Google Drive link; tapping it goes straight there
@@ -1829,6 +1843,30 @@ document.addEventListener('DOMContentLoaded', () => {
     })();
   }
 
+  // HOME ACHIEVEMENTS - latest milestones from the current administration, with a "See more" link
+  const homeAchievementsGrid = document.getElementById('home-achievements-grid');
+  if (homeAchievementsGrid && supabaseClient) {
+    (async () => {
+      const achievements = (await fetchAchievementsData()) || [];
+      if (!achievements.length) {
+        homeAchievementsGrid.innerHTML = '<p class="col-span-full text-center text-slate-300 py-8">Achievements will appear here once they are added in the admin dashboard.</p>';
+        return;
+      }
+      homeAchievementsGrid.innerHTML = achievements.slice(0, 3).map(m => `
+        <a href="achievement-detail.html?id=${m.id}" class="group overflow-hidden rounded-[1.75rem] border border-white/10 bg-white/5 shadow-sm transition hover:-translate-y-1 hover:bg-white/10">
+          ${m.image ? `<img src="${m.image}" alt="${m.title}" class="h-44 w-full object-cover" loading="lazy" />` : ''}
+          <div class="p-6">
+            <span class="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-medium text-slate-300">
+              <span class="h-1.5 w-1.5 rounded-full bg-blue-400"></span>${m.year}
+            </span>
+            <h3 class="mt-3 text-lg font-black text-white">${m.title}</h3>
+            <p class="mt-2 text-sm leading-6 text-slate-300 line-clamp-3">${m.text}</p>
+            <span class="mt-3 inline-block text-sm font-semibold text-blue-300 group-hover:text-blue-200">See more →</span>
+          </div>
+        </a>`).join('');
+    })();
+  }
+
   // HOME DEPARTMENT CARDS - source HOD photo from Supabase, never hardcoded images
   const deptCardImageEls = document.querySelectorAll('[data-dept-card-image]');
   if (deptCardImageEls.length && supabaseClient) {
@@ -1981,4 +2019,3 @@ document.addEventListener('DOMContentLoaded', () => {
     countTargets.forEach((target) => animateCount(target));
   }
 });
-
