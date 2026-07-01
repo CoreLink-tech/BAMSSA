@@ -263,7 +263,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.body.appendChild(footer);
   }
 
-  // Shared "See more info" popup used by HOD, Dept Reps, College Leadership, and Staff.
+  // Shared "See more info" popup used by HOD, Dept Reps, Faculty Leadership, and Staff.
   function ensureInfoModal() {
     let modal = document.querySelector('[data-info-modal]');
     if (modal) return modal;
@@ -717,7 +717,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <div class="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
           ${leadership.length ? `
             <div class="mb-14">
-              <span class="text-xs font-bold uppercase tracking-[0.22em] text-slate-500">College Leadership</span>
+              <span class="text-xs font-bold uppercase tracking-[0.22em] text-slate-500">Faculty Leadership</span>
               <div class="mt-5 grid gap-5 sm:grid-cols-2">
                 ${leadership.map((l, i) => `
                   <article class="flex items-center gap-5 overflow-hidden rounded-[1.75rem] border border-slate-200 bg-slate-50 p-6 shadow-sm">
@@ -759,7 +759,7 @@ document.addEventListener('DOMContentLoaded', () => {
       btn.addEventListener('click', () => {
         const l = leadership[parseInt(btn.dataset.leadershipInfo)];
         if (!l) return;
-        showInfoModal({ tag: 'College Leadership', name: l.name, role: l.role, image: l.image, bio: l.bio });
+        showInfoModal({ tag: 'Faculty Leadership', name: l.name, role: l.role, image: l.image, bio: l.bio });
       });
     });
     main.querySelectorAll('[data-staff-info]').forEach(btn => {

@@ -1165,7 +1165,7 @@ async function renderStaff(content, title) {
   async function renderStaffSection() {
     const leadershipBlock = `
       <div class="mb-8">
-        <h3 class="text-base font-semibold text-slate-900 mb-3">College Leadership</h3>
+        <h3 class="text-base font-semibold text-slate-900 mb-3">Faculty Leadership</h3>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
           ${leadershipRoles.map(r => {
             const entry = leadership.find(l => l.role === r) || { role: r, name: '', image_url: '', bio: '' };
