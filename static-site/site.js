@@ -345,7 +345,6 @@ document.addEventListener('DOMContentLoaded', () => {
     main.innerHTML = `
       <section class="border-b border-white/10 bg-[#0b1c39] text-white">
         <div class="mx-auto max-w-3xl px-4 py-16 text-center sm:px-6 lg:px-8 lg:py-20">
-          <span class="text-xs font-bold uppercase tracking-[0.22em] text-slate-300">About BAMSSA</span>
           <h2 class="mt-3 text-3xl font-black tracking-tight sm:text-5xl">A united voice for every basic medical science student.</h2>
           <p class="mt-5 text-lg leading-8 text-slate-200">BAMSSA brings together Anatomy, Physiology, and Biochemistry students under one strong chapter. We support academic excellence, student welfare, leadership growth, and community outreach.</p>
           <div class="mt-8 grid gap-4 sm:grid-cols-2">
