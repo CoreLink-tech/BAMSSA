@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
       eyebrow: 'Departments',
       title: 'Three pillars of the Basic Medical Sciences.',
       text: 'Each department offers a distinct lens on the human body, and together they form the foundation of every clinical career.',
-      image: asset('anatomy.webp'),
+      images: [asset('dept-classroom.webp'), asset('dept-study-window.webp')],
     },
     events: {
       eyebrow: 'Calendar',
@@ -196,11 +196,20 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!main || !config) return;
     const hero = document.createElement('section');
     hero.className = 'relative overflow-hidden border-b border-white/10 bg-[#081429]';
+
+    const dimClasses = ['hero-slide-dim-a', 'hero-slide-dim-b'];
+    const backgroundMarkup = Array.isArray(config.images) && config.images.length
+      ? `<div class="absolute inset-0">
+          ${config.images.map((src, i) => `<img src="${src}" alt="" class="hero-slide-dim ${dimClasses[i % dimClasses.length]}" decoding="async" />`).join('\n          ')}
+          <div class="absolute inset-0 bg-gradient-to-r from-[#081429]/96 via-[#081429]/84 to-[#081429]/45"></div>
+        </div>`
+      : `<div class="absolute inset-0">
+          <img src="${config.image}" alt="" class="h-full w-full object-cover opacity-30" />
+          <div class="absolute inset-0 bg-gradient-to-r from-[#081429]/96 via-[#081429]/84 to-[#081429]/45"></div>
+        </div>`;
+
     hero.innerHTML = `
-      <div class="absolute inset-0">
-        <img src="${config.image}" alt="" class="h-full w-full object-cover opacity-30" />
-        <div class="absolute inset-0 bg-gradient-to-r from-[#081429]/96 via-[#081429]/84 to-[#081429]/45"></div>
-      </div>
+      ${backgroundMarkup}
       <div class="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
         <span class="inline-flex items-center gap-2 rounded-full border border-blue-300/25 bg-[#243963]/70 px-4 py-2 text-sm font-semibold text-slate-200">${config.eyebrow}</span>
         <h1 class="mt-6 max-w-3xl text-4xl font-black tracking-tight text-white sm:text-5xl">${config.title}</h1>
