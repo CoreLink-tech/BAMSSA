@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
       eyebrow: 'About BAMSSA',
       title: 'Representing every basic medical science student at DELSU.',
       text: 'Founded in 2008, the Basic Medical Sciences Students Association is the umbrella body for students studying Anatomy, Physiology, and Biochemistry at Delta State University.',
-      image: asset('campus.webp'),
+      image: asset('about-hero-bg.webp'),
     },
     departments: {
       eyebrow: 'Departments',
@@ -344,23 +344,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const milestones = achievements || [];
     main.innerHTML = `
       <section class="border-b border-white/10 bg-[#0b1c39] text-white">
-        <div class="mx-auto grid max-w-7xl gap-10 px-4 py-16 sm:px-6 lg:grid-cols-2 lg:px-8 lg:py-20">
-          <div class="reveal-card">
-            <img src="${asset('campus.webp')}" alt="DELSU campus" class="h-full w-full rounded-[2rem] object-cover shadow-2xl shadow-black/25" />
-          </div>
-          <div class="flex flex-col justify-center">
-            <span class="text-xs font-bold uppercase tracking-[0.22em] text-slate-300">About BAMSSA</span>
-            <h2 class="mt-3 text-3xl font-black tracking-tight sm:text-5xl">A united voice for every basic medical science student.</h2>
-            <p class="mt-5 text-lg leading-8 text-slate-200">BAMSSA brings together Anatomy, Physiology, and Biochemistry students under one strong chapter. We support academic excellence, student welfare, leadership growth, and community outreach.</p>
-            <div class="mt-8 grid gap-4 sm:grid-cols-2">
-              <div class="rounded-2xl border border-white/10 bg-white/5 p-5">
-                <p class="text-sm font-bold">Academic support</p>
-                <p class="mt-2 text-sm leading-6 text-slate-300">Tutorials, revision drives, and peer-led study support.</p>
-              </div>
-              <div class="rounded-2xl border border-white/10 bg-white/5 p-5">
-                <p class="text-sm font-bold">Student welfare</p>
-                <p class="mt-2 text-sm leading-6 text-slate-300">Advocacy, support, and a stronger student community.</p>
-              </div>
+        <div class="mx-auto max-w-3xl px-4 py-16 text-center sm:px-6 lg:px-8 lg:py-20">
+          <span class="text-xs font-bold uppercase tracking-[0.22em] text-slate-300">About BAMSSA</span>
+          <h2 class="mt-3 text-3xl font-black tracking-tight sm:text-5xl">A united voice for every basic medical science student.</h2>
+          <p class="mt-5 text-lg leading-8 text-slate-200">BAMSSA brings together Anatomy, Physiology, and Biochemistry students under one strong chapter. We support academic excellence, student welfare, leadership growth, and community outreach.</p>
+          <div class="mt-8 grid gap-4 sm:grid-cols-2">
+            <div class="rounded-2xl border border-white/10 bg-white/5 p-5 text-left">
+              <p class="text-sm font-bold">Academic support</p>
+              <p class="mt-2 text-sm leading-6 text-slate-300">Tutorials, revision drives, and peer-led study support.</p>
+            </div>
+            <div class="rounded-2xl border border-white/10 bg-white/5 p-5 text-left">
+              <p class="text-sm font-bold">Student welfare</p>
+              <p class="mt-2 text-sm leading-6 text-slate-300">Advocacy, support, and a stronger student community.</p>
             </div>
           </div>
         </div>
