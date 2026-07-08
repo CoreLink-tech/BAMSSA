@@ -283,22 +283,22 @@ body.site-shell .hero-slide {
   object-fit: cover;
   opacity: 0;
   filter: blur(4px) brightness(0.7) saturate(0.95) contrast(0.97);
-  animation-duration: 16s;
+  animation-duration: 18s;
   animation-timing-function: ease-in-out;
   animation-iteration-count: infinite;
   animation-fill-mode: both;
 }
 
-/* First photo: slow zoom IN, holds, fades out */
+/* First photo: visible + slow zoom in, then crossfades out */
 body.site-shell .hero-slide-zoom-in {
   animation-name: hero-zoom-in;
   animation-delay: 0s;
 }
 
-/* Second photo: starts zoomed in, slow zoom OUT, fades in as the other fades out */
+/* Second photo: starts invisible, crossfades in as the other fades out, zooms out */
 body.site-shell .hero-slide-zoom-out {
   animation-name: hero-zoom-out;
-  animation-delay: 8s;
+  animation-delay: -9s;
 }
 
 @keyframes hero-drift {
@@ -310,43 +310,122 @@ body.site-shell .hero-slide-zoom-out {
   }
 }
 
+/* Both keyframes share the same opacity timeline (crossfade overlaps at 35%-50% and 85%-100%,
+   never both at 0 at once) and only differ in their zoom direction. */
 @keyframes hero-zoom-in {
   0% {
     opacity: 1;
     transform: scale(1) translate3d(0, 0, 0);
   }
-  44% {
+  35% {
     opacity: 1;
-    transform: scale(1.16) translate3d(-1.5%, -0.5%, 0);
+    transform: scale(1.1) translate3d(-1%, -0.3%, 0);
   }
   50% {
     opacity: 0;
-    transform: scale(1.18) translate3d(-1.8%, -0.6%, 0);
+    transform: scale(1.16) translate3d(-1.6%, -0.5%, 0);
+  }
+  85% {
+    opacity: 0;
+    transform: scale(1.16) translate3d(-1.6%, -0.5%, 0);
   }
   100% {
-    opacity: 0;
+    opacity: 1;
     transform: scale(1) translate3d(0, 0, 0);
   }
 }
 
 @keyframes hero-zoom-out {
   0% {
-    opacity: 0;
-    transform: scale(1.18) translate3d(1.8%, 0.6%, 0);
-  }
-  6% {
     opacity: 1;
+    transform: scale(1.16) translate3d(1.6%, 0.5%, 0);
+  }
+  35% {
+    opacity: 1;
+    transform: scale(1.08) translate3d(0.8%, 0.3%, 0);
   }
   50% {
-    opacity: 1;
+    opacity: 0;
     transform: scale(1) translate3d(0, 0, 0);
   }
-  56% {
+  85% {
     opacity: 0;
+    transform: scale(1) translate3d(0, 0, 0);
   }
   100% {
+    opacity: 1;
+    transform: scale(1.16) translate3d(1.6%, 0.5%, 0);
+  }
+}
+
+/* Dim variant used on inner-page hero banners (Departments, etc.) - same crossfade timing,
+   capped at low opacity so text stays readable over the dark navy background. */
+body.site-shell .hero-slide-dim {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  animation-duration: 18s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-fill-mode: both;
+}
+
+body.site-shell .hero-slide-dim-a {
+  animation-name: hero-dim-zoom-in;
+  animation-delay: 0s;
+}
+
+body.site-shell .hero-slide-dim-b {
+  animation-name: hero-dim-zoom-out;
+  animation-delay: -9s;
+}
+
+@keyframes hero-dim-zoom-in {
+  0% {
+    opacity: 0.32;
+    transform: scale(1) translate3d(0, 0, 0);
+  }
+  35% {
+    opacity: 0.32;
+    transform: scale(1.08) translate3d(-0.8%, -0.3%, 0);
+  }
+  50% {
     opacity: 0;
-    transform: scale(1.18) translate3d(1.8%, 0.6%, 0);
+    transform: scale(1.12) translate3d(-1.3%, -0.4%, 0);
+  }
+  85% {
+    opacity: 0;
+    transform: scale(1.12) translate3d(-1.3%, -0.4%, 0);
+  }
+  100% {
+    opacity: 0.32;
+    transform: scale(1) translate3d(0, 0, 0);
+  }
+}
+
+@keyframes hero-dim-zoom-out {
+  0% {
+    opacity: 0.32;
+    transform: scale(1.12) translate3d(1.3%, 0.4%, 0);
+  }
+  35% {
+    opacity: 0.32;
+    transform: scale(1.05) translate3d(0.6%, 0.2%, 0);
+  }
+  50% {
+    opacity: 0;
+    transform: scale(1) translate3d(0, 0, 0);
+  }
+  85% {
+    opacity: 0;
+    transform: scale(1) translate3d(0, 0, 0);
+  }
+  100% {
+    opacity: 0.32;
+    transform: scale(1.12) translate3d(1.3%, 0.4%, 0);
   }
 }
 
