@@ -246,17 +246,22 @@ function getDeptBadgeColor(dept) {
   return map[dept] || 'bg-slate-100 text-slate-800';
 }
 
-async function convertToWebp(file, quality = 0.85) {
+async function convertToWebp(file, quality = 0.82, maxDimension = 1400) {
   return new Promise((resolve, reject) => {
     const img = new Image();
     const reader = new FileReader();
     reader.onload = (e) => {
       img.onload = () => {
+        let { naturalWidth: w, naturalHeight: h } = img;
+        if (w > maxDimension || h > maxDimension) {
+          if (w >= h) { h = Math.round(h * (maxDimension / w)); w = maxDimension; }
+          else { w = Math.round(w * (maxDimension / h)); h = maxDimension; }
+        }
         const canvas = document.createElement('canvas');
-        canvas.width = img.naturalWidth;
-        canvas.height = img.naturalHeight;
+        canvas.width = w;
+        canvas.height = h;
         const ctx = canvas.getContext('2d');
-        ctx.drawImage(img, 0, 0);
+        ctx.drawImage(img, 0, 0, w, h);
         canvas.toBlob((blob) => {
           if (!blob) { reject(new Error('WebP conversion produced no data')); return; }
           const newName = file.name.replace(/\.[^.]+$/, '') + '.webp';
@@ -290,7 +295,10 @@ async function uploadPhoto(file, bucketName) {
 
   const fileExt = uploadFile.name.split('.').pop();
   const fileName = `${Date.now()}_${Math.random().toString(36).substring(7)}.${fileExt}`;
-  const { error } = await supabase.storage.from(bucketName).upload(fileName, uploadFile);
+  const { error } = await supabase.storage.from(bucketName).upload(fileName, uploadFile, {
+    cacheControl: '31536000',
+    upsert: false
+  });
   if (error) { showToast(error.message, 'error'); return null; }
   const { data } = supabase.storage.from(bucketName).getPublicUrl(fileName);
   return data.publicUrl;
