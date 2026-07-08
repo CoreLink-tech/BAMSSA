@@ -540,8 +540,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // Update page title
     document.title = `${dept.title} - BAMSSA DELSU Chapter`;
 
-    // Fetch HOD, department president(s), and gallery images from Supabase
-    let hod = null, reps = [], galleryImages = [];
+    // Fetch HOD, department president(s), gallery images, and the department card image from Supabase
+    let hod = null, reps = [], galleryImages = [], deptImage = '';
     if (supabaseClient) {
       const { data: hodData } = await supabaseClient.from('hods').select('name, image_url, bio, email, phone').eq('department', dept.supabaseName).single();
       if (hodData) hod = hodData;
@@ -554,6 +554,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const { data: galleryData } = await supabaseClient.from('gallery').select('image_url, title, caption').eq('department', dept.supabaseName).order('created_at', { ascending: false });
       if (galleryData) galleryImages = galleryData;
+
+      const { data: deptData } = await supabaseClient.from('departments').select('image_url').eq('department', dept.supabaseName).single();
+      if (deptData) deptImage = deptData.image_url || '';
     }
     const hodName = hod ? (hod.name || '') : '';
     const hodImage = hod ? (hod.image_url || '') : '';
@@ -574,6 +577,11 @@ document.addEventListener('DOMContentLoaded', () => {
             <span class="h-2 w-2 rounded-full" style="background:#22c55e;display:inline-block;"></span>
             ${dept.count.toLocaleString()} registered students
           </div>
+
+          ${deptImage ? `
+          <div class="mt-8 overflow-hidden rounded-2xl" style="border:1px solid #e2e8f0;">
+            <img src="${deptImage}" alt="${dept.title}" class="w-full object-cover" style="height:320px;" loading="lazy" />
+          </div>` : ''}
 
           <!-- HOD CARD -->
           <div class="mt-10 rounded-2xl p-6 flex items-center gap-5" style="background:#f8fafc;border:1px solid #e2e8f0;">
