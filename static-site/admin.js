@@ -1,7 +1,7 @@
 // BAMSSA Admin Dashboard
 // Sections: Auth, Overview, Administrations, Achievements, Executives, Department Reps, HODs, Gallery
 
-const SECTIONS = ['Overview', 'Administrations', 'Achievements', 'Executives', 'Department Reps', 'HODs', 'Staff', 'News & Updates', 'Gallery', 'E-Library', 'Marketplace', 'Suggestions'];
+const SECTIONS = ['Overview', 'Administrations', 'Achievements', 'Executives', 'Department Reps', 'HODs', 'Departments', 'Staff', 'News & Updates', 'Gallery', 'E-Library', 'Marketplace', 'Suggestions'];
 
 document.addEventListener('DOMContentLoaded', async () => {
   const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
@@ -213,6 +213,8 @@ function renderSection(section) {
     renderDepartmentReps(content, title);
   } else if (section === 'HODs') {
     renderHODs(content, title);
+  } else if (section === 'Departments') {
+    renderDepartmentImages(content, title);
   } else if (section === 'Staff') {
     renderStaff(content, title);
   } else if (section === 'News & Updates') {
@@ -1032,6 +1034,98 @@ async function renderHODs(content, title) {
     
     const photoInput = document.getElementById('hod-photo');
     const preview = document.getElementById('hod-photo-preview');
+    if (photoInput && preview) {
+      photoInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = (ev) => { preview.src = ev.target.result; preview.classList.remove('hidden'); };
+          reader.readAsDataURL(file);
+        }
+      });
+    }
+  }
+}
+
+// DEPARTMENT IMAGES (card image shown on the public Departments page)
+
+async function renderDepartmentImages(content, title) {
+  const { data, error } = await supabase.from('departments').select('*');
+  if (error) { showToast('Failed to load departments', 'error'); return; }
+
+  title.textContent = 'Departments';
+
+  const depts = ['Anatomy', 'Physiology', 'Biochemistry'];
+
+  function renderDeptCard(dept) {
+    const editing = dept.department === window._editingDeptId;
+    return `
+      <div class="bg-white rounded-[1.75rem] border border-slate-200 shadow-sm p-6" data-dept-name="${dept.department}">
+        ${editing ? `
+          <form id="dept-form" class="space-y-4">
+            <h3 class="text-lg font-semibold text-slate-900 mb-4">${escapeHtml(dept.department)}</h3>
+            <div>
+              <label class="block text-sm font-medium text-slate-700 mb-1">Department Image</label>
+              <input type="file" id="dept-photo" accept="image/*" class="w-full px-4 py-2 rounded-lg border border-slate-300 focus:outline-none focus:border-[#2f6df6]" />
+              ${dept.image_url ? `<img src="${escapeHtml(dept.image_url)}" class="mt-2 h-32 w-full object-cover rounded" id="dept-current-img" />` : ''}
+              <img id="dept-photo-preview" class="mt-2 h-32 w-full object-cover rounded hidden" />
+            </div>
+            <div class="flex gap-3">
+              <button type="submit" class="px-6 py-2 rounded-lg bg-[#2f6df6] text-white font-semibold hover:bg-blue-600 transition">Save</button>
+              <button type="button" id="dept-cancel" class="px-6 py-2 rounded-lg bg-slate-200 text-slate-700 hover:bg-slate-300 transition">Cancel</button>
+            </div>
+          </form>
+        ` : `
+          <h3 class="text-xl font-semibold text-slate-900 mb-3">${escapeHtml(dept.department)}</h3>
+          ${dept.image_url
+            ? `<img src="${escapeHtml(dept.image_url)}" class="h-40 w-full object-cover rounded-lg" />`
+            : `<div class="h-40 w-full rounded-lg bg-slate-100 flex items-center justify-center"><span class="text-xs text-slate-400">No image uploaded</span></div>`}
+          <button data-action="edit-dept" data-dept="${dept.department}" class="mt-4 px-4 py-2 rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200 transition">Edit</button>
+        `}
+      </div>
+    `;
+  }
+
+  content.innerHTML = `
+    <p class="text-sm text-slate-500 mb-5">Set the card image shown for each department on the public Departments page.</p>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+      ${depts.map(d => {
+        const dept = data.find(x => x.department === d) || { department: d, image_url: '' };
+        return renderDeptCard(dept);
+      }).join('')}
+    </div>
+  `;
+
+  document.querySelectorAll('[data-action="edit-dept"]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      window._editingDeptId = btn.dataset.dept;
+      renderDepartmentImages(content, title);
+    });
+  });
+
+  if (window._editingDeptId) {
+    document.getElementById('dept-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const photoFile = document.getElementById('dept-photo').files[0];
+
+      let image_url = data.find(d => d.department === window._editingDeptId)?.image_url || null;
+      if (photoFile) {
+        const url = await uploadPhoto(photoFile, 'gallery');
+        if (!url) return;
+        image_url = url;
+      } else if (!image_url) {
+        showToast('Please choose an image to upload', 'error');
+        return;
+      }
+
+      const { error } = await supabase.from('departments').upsert({ department: window._editingDeptId, image_url }, { onConflict: ['department'] });
+      if (error) { showToast(error.message, 'error'); } else { showToast('Department image updated', 'success'); delete window._editingDeptId; renderSection('Departments'); }
+    });
+
+    document.getElementById('dept-cancel').addEventListener('click', () => { delete window._editingDeptId; renderSection('Departments'); });
+
+    const photoInput = document.getElementById('dept-photo');
+    const preview = document.getElementById('dept-photo-preview');
     if (photoInput && preview) {
       photoInput.addEventListener('change', (e) => {
         const file = e.target.files[0];

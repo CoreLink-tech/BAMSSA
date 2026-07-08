@@ -420,12 +420,13 @@ document.addEventListener('DOMContentLoaded', () => {
       </section>`;
   }
 
-  function renderDepartments(main, hodData) {
+  function renderDepartments(main, hodData, deptImages) {
     const hods = hodData || {};
+    const images = deptImages || {};
     const items = [
       {
         key: 'anatomy',
-        image: '',
+        image: images['Anatomy'] || '',
         title: 'Anatomy',
         subtitle: 'Structure of the human body',
         text: 'Explores gross anatomy, histology, embryology, and neuroanatomy through hands-on learning and imaging.',
@@ -436,7 +437,7 @@ document.addEventListener('DOMContentLoaded', () => {
       },
       {
         key: 'physiology',
-        image: '',
+        image: images['Physiology'] || '',
         title: 'Physiology',
         subtitle: 'How the body functions',
         text: 'Covers the mechanisms by which the human body operates from cellular signalling to whole-system integration.',
@@ -447,7 +448,7 @@ document.addEventListener('DOMContentLoaded', () => {
       },
       {
         key: 'biochemistry',
-        image: '',
+        image: images['Biochemistry'] || '',
         title: 'Biochemistry',
         subtitle: 'Chemistry of life',
         text: 'Studies the molecular basis of life from enzyme kinetics to metabolic pathways and clinical biochemistry.',
@@ -1144,6 +1145,15 @@ document.addEventListener('DOMContentLoaded', () => {
     return result;
   }
 
+  async function fetchDepartmentImages() {
+    if (!supabaseClient) return null;
+    const { data, error } = await supabaseClient.from('departments').select('department, image_url');
+    if (error) return null;
+    const result = {};
+    data.forEach(row => { result[row.department] = row.image_url || ''; });
+    return result;
+  }
+
   async function fetchNewsData() {
     if (!supabaseClient) return null;
     const { data, error } = await supabaseClient.from('news').select('*').order('created_at', { ascending: false });
@@ -1547,8 +1557,8 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       case 'departments': {
         injectLoading(main);
-        const hods = await fetchHodsData();
-        if (hods !== null) { renderDepartments(main, hods); } else { injectError(main); }
+        const [hods, deptImages] = await Promise.all([fetchHodsData(), fetchDepartmentImages()]);
+        if (hods !== null) { renderDepartments(main, hods, deptImages || {}); } else { injectError(main); }
         break;
       }
       case 'news': {
