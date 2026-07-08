@@ -1584,25 +1584,33 @@ async function renderGallery(content, title) {
       
       <form id="add-gallery-form" class="bg-white rounded-[1.75rem] border border-slate-200 shadow-sm p-6">
         <h3 class="text-lg font-semibold text-slate-900 mb-4">Add Image</h3>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <label class="block text-sm font-medium text-slate-700 mb-1">Title</label>
-            <input type="text" id="gallery-title" required class="w-full px-4 py-2 rounded-lg border border-slate-300 focus:outline-none focus:border-[#2f6df6]" />
+        <div class="mb-4">
+          <label class="inline-flex items-center gap-2 text-sm font-medium text-slate-700">
+            <input type="checkbox" id="gallery-show-details" class="h-4 w-4 rounded border-slate-300 text-[#2f6df6] focus:ring-[#2f6df6]" />
+            Add title, caption &amp; tag (optional)
+          </label>
+        </div>
+        <div id="gallery-details-fields" class="hidden">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-slate-700 mb-1">Title</label>
+              <input type="text" id="gallery-title" class="w-full px-4 py-2 rounded-lg border border-slate-300 focus:outline-none focus:border-[#2f6df6]" />
+            </div>
           </div>
-          <div>
-            <label class="block text-sm font-medium text-slate-700 mb-1">Department</label>
-            <select id="gallery-dept" required class="w-full px-4 py-2 rounded-lg border border-slate-300 focus:outline-none focus:border-[#2f6df6]">
-              ${depts.slice(1).map(d => `<option value="${d}">${d}</option>`).join('')}
-            </select>
+          <div class="mt-4">
+            <label class="block text-sm font-medium text-slate-700 mb-1">Caption</label>
+            <textarea id="gallery-caption" rows="2" class="w-full px-4 py-2 rounded-lg border border-slate-300 focus:outline-none focus:border-[#2f6df6]"></textarea>
+          </div>
+          <div class="mt-4">
+            <label class="block text-sm font-medium text-slate-700 mb-1">Tag</label>
+            <input type="text" id="gallery-tag" class="w-full px-4 py-2 rounded-lg border border-slate-300 focus:outline-none focus:border-[#2f6df6]" />
           </div>
         </div>
         <div class="mt-4">
-          <label class="block text-sm font-medium text-slate-700 mb-1">Caption</label>
-          <textarea id="gallery-caption" rows="2" class="w-full px-4 py-2 rounded-lg border border-slate-300 focus:outline-none focus:border-[#2f6df6]"></textarea>
-        </div>
-        <div class="mt-4">
-          <label class="block text-sm font-medium text-slate-700 mb-1">Tag</label>
-          <input type="text" id="gallery-tag" class="w-full px-4 py-2 rounded-lg border border-slate-300 focus:outline-none focus:border-[#2f6df6]" />
+          <label class="block text-sm font-medium text-slate-700 mb-1">Department</label>
+          <select id="gallery-dept" class="w-full px-4 py-2 rounded-lg border border-slate-300 focus:outline-none focus:border-[#2f6df6]">
+            ${depts.slice(1).map(d => `<option value="${d}">${d}</option>`).join('')}
+          </select>
         </div>
         <div class="mt-4">
           <label class="block text-sm font-medium text-slate-700 mb-1">Image</label>
@@ -1648,15 +1656,19 @@ async function renderGallery(content, title) {
     btn.addEventListener('click', () => { window._galleryFilter = btn.dataset.filter; renderGallery(content, title); });
   });
   
+  document.getElementById('gallery-show-details')?.addEventListener('change', (e) => {
+    document.getElementById('gallery-details-fields').classList.toggle('hidden', !e.target.checked);
+  });
+
   document.getElementById('add-gallery-form').addEventListener('submit', async (e) => {
     e.preventDefault();
-    const titleVal = document.getElementById('gallery-title').value.trim();
     const dept = document.getElementById('gallery-dept').value;
-    const caption = document.getElementById('gallery-caption').value.trim();
-    const tag = document.getElementById('gallery-tag').value.trim();
+    const caption = document.getElementById('gallery-caption')?.value.trim() || '';
+    const tag = document.getElementById('gallery-tag')?.value.trim() || '';
     const file = document.getElementById('gallery-image').files[0];
-    
+
     if (!file) return;
+    const titleVal = document.getElementById('gallery-title')?.value.trim() || file.name.replace(/\.[^/.]+$/, '');
     const url = await uploadPhoto(file, 'gallery');
     if (!url) return;
     
