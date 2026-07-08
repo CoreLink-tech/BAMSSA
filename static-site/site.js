@@ -463,7 +463,7 @@ document.addEventListener('DOMContentLoaded', () => {
               <div class="group overflow-hidden rounded-[2rem] border border-slate-200 shadow-sm flex flex-col" style="background:#ffffff;">
                 <div class="overflow-hidden h-52 flex items-center justify-center" style="background:#f1f5f9;">
                   ${item.image
-                    ? `<img src="${item.image}" alt="${item.title}" class="h-full w-full object-cover transition duration-500 group-hover:scale-105" />`
+                    ? `<img src="${item.image}" alt="${item.title}" class="h-full w-full object-cover transition duration-500 group-hover:scale-105" loading="lazy" />`
                     : `<span style="color:#94a3b8;font-size:0.875rem;">No image uploaded</span>`}
                 </div>
                 <div class="p-6 flex flex-col flex-1" style="background:#ffffff;">
@@ -694,7 +694,7 @@ document.addEventListener('DOMContentLoaded', () => {
               .map(
                 (item) => `
                   <figure class="overflow-hidden rounded-[1.75rem] border border-slate-200 bg-slate-100 shadow-sm">
-                    <img src="${item.image}" alt="${item.title}" class="h-64 w-full object-cover transition duration-500 hover:scale-105" />
+                    <img src="${item.image}" alt="${item.title}" class="h-64 w-full object-cover transition duration-500 hover:scale-105" loading="lazy" />
                     <figcaption class="p-5">
                       <span class="inline-flex rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-medium text-blue-600">${item.tag}</span>
                       <h3 class="mt-3 text-lg font-black text-slate-900">${item.title}</h3>
@@ -722,7 +722,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 ${leadership.map((l, i) => `
                   <article class="flex items-center gap-5 overflow-hidden rounded-[1.75rem] border border-slate-200 bg-slate-50 p-6 shadow-sm">
                     ${l.image
-                      ? `<img src="${l.image}" alt="${l.name}" class="h-24 w-24 flex-shrink-0 rounded-2xl object-cover" />`
+                      ? `<img src="${l.image}" alt="${l.name}" class="h-24 w-24 flex-shrink-0 rounded-2xl object-cover" loading="lazy" />`
                       : `<div class="h-24 w-24 flex-shrink-0 rounded-2xl flex items-center justify-center bg-slate-200"><span class="text-xs text-slate-500">No photo</span></div>`
                     }
                     <div class="flex-1">
@@ -740,7 +740,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 (member, i) => `
                   <article class="overflow-hidden rounded-[1.75rem] border border-slate-200 bg-white shadow-sm">
                     ${member.image
-                      ? `<img src="${member.image}" alt="${member.name}" class="h-56 w-full object-cover" />`
+                      ? `<img src="${member.image}" alt="${member.name}" class="h-56 w-full object-cover" loading="lazy" />`
                       : `<div class="h-56 w-full flex items-center justify-center bg-slate-100"><span class="text-sm text-slate-400">No photo</span></div>`
                     }
                     <div class="p-6">
@@ -790,7 +790,7 @@ document.addEventListener('DOMContentLoaded', () => {
                   (article) => `
                     <article class="overflow-hidden rounded-[1.75rem] border border-slate-200 bg-white shadow-sm">
                       ${article.image
-                        ? `<img src="${article.image}" alt="${article.title}" class="h-56 w-full object-cover" />`
+                        ? `<img src="${article.image}" alt="${article.title}" class="h-56 w-full object-cover" loading="lazy" />`
                         : ''
                       }
                       <div class="p-6">
@@ -835,7 +835,7 @@ document.addEventListener('DOMContentLoaded', () => {
               .map(
                 (event) => `
                   <article class="event-card overflow-hidden rounded-[1.75rem] border border-slate-200 bg-white shadow-sm" data-status="${event.status}">
-                    <img src="${event.image}" alt="${event.title}" class="h-56 w-full object-cover" />
+                    <img src="${event.image}" alt="${event.title}" class="h-56 w-full object-cover" loading="lazy" />
                     <div class="p-6">
                       <div class="flex flex-wrap items-center gap-2">
                         <span class="rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-medium text-blue-600">${event.tag}</span>
@@ -1030,7 +1030,7 @@ document.addEventListener('DOMContentLoaded', () => {
               .map(
                 (exec, index) => `
                   <button type="button" data-exec-index="${index}" class="group text-left overflow-hidden rounded-[1.75rem] border border-slate-200 shadow-sm transition hover:-translate-y-1 hover:shadow-xl" style="background:#ffffff;">
-                    ${exec.image ? `<img src="${exec.image}" alt="${exec.name}" class="h-72 w-full object-cover" />` : `<div class="h-72 w-full flex items-center justify-center" style="background:#f1f5f9;"><span style="color:#94a3b8;" class="text-sm">No photo</span></div>`}
+                    ${exec.image ? `<img src="${exec.image}" alt="${exec.name}" class="h-72 w-full object-cover" loading="lazy" />` : `<div class="h-72 w-full flex items-center justify-center" style="background:#f1f5f9;"><span style="color:#94a3b8;" class="text-sm">No photo</span></div>`}
                     <div class="p-5" style="background:#ffffff;">
                       <p class="text-xs font-bold uppercase tracking-[0.22em]" style="color:#64748b;">${exec.role}</p>
                       <h3 class="mt-2 text-2xl font-black" style="color:#0f172a;">${exec.name}</h3>
