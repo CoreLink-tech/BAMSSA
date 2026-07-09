@@ -430,29 +430,66 @@ body.site-shell .hero-slide-dim-c {
   100% { opacity: 0.32; transform: scale(1.04) translate3d(-0.5%, 0.4%, 0); }
 }
 
-/* Soft blurred transition at the bottom of every hero, replacing the old hard border line.
-   Sits above the hero background and frosts it out gradually into the section below. */
+/* Progressive blur transition at the bottom of every hero, replacing the old hard border line.
+   A single backdrop-filter blur has one fixed strength and looks like a flat frosted panel.
+   Real "progressive" blur stacks several layers at increasing blur strength, each revealed
+   over a taller portion of the band - so blur compounds smoothly toward the bottom instead
+   of switching on abruptly. This is the same technique used in Linear/Vercel-style hero fades. */
 body.site-shell .hero-blur-edge {
   position: absolute;
   left: 0;
   right: 0;
   bottom: -1px;
-  height: 190px;
+  height: 240px;
   pointer-events: none;
   z-index: 5;
-  backdrop-filter: blur(22px);
-  -webkit-backdrop-filter: blur(22px);
-  -webkit-mask-image: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.4) 45%, #000 100%);
-  mask-image: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.4) 45%, #000 100%);
 }
 
-/* Layered on top of the blur: actually dissolves the hero's dark tone into the light
-   section background beneath it, so the seam reads as a fade rather than a hard cut. */
-body.site-shell .hero-blur-edge::after {
-  content: '';
+body.site-shell .hero-blur-layer {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to bottom, transparent 0%, rgba(248, 249, 250, 0.55) 55%, rgba(248, 249, 250, 0.96) 100%);
+  -webkit-backdrop-filter: blur(var(--blur-amt, 4px));
+  backdrop-filter: blur(var(--blur-amt, 4px));
+}
+
+body.site-shell .hero-blur-layer-1 {
+  --blur-amt: 3px;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, transparent 15%, #000 45%, #000 100%);
+  mask-image: linear-gradient(to bottom, transparent 0%, transparent 15%, #000 45%, #000 100%);
+}
+
+body.site-shell .hero-blur-layer-2 {
+  --blur-amt: 6px;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, transparent 35%, #000 60%, #000 100%);
+  mask-image: linear-gradient(to bottom, transparent 0%, transparent 35%, #000 60%, #000 100%);
+}
+
+body.site-shell .hero-blur-layer-3 {
+  --blur-amt: 12px;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, transparent 55%, #000 75%, #000 100%);
+  mask-image: linear-gradient(to bottom, transparent 0%, transparent 55%, #000 75%, #000 100%);
+}
+
+body.site-shell .hero-blur-layer-4 {
+  --blur-amt: 22px;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, transparent 75%, #000 92%, #000 100%);
+  mask-image: linear-gradient(to bottom, transparent 0%, transparent 75%, #000 92%, #000 100%);
+}
+
+/* Final color wash - dissolves the hero's dark tone into the light section background
+   beneath it with a gentle eased curve, so the seam reads as a fade rather than a cut. */
+body.site-shell .hero-blur-wash {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(248, 249, 250, 0.05) 45%,
+    rgba(248, 249, 250, 0.22) 65%,
+    rgba(248, 249, 250, 0.55) 82%,
+    rgba(248, 249, 250, 0.88) 94%,
+    rgba(248, 249, 250, 0.99) 100%
+  );
 }
 
 /* Progressive blur applied via JS as the hero scrolls out of view (see initHeroScrollBlur in site.js) */

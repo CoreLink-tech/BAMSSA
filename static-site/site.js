@@ -242,7 +242,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     hero.innerHTML = `
       ${backgroundMarkup}
-      <div class="hero-blur-edge" aria-hidden="true"></div>
+      <div class="hero-blur-edge" aria-hidden="true">
+        <span class="hero-blur-layer hero-blur-layer-1"></span>
+        <span class="hero-blur-layer hero-blur-layer-2"></span>
+        <span class="hero-blur-layer hero-blur-layer-3"></span>
+        <span class="hero-blur-layer hero-blur-layer-4"></span>
+        <span class="hero-blur-wash"></span>
+      </div>
       <div class="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
         <span class="inline-flex items-center gap-2 rounded-full border border-blue-300/25 bg-[#243963]/70 px-4 py-2 text-sm font-semibold text-slate-200">${config.eyebrow}</span>
         <h1 class="mt-6 max-w-3xl text-4xl font-black tracking-tight text-white sm:text-5xl">${config.title}</h1>
