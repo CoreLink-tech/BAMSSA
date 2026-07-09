@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
       eyebrow: 'Leadership',
       title: 'Executive Council 2026 / 2027.',
       text: 'The team guiding BAMSSA across academics, welfare, outreach, and student engagement.',
-      image: asset('executives-banner.webp'),
+      images: [asset('executives-banner-1.webp'), asset('executives-banner-2.webp'), asset('executives-banner-3.webp')],
     },
     gallery: {
       eyebrow: 'Gallery',
@@ -197,10 +197,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const hero = document.createElement('section');
     hero.className = 'relative overflow-hidden border-b border-white/10 bg-[#081429]';
 
-    const dimClasses = ['hero-slide-dim-a', 'hero-slide-dim-b'];
+    const dimClasses = ['hero-slide-dim-a', 'hero-slide-dim-b', 'hero-slide-dim-c'];
+    const isThreeWay = Array.isArray(config.images) && config.images.length === 3;
     const backgroundMarkup = Array.isArray(config.images) && config.images.length
       ? `<div class="absolute inset-0">
-          ${config.images.map((src, i) => `<img src="${src}" alt="" class="hero-slide-dim ${dimClasses[i % dimClasses.length]}" decoding="async" />`).join('\n          ')}
+          ${config.images.map((src, i) => `<img src="${src}" alt="" class="hero-slide-dim ${dimClasses[i % dimClasses.length]}${isThreeWay ? ' hero-slide-dim-3' : ''}" decoding="async" />`).join('\n          ')}
           <div class="absolute inset-0 bg-gradient-to-r from-[#081429]/96 via-[#081429]/84 to-[#081429]/45"></div>
         </div>`
       : `<div class="absolute inset-0">

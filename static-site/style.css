@@ -383,6 +383,53 @@ body.site-shell .hero-slide-dim-b {
   animation-delay: -9s;
 }
 
+/* Third slide, used when a hero rotates through 3 images. Same 27s/9s-per-slot
+   rhythm as the a/b pair above, just extended to a three-way cycle. */
+body.site-shell .hero-slide-dim-a.hero-slide-dim-3,
+body.site-shell .hero-slide-dim-b.hero-slide-dim-3,
+body.site-shell .hero-slide-dim-c {
+  animation-duration: 27s;
+}
+
+body.site-shell .hero-slide-dim-a.hero-slide-dim-3 {
+  animation-name: hero-dim-zoom-in-3;
+  animation-delay: 0s;
+}
+
+body.site-shell .hero-slide-dim-b.hero-slide-dim-3 {
+  animation-name: hero-dim-zoom-out-3;
+  animation-delay: -9s;
+}
+
+body.site-shell .hero-slide-dim-c {
+  animation-name: hero-dim-zoom-pan-3;
+  animation-delay: -18s;
+}
+
+@keyframes hero-dim-zoom-in-3 {
+  0% { opacity: 0.32; transform: scale(1) translate3d(0, 0, 0); }
+  27.5% { opacity: 0.32; transform: scale(1.06) translate3d(-0.7%, -0.3%, 0); }
+  33.3% { opacity: 0; transform: scale(1.08) translate3d(-0.9%, -0.4%, 0); }
+  94.4% { opacity: 0; transform: scale(1.08) translate3d(-0.9%, -0.4%, 0); }
+  100% { opacity: 0.32; transform: scale(1) translate3d(0, 0, 0); }
+}
+
+@keyframes hero-dim-zoom-out-3 {
+  0% { opacity: 0.32; transform: scale(1.09) translate3d(0.9%, 0.3%, 0); }
+  27.5% { opacity: 0.32; transform: scale(1.04) translate3d(0.4%, 0.15%, 0); }
+  33.3% { opacity: 0; transform: scale(1) translate3d(0, 0, 0); }
+  94.4% { opacity: 0; transform: scale(1) translate3d(0, 0, 0); }
+  100% { opacity: 0.32; transform: scale(1.09) translate3d(0.9%, 0.3%, 0); }
+}
+
+@keyframes hero-dim-zoom-pan-3 {
+  0% { opacity: 0.32; transform: scale(1.04) translate3d(-0.5%, 0.4%, 0); }
+  27.5% { opacity: 0.32; transform: scale(1.09) translate3d(0.5%, -0.2%, 0); }
+  33.3% { opacity: 0; transform: scale(1.1) translate3d(0.7%, -0.3%, 0); }
+  94.4% { opacity: 0; transform: scale(1.1) translate3d(0.7%, -0.3%, 0); }
+  100% { opacity: 0.32; transform: scale(1.04) translate3d(-0.5%, 0.4%, 0); }
+}
+
 @keyframes hero-dim-zoom-in {
   0% {
     opacity: 0.32;
