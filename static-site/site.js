@@ -191,42 +191,11 @@ document.addEventListener('DOMContentLoaded', () => {
     document.body.insertBefore(header, document.querySelector('main'));
   }
 
-  // Progressively blurs the hero's background image(s) as the user scrolls past it,
-  // so the hero dissolves into the next section instead of cutting off at a hard line.
-  function initHeroScrollBlur() {
-    const heroImages = document.querySelectorAll('.hero-slide, .hero-slide-dim');
-    if (!heroImages.length) return;
-    const heroSection = heroImages[0].closest('section');
-    if (!heroSection) return;
-
-    const MAX_BLUR = 9; // px
-    let ticking = false;
-
-    function apply() {
-      const heroHeight = heroSection.offsetHeight || 1;
-      const progress = Math.min(Math.max(window.scrollY / heroHeight, 0), 1);
-      const blurPx = (progress * MAX_BLUR).toFixed(2);
-      heroImages.forEach((img) => { img.style.filter = `blur(${blurPx}px)`; });
-      ticking = false;
-    }
-
-    function onScroll() {
-      if (!ticking) {
-        window.requestAnimationFrame(apply);
-        ticking = true;
-      }
-    }
-
-    apply();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', onScroll);
-  }
-
   function injectHero(config) {
     const main = document.querySelector('main');
     if (!main || !config) return;
     const hero = document.createElement('section');
-    hero.className = 'relative overflow-hidden bg-[#081429]';
+    hero.className = 'relative overflow-hidden border-b border-white/10 bg-[#081429]';
 
     const dimClasses = ['hero-slide-dim-a', 'hero-slide-dim-b', 'hero-slide-dim-c'];
     const isThreeWay = Array.isArray(config.images) && config.images.length === 3;
@@ -242,13 +211,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     hero.innerHTML = `
       ${backgroundMarkup}
-      <div class="hero-blur-edge" aria-hidden="true">
-        <span class="hero-blur-layer hero-blur-layer-1"></span>
-        <span class="hero-blur-layer hero-blur-layer-2"></span>
-        <span class="hero-blur-layer hero-blur-layer-3"></span>
-        <span class="hero-blur-layer hero-blur-layer-4"></span>
-        <span class="hero-blur-wash"></span>
-      </div>
       <div class="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
         <span class="inline-flex items-center gap-2 rounded-full border border-blue-300/25 bg-[#243963]/70 px-4 py-2 text-sm font-semibold text-slate-200">${config.eyebrow}</span>
         <h1 class="mt-6 max-w-3xl text-4xl font-black tracking-tight text-white sm:text-5xl">${config.title}</h1>
@@ -1693,8 +1655,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     injectFooter();
   }
-
-  initHeroScrollBlur();
 
   const toggle = document.querySelector('[data-menu-toggle]');
   const mobileNav = document.querySelector('[data-mobile-nav]');
