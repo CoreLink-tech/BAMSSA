@@ -430,6 +430,28 @@ body.site-shell .hero-slide-dim-c {
   100% { opacity: 0.32; transform: scale(1.04) translate3d(-0.5%, 0.4%, 0); }
 }
 
+/* Soft blurred transition at the bottom of every hero, replacing the old hard border line.
+   Sits above the hero background and frosts it out gradually into the section below. */
+body.site-shell .hero-blur-edge {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 130px;
+  pointer-events: none;
+  z-index: 5;
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  -webkit-mask-image: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.5) 55%, #000 100%);
+  mask-image: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.5) 55%, #000 100%);
+}
+
+/* Progressive blur applied via JS as the hero scrolls out of view (see initHeroScrollBlur in site.js) */
+body.site-shell .hero-slide,
+body.site-shell .hero-slide-dim {
+  will-change: filter;
+}
+
 @keyframes hero-dim-zoom-in {
   0% {
     opacity: 0.32;
