@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
       eyebrow: 'Achievements',
       title: 'Milestones we are proud of.',
       text: 'A running record of what BAMSSA and its members have accomplished, session by session.',
-      image: asset('whitecoat.webp'),
+      image: asset('achievements-banner.webp'),
     },
     gallery: {
       eyebrow: 'Gallery',
