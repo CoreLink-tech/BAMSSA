@@ -38,6 +38,12 @@ document.addEventListener('DOMContentLoaded', () => {
       text: 'The team guiding BAMSSA across academics, welfare, outreach, and student engagement.',
       images: [asset('executives-banner-1.webp'), asset('executives-banner-2.webp'), asset('executives-banner-3.webp')],
     },
+    achievements: {
+      eyebrow: 'Achievements',
+      title: 'Milestones we are proud of.',
+      text: 'A running record of what BAMSSA and its members have accomplished, session by session.',
+      image: asset('whitecoat.webp'),
+    },
     gallery: {
       eyebrow: 'Gallery',
       title: 'Moments from campus life.',
@@ -141,6 +147,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <a href="gallery.html" class="${pageKey === 'gallery' ? 'rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-white' : 'rounded-full px-4 py-2 text-sm font-semibold text-slate-200 hover:bg-white/10 hover:text-white'}">Gallery</a>
             <a href="staff.html" class="${pageKey === 'staff' ? 'rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-white' : 'rounded-full px-4 py-2 text-sm font-semibold text-slate-200 hover:bg-white/10 hover:text-white'}">Staff</a>
             <a href="executives.html" class="${pageKey === 'executives' ? 'rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-white' : 'rounded-full px-4 py-2 text-sm font-semibold text-slate-200 hover:bg-white/10 hover:text-white'}">Executives</a>
+            <a href="achievements.html" class="${pageKey === 'achievements' ? 'rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-white' : 'rounded-full px-4 py-2 text-sm font-semibold text-slate-200 hover:bg-white/10 hover:text-white'}">Achievements</a>
             <div class="relative" data-student-utility>
               <button type="button" data-student-utility-toggle class="${['suggestions', 'news', 'contact', 'marketplace'].includes(pageKey) ? 'border border-blue-300/40 bg-white/15 px-4 py-2 text-sm font-semibold text-white' : 'border border-white/15 bg-white/5 px-4 py-2 text-sm font-semibold text-slate-200 hover:bg-white/10 hover:text-white'} relative rounded-full inline-flex items-center gap-1.5">
                 Student Utility
@@ -170,6 +177,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <a href="gallery.html" class="rounded-xl ${pageKey === 'gallery' ? 'bg-white/10 text-white' : 'text-slate-200 hover:bg-white/10 hover:text-white'} px-4 py-3 text-sm font-semibold">Gallery</a>
             <a href="staff.html" class="rounded-xl ${pageKey === 'staff' ? 'bg-white/10 text-white' : 'text-slate-200 hover:bg-white/10 hover:text-white'} px-4 py-3 text-sm font-semibold">Staff</a>
             <a href="executives.html" class="rounded-xl ${pageKey === 'executives' ? 'bg-white/10 text-white' : 'text-slate-200 hover:bg-white/10 hover:text-white'} px-4 py-3 text-sm font-semibold">Executives</a>
+            <a href="achievements.html" class="rounded-xl ${pageKey === 'achievements' ? 'bg-white/10 text-white' : 'text-slate-200 hover:bg-white/10 hover:text-white'} px-4 py-3 text-sm font-semibold">Achievements</a>
             <button type="button" data-mobile-utility-toggle class="mt-1 flex w-full items-center justify-between rounded-xl border border-white/15 bg-white/5 px-4 py-3 text-sm font-semibold text-slate-200 hover:bg-white/10 hover:text-white">
               <span class="inline-flex items-center gap-2">
                 Student Utility
@@ -655,6 +663,35 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  function renderAchievementsList(main, achievements) {
+    main.innerHTML = `
+      <section class="bg-white text-slate-900">
+        <div class="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+          ${!achievements.length ? `
+            <p class="text-center text-slate-500 py-12">Achievements will appear here once they are added in the admin dashboard.</p>
+          ` : `
+            <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              ${achievements.map(m => `
+                <a href="achievement-detail.html?id=${m.id}" class="group overflow-hidden rounded-[1.75rem] border border-slate-200 bg-slate-50 shadow-sm transition hover:-translate-y-1 hover:shadow-md">
+                  ${m.image ? `<img src="${m.image}" alt="${m.title}" class="h-44 w-full object-cover" loading="lazy" />` : ''}
+                  <div class="p-6">
+                    <div class="flex flex-wrap items-center gap-2">
+                      <span class="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-medium text-slate-500">
+                        <span class="h-1.5 w-1.5 rounded-full bg-blue-500"></span>${m.year}
+                      </span>
+                      ${m.session ? `<span class="inline-flex rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-medium text-blue-600">${m.session}</span>` : ''}
+                    </div>
+                    <h3 class="mt-3 text-lg font-black text-slate-900">${m.title}</h3>
+                    <p class="mt-2 text-sm leading-6 text-slate-600 line-clamp-3">${m.text}</p>
+                    <span class="mt-3 inline-block text-sm font-semibold text-blue-600 group-hover:text-blue-700">See more →</span>
+                  </div>
+                </a>`).join('')}
+            </div>
+          `}
+        </div>
+      </section>`;
+  }
+
   function renderAchievementDetail(main, detail) {
     const { achievement, images } = detail;
     document.title = `${achievement.title} - BAMSSA DELSU Chapter`;
@@ -707,12 +744,13 @@ document.addEventListener('DOMContentLoaded', () => {
               .map(
                 (item) => `
                   <figure class="overflow-hidden rounded-[1.75rem] border border-slate-200 bg-slate-100 shadow-sm">
-                    <img src="${item.image}" alt="${item.title}" class="h-64 w-full object-cover transition duration-500 hover:scale-105" loading="lazy" />
+                    <img src="${item.image}" alt="${item.title || 'Gallery photo'}" class="h-64 w-full object-cover transition duration-500 hover:scale-105" loading="lazy" />
+                    ${item.tag || item.title || item.text ? `
                     <figcaption class="p-5">
-                      <span class="inline-flex rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-medium text-blue-600">${item.tag}</span>
-                      <h3 class="mt-3 text-lg font-black text-slate-900">${item.title}</h3>
-                      <p class="mt-2 text-sm leading-6 text-slate-600">${item.text}</p>
-                    </figcaption>
+                      ${item.tag ? `<span class="inline-flex rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-medium text-blue-600">${item.tag}</span>` : ''}
+                      ${item.title ? `<h3 class="mt-3 text-lg font-black text-slate-900">${item.title}</h3>` : ''}
+                      ${item.text ? `<p class="mt-2 text-sm leading-6 text-slate-600">${item.text}</p>` : ''}
+                    </figcaption>` : ''}
                   </figure>`,
               )
               .join('')}
@@ -1218,6 +1256,22 @@ document.addEventListener('DOMContentLoaded', () => {
     }));
   }
 
+  async function fetchAllAchievementsData() {
+    if (!supabaseClient) return null;
+    const { data, error } = await supabaseClient.from('achievements').select('*, administrations(session_label)').order('date', { ascending: false });
+    if (error) return null;
+    return data.map(row => ({
+      id: row.id,
+      year: row.date ? new Date(row.date).getFullYear() : '',
+      title: row.title,
+      text: row.description ? row.description.replace(/<[^>]*>/g, '') : '',
+      tag: row.tag,
+      image: row.image_url,
+      date: row.date,
+      session: row.administrations ? row.administrations.session_label : ''
+    }));
+  }
+
   async function fetchAchievementDetail(id) {
     if (!supabaseClient || !id) return null;
     const { data: achievement, error } = await supabaseClient.from('achievements').select('*').eq('id', id).single();
@@ -1594,6 +1648,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if (detail) { renderAchievementDetail(main, detail); } else { injectError(main); }
         break;
       }
+      case 'achievements': {
+        injectLoading(main);
+        const allAchievements = await fetchAllAchievementsData();
+        if (allAchievements !== null) { renderAchievementsList(main, allAchievements); } else { injectError(main); }
+        break;
+      }
       case 'marketplace': {
         renderMarketplace(main);
         break;
@@ -1613,6 +1673,9 @@ document.addEventListener('DOMContentLoaded', () => {
         break;
       case 'gallery':
         renderGallery(main);
+        break;
+      case 'achievements':
+        renderAchievementsList(main, []);
         break;
       case 'staff':
         renderStaff(main);
@@ -1644,7 +1707,7 @@ document.addEventListener('DOMContentLoaded', () => {
       injectHero(pageConfigs[pageKey]);
     }
     document.body.classList.add('js-ready');
-    if (['executives', 'gallery', 'departments', 'suggestions', 'department-detail', 'news', 'staff', 'about', 'achievement-detail', 'marketplace'].includes(pageKey)) {
+    if (['executives', 'gallery', 'departments', 'suggestions', 'department-detail', 'news', 'staff', 'about', 'achievement-detail', 'achievements', 'marketplace'].includes(pageKey)) {
       if (supabaseClient) {
         renderPageAsync(pageKey, main);
       } else {

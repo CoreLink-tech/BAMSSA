@@ -1762,7 +1762,7 @@ async function renderGallery(content, title) {
     const file = document.getElementById('gallery-image').files[0];
 
     if (!file) return;
-    const titleVal = document.getElementById('gallery-title')?.value.trim() || file.name.replace(/\.[^/.]+$/, '');
+    const titleVal = document.getElementById('gallery-title')?.value.trim() || '';
     const url = await uploadPhoto(file, 'gallery');
     if (!url) return;
     
@@ -1790,7 +1790,7 @@ async function renderGallery(content, title) {
     for (let i = 0; i < files.length; i++) {
       progress.textContent = `Uploading ${i + 1} of ${files.length}...`;
       const file = files[i];
-      const titleVal = file.name.replace(/\.[^/.]+$/, '');
+      const titleVal = '';
       const url = await uploadPhoto(file, 'gallery');
       if (!url) continue;
       await supabase.from('gallery').insert([{ title: titleVal, department: dept, caption: '', tag: '', image_url: url }]);
